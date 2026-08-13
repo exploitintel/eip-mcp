@@ -1,0 +1,70 @@
+[Unit]
+Description=EIP v3 MCP research server (streamable HTTP)
+Documentation=file:///opt/eip/eip-mcp-v3/README.md
+Wants=network-online.target eip-server-v3.service
+After=network-online.target eip-server-v3.service
+ConditionPathExists=/etc/eip-v3/eip-mcp-v3.env
+# These two belong in [Unit]: systemd's [Service] section accepts only the legacy
+# StartLimitInterval/StartLimitBurst aliases, so the Sec-suffixed form was logged
+# as an unknown key and ignored, leaving the default 10s window. At RestartSec=3
+# only four starts land inside 10s, so the limiter never tripped and a crash loop
+# - an OOM kill under MemoryMax, say - never reached `failed`.
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+DynamicUser=true
+WorkingDirectory=/opt/eip/eip-mcp-v3
+EnvironmentFile=/etc/eip-v3/eip-mcp-v3.env
+UMask=0077
+ExecStartPre=/usr/bin/test -x /opt/eip/eip-mcp-v3/.venv/bin/eip-mcp-v3
+ExecStart=/opt/eip/eip-mcp-v3/.venv/bin/eip-mcp-v3 --transport streamable-http --host 127.0.0.1 --port 13003 --path /mcp
+Restart=on-failure
+RestartSec=3
+# A configuration error is not a transient fault, and restarting through one hides
+# it. `EIP_MCP_ALLOWED_HOSTS` ships empty on purpose (see the env example), so the
+# very first `enable --now` before editing exits 2 - and with a bare
+# `Restart=on-failure` that became an endless silent loop rather than a failure:
+# at 3s spacing only four starts land inside systemd's default 10s window, so the
+# start limiter never tripped and the unit never reached `failed`. Exit 2 is now
+# terminal, and the window is widened so that a genuine crash loop does trip it.
+RestartPreventExitStatus=2
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @obsolete
+# The process reads other processes' entries for nothing.
+ProtectProc=invisible
+ProcSubset=pid
+# This endpoint authenticates nothing and rate-limits nothing, and one response is
+# buffered whole before the output ceiling is applied - 30 concurrent reads of a
+# large artifact took resident memory from 100 MB to 342 MB. These are the backstop
+# for that, set well above normal operation so they bound an abuse rather than
+# interfere with a legitimate large read.
+MemoryMax=1G
+TasksMax=256
+LimitNOFILE=4096
+# Deliberately NOT set: MemoryDenyWriteExecute. It breaks CPython 3.14's JIT.
+IPAddressDeny=any
+IPAddressAllow=127.0.0.0/8
+IPAddressAllow=::1/128
+
+[Install]
+WantedBy=multi-user.target

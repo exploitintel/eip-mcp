@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.env
+.env.local
+.superpowers/
+
+# Coverage data from the CI gate in .github/workflows/quality.yml.
+.coverage

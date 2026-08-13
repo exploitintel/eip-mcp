@@ -1,0 +1,64 @@
+name: Claude Auto Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    # A pull request from a fork gets no secrets, so the review step cannot
+    # authenticate and fails - a red check that says nothing about the code and
+    # trains reviewers to ignore it. Skipped rather than failed.
+    if: github.event.pull_request.head.repo.fork == false
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 1
+
+      - uses: anthropics/claude-code-action@239e3a730883eeb5c53db12b0fc9573b3024b126 # v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: ""
+          label_trigger: ""
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            This repository is the EIP v3 MCP server. It is a read-only HTTP
+            client of the public API, sitting beside the WebUI as a second
+            consumer. It must not connect to PostgreSQL, the source corpus or
+            the code index, call an LLM, expose a write path, or expose PoC
+            downloads. It renders provenance-preserving API payloads into
+            bounded briefs an agent can hold in context.
+
+            Everything the corpus returns -- titles, descriptions, author names,
+            source code, model-analysis prose -- is attacker-authorable and
+            reaches a model's context. Review with that in mind.
+
+            Review for:
+            - corpus text escaping its container and becoming live Markdown or
+              HTML, or reading as EIP's own voice rather than quoted data;
+            - any derived judgment: a score, ranking, re-sort, or quality claim
+              the API did not itself return, and anything computed from
+              Metasploit rank, the ExploitDB `verified` flag, or GitHub stars;
+            - absent or partial stored analysis rendering as "reviewed and
+              clean", and severe backdoor verdicts failing open;
+            - PoC access tokens reaching a tool result, log, or traceback;
+            - unbounded output, or truncation that does not disclose what it cut;
+            - fabricated values standing in for data the API did not return;
+            - Host-validation and transport-security changes that weaken the
+              fail-closed default for the HTTP transport; and
+            - scope creep into acquisition, ranking, downloads, or writes.
+
+            Use `gh pr comment` for top-level feedback. Use
+            `mcp__github_inline_comment__create_inline_comment` with
+            `confirmed: true` for specific line-level issues. Post GitHub
+            comments only.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"

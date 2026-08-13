@@ -1,0 +1,130 @@
+name: Release to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Require a release commit from main
+        run: |
+          git fetch origin main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Install test and packaging tools
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e .
+
+      - name: Match package version to release tag
+        run: |
+          python - <<'PY'
+          import os
+          from eip_mcp_v3 import __version__
+
+          tag = os.environ["GITHUB_REF_NAME"]
+          expected = f"v{__version__}"
+          if tag != expected:
+              raise SystemExit(f"release tag {tag!r} does not match {expected!r}")
+          if ".dev" in __version__:
+              raise SystemExit("development versions cannot be published")
+          PY
+
+      - name: Verify source
+        run: |
+          ruff check src tests
+          python -m pytest -q \
+            --cov=eip_mcp_v3 --cov-report=term-missing --cov-fail-under=95
+
+      - name: Build and validate distributions
+        run: |
+          python -m build
+          python -m twine check dist/*
+
+      - name: Smoke-test wheel and source distribution
+        run: |
+          python -m venv /tmp/eip-mcp-wheel
+          /tmp/eip-mcp-wheel/bin/python -m pip install dist/*.whl
+          /tmp/eip-mcp-wheel/bin/python -m pip check
+          /tmp/eip-mcp-wheel/bin/eip-mcp --version
+          /tmp/eip-mcp-wheel/bin/eip-mcp --help
+          /tmp/eip-mcp-wheel/bin/eip-mcp-v3 --help
+
+          python -m venv /tmp/eip-mcp-sdist
+          /tmp/eip-mcp-sdist/bin/python -m pip install dist/*.tar.gz
+          /tmp/eip-mcp-sdist/bin/python -m pip check
+          /tmp/eip-mcp-sdist/bin/eip-mcp --version
+          /tmp/eip-mcp-sdist/bin/eip-mcp --help
+          /tmp/eip-mcp-sdist/bin/eip-mcp-v3 --help
+
+      - name: Verify exact artifact and executable identities
+        run: |
+          python - <<'PY'
+          import pathlib
+          import tarfile
+          import zipfile
+          from importlib.metadata import distribution, version
+
+          release = version("eip-mcp")
+          wheel = pathlib.Path(f"dist/eip_mcp-{release}-py3-none-any.whl")
+          sdist = pathlib.Path(f"dist/eip_mcp-{release}.tar.gz")
+          if set(pathlib.Path("dist").iterdir()) != {sdist, wheel}:
+              raise SystemExit("dist contains unexpected or missing release artifacts")
+          scripts = {
+              entry.name
+              for entry in distribution("eip-mcp").entry_points
+              if entry.group == "console_scripts"
+          }
+          if scripts != {"eip-mcp", "eip-mcp-v3"}:
+              raise SystemExit(f"unexpected console scripts: {sorted(scripts)}")
+          with zipfile.ZipFile(wheel) as archive:
+              assert any(name.endswith("/licenses/LICENSE") for name in archive.namelist())
+          with tarfile.open(sdist) as archive:
+              names = archive.getnames()
+              assert any(name.endswith("/LICENSE") for name in names)
+              assert any(name.endswith("/SECURITY.md") for name in names)
+          PY
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: eip-mcp-pypi
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/eip-mcp/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: eip-mcp-pypi
+          path: dist
+
+      - name: Publish through PyPI Trusted Publishing
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        with:
+          packages-dir: dist/
+          attestations: true

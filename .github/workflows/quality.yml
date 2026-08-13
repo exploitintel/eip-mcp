@@ -1,0 +1,123 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Exercise the supported Python floor and current development target.
+        python-version: ["3.12", "3.14"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Enforce ASCII dash typography
+        run: |
+          if git grep -n -I -P '[\x{2013}\x{2014}]' -- .; then
+            echo "Use an ASCII hyphen instead of an en dash or em dash." >&2
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m pip install -e .
+
+      - name: Ruff
+        run: ruff check src tests
+
+      - name: Pytest
+        # Live API tests remain opt-in; CI verifies the hermetic suite and its
+        # calibrated coverage floor.
+        run: >-
+          python -m pytest -q
+          --cov=eip_mcp_v3 --cov-report=term-missing --cov-fail-under=95
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Enforce ASCII dash typography
+        run: |
+          if git grep -n -I -P '[\x{2013}\x{2014}]' -- .; then
+            echo "Use an ASCII hyphen instead of an en dash or em dash." >&2
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Install packaging tools
+        run: python -m pip install "build>=1.2,<2" "twine>=6,<7"
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Validate distributions
+        run: python -m twine check dist/*
+
+      - name: Smoke-test the installed wheel
+        run: |
+          python -m venv /tmp/eip-mcp-wheel-check
+          /tmp/eip-mcp-wheel-check/bin/python -m pip install dist/*.whl
+          /tmp/eip-mcp-wheel-check/bin/python -m pip check
+          /tmp/eip-mcp-wheel-check/bin/eip-mcp --version
+          /tmp/eip-mcp-wheel-check/bin/eip-mcp --help
+          /tmp/eip-mcp-wheel-check/bin/eip-mcp-v3 --help
+          /tmp/eip-mcp-wheel-check/bin/python - <<'PY'
+          from importlib.metadata import version
+          from eip_mcp_v3 import __version__
+
+          assert __version__ == version("eip-mcp")
+          PY
+
+      - name: Smoke-test the installed source distribution
+        run: |
+          python -m venv /tmp/eip-mcp-sdist-check
+          /tmp/eip-mcp-sdist-check/bin/python -m pip install dist/*.tar.gz
+          /tmp/eip-mcp-sdist-check/bin/python -m pip check
+          /tmp/eip-mcp-sdist-check/bin/eip-mcp --version
+          /tmp/eip-mcp-sdist-check/bin/eip-mcp --help
+          /tmp/eip-mcp-sdist-check/bin/eip-mcp-v3 --help
+
+      - name: Check release files
+        run: |
+          python - <<'PY'
+          import pathlib
+          import tarfile
+          import zipfile
+
+          wheel = next(pathlib.Path("dist").glob("*.whl"))
+          sdist = next(pathlib.Path("dist").glob("*.tar.gz"))
+          with zipfile.ZipFile(wheel) as archive:
+              assert any(name.endswith("/licenses/LICENSE") for name in archive.namelist())
+              assert any(name.endswith("/METADATA") for name in archive.namelist())
+          with tarfile.open(sdist) as archive:
+              names = archive.getnames()
+              assert any(name.endswith("/LICENSE") for name in names)
+              assert any(name.endswith("/README.md") for name in names)
+              assert any(name.endswith("/SECURITY.md") for name in names)
+              assert any(name.endswith("/CONTRIBUTING.md") for name in names)
+              assert any(name.endswith("/docs/user-guide.md") for name in names)
+              assert any(name.endswith("/docs/self-hosting.md") for name in names)
+              assert any(name.endswith("/tests/renderer_inventory.py") for name in names)
+              assert any(name.endswith("/tests/fixtures/statistics.json") for name in names)
+          PY

@@ -1,0 +1,1072 @@
+{
+  "entity_id": "de791362-8227-514d-90fa-207ad4d1153d",
+  "identifier": "CVE-2026-15409",
+  "identifiers": [
+    "CVE-2026-15409",
+    "GHSA-35RC-2VCV-R6Q5"
+  ],
+  "rejected": false,
+  "withdrawn": false,
+  "search_excluded": false,
+  "stix_available": true,
+  "title": {
+    "value": "SonicWall SMA1000 Appliances Server-Side Request Forgery Vulnerability",
+    "provenance": {
+      "source": "kev",
+      "native_id": "CVE-2026-15409",
+      "fingerprint": null,
+      "record_key": null,
+      "provider": "CISA",
+      "pointer": "fixed-source-record:kev:sha256:16acee8334e59e44ccbaed4da7d02b409144061542b64ad74a9443fb7842a828:CVE-2026-15409#/vulnerabilityName"
+    }
+  },
+  "description": {
+    "value": "A Server-side request forgery (SSRF) vulnerability has been identified in the SMA1000 Appliance Work Place interface. A remote unauthenticated attacker could potentially cause the appliance to make requests to unintended location.",
+    "provenance": {
+      "source": "cvelistV5",
+      "native_id": "CVE-2026-15409",
+      "fingerprint": null,
+      "record_key": null,
+      "provider": "sonicwall",
+      "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/cna/descriptions/0"
+    }
+  },
+  "published": {
+    "value": "2026-07-14T19:39:34.808000Z",
+    "provenance": {
+      "source": "cvelistV5",
+      "native_id": "CVE-2026-15409",
+      "fingerprint": null,
+      "record_key": null,
+      "provider": "sonicwall",
+      "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409"
+    }
+  },
+  "tracked_since": null,
+  "cvss": {
+    "version": "3.1",
+    "score": 10.0,
+    "severity": "CRITICAL",
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+    "provenance": {
+      "source": "nvd",
+      "native_id": "CVE-2026-15409",
+      "fingerprint": null,
+      "record_key": null,
+      "provider": "134c704f-9b21-4f2e-91b3-4a467353bcc0",
+      "pointer": "fixed-source-record:nvd:sha256:3fc3bc41a87dddb15ea6b76c867baf58ec66aaeca79eb2e3c7b399676fc9431e:CVE-2026-15409#/metrics/cvssMetricV31/0/cvssData"
+    }
+  },
+  "epss": {
+    "score": 0.7844,
+    "percentile": 0.99541,
+    "provenance": {
+      "source": "epss",
+      "native_id": "CVE-2026-15409",
+      "fingerprint": null,
+      "record_key": null,
+      "provider": "epss",
+      "pointer": "fixed-source-record:epss:sha256:6bb2c86d54ac209b1a8e717370e88bf54b198a8ce6e0c8313804c7bf6fbb158a:CVE-2026-15409"
+    }
+  },
+  "exploitation": {
+    "cisa_kev": {
+      "listed": true,
+      "added_at": "2026-07-14T00:00:00Z",
+      "provenance": {
+        "source": "kev",
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "record_key": null,
+        "provider": "CISA",
+        "pointer": "fixed-source-record:kev:sha256:16acee8334e59e44ccbaed4da7d02b409144061542b64ad74a9443fb7842a828:CVE-2026-15409"
+      }
+    },
+    "vulncheck_kev": {
+      "listed": true,
+      "added_at": "2026-07-14T00:00:00Z",
+      "provenance": {
+        "source": "vulncheck-kev",
+        "native_id": "cve:CVE-2026-15409",
+        "fingerprint": null,
+        "record_key": null,
+        "provider": "VulnCheck",
+        "pointer": "fixed-source-record:vulncheck-kev:sha256:ba0ee09db8709b21576105ce86ebcfb00d8a5c3685096768b6f84896e1c5e507:cve:CVE-2026-15409"
+      }
+    },
+    "reported_exploitation": {
+      "observed": true,
+      "provenance": {
+        "source": "vulncheck-kev",
+        "native_id": "cve:CVE-2026-15409",
+        "fingerprint": null,
+        "record_key": null,
+        "provider": "VulnCheck",
+        "pointer": "fixed-source-record:vulncheck-kev:sha256:ba0ee09db8709b21576105ce86ebcfb00d8a5c3685096768b6f84896e1c5e507:cve:CVE-2026-15409#/vulncheck_reported_exploitation"
+      }
+    },
+    "known_ransomware": {
+      "observed": true,
+      "provenance": {
+        "source": "kev",
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "record_key": null,
+        "provider": "CISA",
+        "pointer": "fixed-source-record:kev:sha256:16acee8334e59e44ccbaed4da7d02b409144061542b64ad74a9443fb7842a828:CVE-2026-15409#/knownRansomwareCampaignUse"
+      }
+    },
+    "catalogued_exploit_count": 0,
+    "repository_candidate_count": 6,
+    "curated_repository_poc_count": 0,
+    "nuclei_template_count": 1,
+    "ssvc": {
+      "exploitation": "active",
+      "automatable": "yes",
+      "technical_impact": "total",
+      "role": "CISA Coordinator",
+      "version": "2.0.3",
+      "evaluated_at": "2026-07-14T00:00:00Z",
+      "provenance": {
+        "source": "cvelistV5",
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "record_key": null,
+        "provider": "CISA-ADP",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/adp/0/metrics/1/other/content"
+      }
+    }
+  },
+  "cwe_ids": [
+    "CWE-918"
+  ],
+  "artifacts": {
+    "items": [
+      {
+        "artifact_id": "d0357b81-7de3-5348-9a00-c0015de4d64d",
+        "source": "nuclei",
+        "kind": "template",
+        "native_id": "CVE-2026-15409",
+        "provider_type": "nuclei",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "SonicWall SMA1000 - Server-Side Request Forgery",
+        "description": "SMA1000 Appliance Work Place interface contains a server side request forgery caused by improper request validation, letting remote unauthenticated attackers make requests to unintended locations, exploit requires no special privileges.",
+        "url": null,
+        "locator": "fixed-source-record:nuclei:8dd4ae74ca2fdbcce55ab21eb7a3a52988f2bdf0:CVE-2026-15409",
+        "metadata_locator": null,
+        "metadata_fingerprint": null,
+        "author": "DhiyaneshDk",
+        "owner_name": null,
+        "owner_id": null,
+        "language": "YAML",
+        "stars": null,
+        "published_at": null,
+        "fingerprint": null
+      },
+      {
+        "artifact_id": "513a06a2-8fae-5f86-9be4-a2fcd3e44f42",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301123879",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "HORKimhab/CVE-2026-15409",
+        "description": "CVE-2026-15409 - Dectect",
+        "url": "https://github.com/HORKimhab/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/a8/1301123879/66a6140d12ec8b4c22545429fd74834173fa9709/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301123879",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "HORKimhab",
+        "owner_id": "41143106",
+        "language": null,
+        "stars": 0,
+        "published_at": "2026-07-15T02:30:50Z",
+        "fingerprint": "sha256:fc7f560d7d39b472f9556b7fa1346dd0679ebfe25f8fc708f5adb577c60a00f5"
+      },
+      {
+        "artifact_id": "99468243-39fe-5874-a484-328c4cbede52",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301775326",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "remmons-r7/rapid7-CVE-2026-15409",
+        "description": "This repo contains a proof-of-concept exploit for CVE-2026-15409. It establishes non-root remote code execution on SonicWall SMA 1000 by implementing the Erlang protocol expected by localhost:1050 and tunneling it through the websocket for file r/w and arbitrary code execution via RPC calls.",
+        "url": "https://github.com/remmons-r7/rapid7-CVE-2026-15409",
+        "locator": "repositories/snapshots/github/db/1301775326/ba6af6d29b46783be4f03827663a7c37db9ca6af/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301775326",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "remmons-r7",
+        "owner_id": "166433046",
+        "language": null,
+        "stars": 26,
+        "published_at": "2026-07-15T15:37:11Z",
+        "fingerprint": "sha256:78ff3163e3242f6a9adb6a88d88cbe8a1d0132376a09b901fb449ebb381bf68e"
+      },
+      {
+        "artifact_id": "4d01c82c-ce1a-5124-b008-f4a22bfcb179",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301848220",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "0xBlackash/CVE-2026-15409",
+        "description": "CVE-2026-15409",
+        "url": "https://github.com/0xBlackash/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/39/1301848220/3120e2ba3c0732083d12e8be501f28a09e78e26a/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301848220",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "0xAshwesker",
+        "owner_id": "259905299",
+        "language": null,
+        "stars": 3,
+        "published_at": "2026-07-15T16:51:53Z",
+        "fingerprint": "sha256:0e30aef51f9e02dfb9603e56ef69b0e4321f72a8e235c841f3c4451932205637"
+      },
+      {
+        "artifact_id": "06a4fc29-6f99-547f-9613-dc1beb0dfd1a",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1302528775",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "MrRawBit/SonicWall-SMA1000-Zero-Day-IoC-Check",
+        "description": "Unofficial Bash IoC checker for SonicWall SMA1000 appliances affected by actively exploited CVE-2026-15409 and CVE-2026-15410.",
+        "url": "https://github.com/MrRawBit/SonicWall-SMA1000-Zero-Day-IoC-Check",
+        "locator": "repositories/snapshots/github/a7/1302528775/ac577237c0edabd5d0573a1bf4a85102485f9ef9/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1302528775",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "MrRawBit",
+        "owner_id": "16192624",
+        "language": null,
+        "stars": 0,
+        "published_at": "2026-07-16T08:31:07Z",
+        "fingerprint": "sha256:797937b78ac75d5f9d840eecf781f991d9388b89b0bc7008f2bdf0e371d1c2a4"
+      },
+      {
+        "artifact_id": "a72ee0b1-0d1c-5875-938c-57030843c46f",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1304238138",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "tc4dy/CVE-2026-15409-15410-Framework",
+        "description": "CVE-2026-15409/15410 SonicWall SMA1000 multi-exploit Framework \ud83d\udd25 SSRF\u2192Erlang RPC\u2192RCE\u2192root privesc. Features: --detect safe check, --exec, --read-file, --privesc, --rpc, interactive shell, batch threading, file write, ws-url override, pipe support.\ud83d\udee1\ufe0f KEV listed CVSS 10.0 actively exploited. Authorized testing only. Use Ethically, Stay Legal. \ud83d\udd12",
+        "url": "https://github.com/tc4dy/CVE-2026-15409-15410-Framework",
+        "locator": "repositories/snapshots/github/bc/1304238138/a823da9fdce6ada04d8a03813871cba1bb6b90ad/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1304238138",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "tc4dy",
+        "owner_id": "140116264",
+        "language": null,
+        "stars": 5,
+        "published_at": "2026-07-17T17:30:02Z",
+        "fingerprint": "sha256:97131830950363d780174a4dc115ea4411e24d0a8596a29d207b79b5f407f6ec"
+      },
+      {
+        "artifact_id": "0e442889-0aa0-5b16-a3ca-7d582113ea1e",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1321910051",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "Ch4120N/CVE-2026-15409",
+        "description": "Proof-of-Concept exploit for CVE-2026-15409 (SonicWall SMA 1000 RCE) via Erlang distribution over WebSocket. Achieves unauthenticated remote code execution as couchdb user.",
+        "url": "https://github.com/Ch4120N/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/cb/1321910051/8706e3bbf4b1e607bc216d65b9a0a2000e3c16dc/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1321910051",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "Ch4120N",
+        "owner_id": "159701862",
+        "language": null,
+        "stars": 1,
+        "published_at": "2026-08-03T14:59:04Z",
+        "fingerprint": "sha256:cc6e2ac613acf6e4e068d8716a47ee6b3ec79405a8bf55c6ad6f9e98c2443a45"
+      }
+    ],
+    "total": 7,
+    "truncated": false
+  },
+  "pocs": {
+    "items": [
+      {
+        "artifact_id": "513a06a2-8fae-5f86-9be4-a2fcd3e44f42",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301123879",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "HORKimhab/CVE-2026-15409",
+        "description": "CVE-2026-15409 - Dectect",
+        "url": "https://github.com/HORKimhab/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/a8/1301123879/66a6140d12ec8b4c22545429fd74834173fa9709/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301123879",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "HORKimhab",
+        "owner_id": "41143106",
+        "language": null,
+        "stars": 0,
+        "published_at": "2026-07-15T02:30:50Z",
+        "fingerprint": "sha256:fc7f560d7d39b472f9556b7fa1346dd0679ebfe25f8fc708f5adb577c60a00f5",
+        "public_id": 3523770880292712,
+        "source_artifact_id": "repository:github.com:1301123879",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "66a6140d12ec8b4c22545429fd74834173fa9709",
+        "file_count": 4,
+        "byte_count": 9601,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 1,
+        "exact_copy_count": 0,
+        "analysis": null
+      },
+      {
+        "artifact_id": "99468243-39fe-5874-a484-328c4cbede52",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301775326",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "remmons-r7/rapid7-CVE-2026-15409",
+        "description": "This repo contains a proof-of-concept exploit for CVE-2026-15409. It establishes non-root remote code execution on SonicWall SMA 1000 by implementing the Erlang protocol expected by localhost:1050 and tunneling it through the websocket for file r/w and arbitrary code execution via RPC calls.",
+        "url": "https://github.com/remmons-r7/rapid7-CVE-2026-15409",
+        "locator": "repositories/snapshots/github/db/1301775326/ba6af6d29b46783be4f03827663a7c37db9ca6af/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301775326",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "remmons-r7",
+        "owner_id": "166433046",
+        "language": null,
+        "stars": 26,
+        "published_at": "2026-07-15T15:37:11Z",
+        "fingerprint": "sha256:78ff3163e3242f6a9adb6a88d88cbe8a1d0132376a09b901fb449ebb381bf68e",
+        "public_id": 594711952474247,
+        "source_artifact_id": "repository:github.com:1301775326",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "ba6af6d29b46783be4f03827663a7c37db9ca6af",
+        "file_count": 2,
+        "byte_count": 18697,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 1,
+        "exact_copy_count": 0,
+        "analysis": null
+      },
+      {
+        "artifact_id": "4d01c82c-ce1a-5124-b008-f4a22bfcb179",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1301848220",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "0xBlackash/CVE-2026-15409",
+        "description": "CVE-2026-15409",
+        "url": "https://github.com/0xBlackash/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/39/1301848220/3120e2ba3c0732083d12e8be501f28a09e78e26a/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301848220",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "0xAshwesker",
+        "owner_id": "259905299",
+        "language": null,
+        "stars": 3,
+        "published_at": "2026-07-15T16:51:53Z",
+        "fingerprint": "sha256:0e30aef51f9e02dfb9603e56ef69b0e4321f72a8e235c841f3c4451932205637",
+        "public_id": 5276255430751562,
+        "source_artifact_id": "repository:github.com:1301848220",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "3120e2ba3c0732083d12e8be501f28a09e78e26a",
+        "file_count": 2,
+        "byte_count": 8929,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 1,
+        "exact_copy_count": 0,
+        "analysis": null
+      },
+      {
+        "artifact_id": "06a4fc29-6f99-547f-9613-dc1beb0dfd1a",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1302528775",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "MrRawBit/SonicWall-SMA1000-Zero-Day-IoC-Check",
+        "description": "Unofficial Bash IoC checker for SonicWall SMA1000 appliances affected by actively exploited CVE-2026-15409 and CVE-2026-15410.",
+        "url": "https://github.com/MrRawBit/SonicWall-SMA1000-Zero-Day-IoC-Check",
+        "locator": "repositories/snapshots/github/a7/1302528775/ac577237c0edabd5d0573a1bf4a85102485f9ef9/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1302528775",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "MrRawBit",
+        "owner_id": "16192624",
+        "language": null,
+        "stars": 0,
+        "published_at": "2026-07-16T08:31:07Z",
+        "fingerprint": "sha256:797937b78ac75d5f9d840eecf781f991d9388b89b0bc7008f2bdf0e371d1c2a4",
+        "public_id": 5489280332742718,
+        "source_artifact_id": "repository:github.com:1302528775",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "ac577237c0edabd5d0573a1bf4a85102485f9ef9",
+        "file_count": 3,
+        "byte_count": 12613,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 2,
+        "exact_copy_count": 0,
+        "analysis": null
+      },
+      {
+        "artifact_id": "a72ee0b1-0d1c-5875-938c-57030843c46f",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1304238138",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "tc4dy/CVE-2026-15409-15410-Framework",
+        "description": "CVE-2026-15409/15410 SonicWall SMA1000 multi-exploit Framework \ud83d\udd25 SSRF\u2192Erlang RPC\u2192RCE\u2192root privesc. Features: --detect safe check, --exec, --read-file, --privesc, --rpc, interactive shell, batch threading, file write, ws-url override, pipe support.\ud83d\udee1\ufe0f KEV listed CVSS 10.0 actively exploited. Authorized testing only. Use Ethically, Stay Legal. \ud83d\udd12",
+        "url": "https://github.com/tc4dy/CVE-2026-15409-15410-Framework",
+        "locator": "repositories/snapshots/github/bc/1304238138/a823da9fdce6ada04d8a03813871cba1bb6b90ad/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1304238138",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "tc4dy",
+        "owner_id": "140116264",
+        "language": null,
+        "stars": 5,
+        "published_at": "2026-07-17T17:30:02Z",
+        "fingerprint": "sha256:97131830950363d780174a4dc115ea4411e24d0a8596a29d207b79b5f407f6ec",
+        "public_id": 8624563467943327,
+        "source_artifact_id": "repository:github.com:1304238138",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "a823da9fdce6ada04d8a03813871cba1bb6b90ad",
+        "file_count": 6,
+        "byte_count": 1545931,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 1,
+        "exact_copy_count": 0,
+        "analysis": null
+      },
+      {
+        "artifact_id": "0e442889-0aa0-5b16-a3ca-7d582113ea1e",
+        "source": "repository-inventory",
+        "kind": "repository",
+        "native_id": "github:github.com:1321910051",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "record_key": null,
+        "title": "Ch4120N/CVE-2026-15409",
+        "description": "Proof-of-Concept exploit for CVE-2026-15409 (SonicWall SMA 1000 RCE) via Erlang distribution over WebSocket. Achieves unauthenticated remote code execution as couchdb user.",
+        "url": "https://github.com/Ch4120N/CVE-2026-15409",
+        "locator": "repositories/snapshots/github/cb/1321910051/8706e3bbf4b1e607bc216d65b9a0a2000e3c16dc/source",
+        "metadata_locator": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1321910051",
+        "metadata_fingerprint": null,
+        "author": null,
+        "owner_name": "Ch4120N",
+        "owner_id": "159701862",
+        "language": null,
+        "stars": 1,
+        "published_at": "2026-08-03T14:59:04Z",
+        "fingerprint": "sha256:cc6e2ac613acf6e4e068d8716a47ee6b3ec79405a8bf55c6ad6f9e98c2443a45",
+        "public_id": 8789003144314812,
+        "source_artifact_id": "repository:github.com:1321910051",
+        "catalog_kind": "repository-candidate",
+        "content_revision": "8706e3bbf4b1e607bc216d65b9a0a2000e3c16dc",
+        "file_count": 5,
+        "byte_count": 35877,
+        "association_providers": [
+          "poc-repository-github-discovery",
+          "poc-repository-nomisec-metadata",
+          "poc-repository-poc-monitor-metadata"
+        ],
+        "vulnerability_count": 1,
+        "exact_copy_count": 0,
+        "analysis": null
+      }
+    ],
+    "total": 6,
+    "truncated": false
+  },
+  "related_artifacts": {
+    "items": [],
+    "total": 0,
+    "truncated": false
+  },
+  "nuclei_templates": {
+    "items": [
+      {
+        "artifact_id": "d0357b81-7de3-5348-9a00-c0015de4d64d",
+        "template_id": "CVE-2026-15409",
+        "name": "SonicWall SMA1000 - Server-Side Request Forgery",
+        "description": "SMA1000 Appliance Work Place interface contains a server side request forgery caused by improper request validation, letting remote unauthenticated attackers make requests to unintended locations, exploit requires no special privileges.",
+        "severity": "critical",
+        "authors": [
+          "DhiyaneshDk",
+          "rapid7"
+        ],
+        "tags": [
+          "cve",
+          "cve2026",
+          "sonicwall",
+          "sma",
+          "ssrf",
+          "rce",
+          "kev",
+          "vkev"
+        ],
+        "impact": "Remote attackers can make the appliance send requests to unintended locations, potentially accessing internal resources or causing further attacks.\n",
+        "remediation": "Update to the latest version.\n",
+        "classification": {
+          "cvss_score": 10.0,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cwe_ids": [
+            "CWE-918"
+          ],
+          "cpe": null
+        },
+        "reconnaissance": [
+          {
+            "service": "Shodan",
+            "query": "http.html:\"workplace\" \"SMA\""
+          }
+        ],
+        "references": [
+          "https://www.rapid7.com/blog/post/etr-rapid7-mdr-team-discovers-new-sonicwall-sma1000-zero-days-being-actively-exploited-cve-2026-15409-cve-2026-15410/",
+          "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0008",
+          "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-15409",
+          "https://github.com/remmons-r7/rapid7-CVE-2026-15409"
+        ],
+        "provenance": {
+          "source": "nuclei",
+          "native_id": "CVE-2026-15409",
+          "fingerprint": null,
+          "record_key": null,
+          "provider": "ProjectDiscovery",
+          "pointer": "fixed-source-record:nuclei:8dd4ae74ca2fdbcce55ab21eb7a3a52988f2bdf0:CVE-2026-15409"
+        }
+      }
+    ],
+    "total": 1,
+    "truncated": false
+  },
+  "docker_labs": {
+    "items": [],
+    "total": 0,
+    "truncated": false
+  },
+  "artifact_links": {
+    "items": [
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "06a4fc29-6f99-547f-9613-dc1beb0dfd1a",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-62f27ca3eb897cc94ee09856d8f7c1c8332d936ffb1fd6cf39c3aac82e270fa6",
+        "pointer": "repositories/provider-responses/github/resp-7049aedd160cf9cc8fe22eb90352ce8d584d55aff5cc1fe72a52ac0f91aea287/index.jsonl#row=194,item=56",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "06a4fc29-6f99-547f-9613-dc1beb0dfd1a",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-ff58d3e0bba301e9ca39a8b1a3ef38f0f5bc3fd1f7ad4878401df2f8fde5f3a4",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1302528775",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "06a4fc29-6f99-547f-9613-dc1beb0dfd1a",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-3628d30528a817d132a777b67e629033e79e8221c9d4eef56bb344db8c86ceaa",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1302528775",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "0e442889-0aa0-5b16-a3ca-7d582113ea1e",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-c4990f3fe8ad8164ee3955cd036589c234bfd41705516160fe49eeeb24404e53",
+        "pointer": "repositories/provider-responses/github/resp-6f8cf3655b1a993fe166adfcd1a5f31166fe74fffe75e00fe41e3bf22c2a0aa7/index.jsonl#row=4,item=48",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "0e442889-0aa0-5b16-a3ca-7d582113ea1e",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-26b112d1274f08e6c27a80519d20bda74801dfb84a1967f3478dd56ec6c7bc4f",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1321910051",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "0e442889-0aa0-5b16-a3ca-7d582113ea1e",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-49c07c03d1f24dcdf9e8b82e316359cddaa174ea39b052cb17a3f0183ed7f80e",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1321910051",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "4d01c82c-ce1a-5124-b008-f4a22bfcb179",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-0b34cc335a2d0f382fcaa3a1852b81f071897cfbd3260e26c6dfdef1b12bdaf4",
+        "pointer": "repositories/provider-responses/github/resp-7049aedd160cf9cc8fe22eb90352ce8d584d55aff5cc1fe72a52ac0f91aea287/index.jsonl#row=189,item=11",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "4d01c82c-ce1a-5124-b008-f4a22bfcb179",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-496c16ca18549899ce7355a98e09563c6eb9470ee9f78293f3c4efb06d300e89",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301848220",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "4d01c82c-ce1a-5124-b008-f4a22bfcb179",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-29281ab1799ae598f37f33f5939fafa260484d93c84b78f7f73b2af718fff3a7",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1301848220",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "513a06a2-8fae-5f86-9be4-a2fcd3e44f42",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-ced23cfdb6353edf89109756b947ff218dd8175be65aeeab6f055885d2fc56e7",
+        "pointer": "repositories/provider-responses/github/resp-7049aedd160cf9cc8fe22eb90352ce8d584d55aff5cc1fe72a52ac0f91aea287/index.jsonl#row=190,item=34",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "513a06a2-8fae-5f86-9be4-a2fcd3e44f42",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-c9d1424a5e34f53118bbce3958c7958b3a6b11e67c8cd25c8f55f3bcc268b635",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301123879",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "513a06a2-8fae-5f86-9be4-a2fcd3e44f42",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-e79742d7f93bb648f5de8e2c5270efdf5c307c280bd13f8760dde09455acea7a",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1301123879",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "99468243-39fe-5874-a484-328c4cbede52",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-c72f567404cbd675cfa31b813579a53887b8ce96a544b3e985a5198ed1f8ffbe",
+        "pointer": "repositories/provider-responses/github/resp-7049aedd160cf9cc8fe22eb90352ce8d584d55aff5cc1fe72a52ac0f91aea287/index.jsonl#row=188,item=24",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "99468243-39fe-5874-a484-328c4cbede52",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-9df8b70fdc4e2126bf5d2442292b37f4d806c188a2a4879312e214b88dd5f554",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1301775326",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "99468243-39fe-5874-a484-328c4cbede52",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-5217c7368a9662bd4c1c93caded9abf9f9cdc92db6a933309f94881c3add872c",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1301775326",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "a72ee0b1-0d1c-5875-938c-57030843c46f",
+        "provider": "poc-repository-github-discovery",
+        "claim_id": "claim-2bf5497967c93eece51b3446934f5980404407d4c8f07597f17c45eab3eb32f1",
+        "pointer": "repositories/provider-responses/github/resp-7049aedd160cf9cc8fe22eb90352ce8d584d55aff5cc1fe72a52ac0f91aea287/index.jsonl#row=188,item=66",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "a72ee0b1-0d1c-5875-938c-57030843c46f",
+        "provider": "poc-repository-nomisec-metadata",
+        "claim_id": "claim-f4aaf92876715620e85e84a234d2ab31009332cc5a75a5db31793edd6ac9da0b",
+        "pointer": "fixed-source-record:nomisec:8e8b37ec5045d895c4f46e7e697da257ce3c72e2:CVE-2026-15409:1304238138",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "a72ee0b1-0d1c-5875-938c-57030843c46f",
+        "provider": "poc-repository-poc-monitor-metadata",
+        "claim_id": "claim-b3ed80c2d5ce1def8c91263012878244f18adb74a7432beb6b95b3a80ff1fa53",
+        "pointer": "fixed-source-record:poc-git-poc-monitor-sari3l:e4f9d9dca4a4fb0f6321d37b12a3d67a35261335:CVE-2026-15409:1304238138",
+        "record_key": null
+      },
+      {
+        "vulnerability_id": "CVE-2026-15409",
+        "artifact_id": "d0357b81-7de3-5348-9a00-c0015de4d64d",
+        "provider": "nuclei",
+        "claim_id": "CVE-2026-15409",
+        "pointer": "fixed-source-record:nuclei:8dd4ae74ca2fdbcce55ab21eb7a3a52988f2bdf0:CVE-2026-15409",
+        "record_key": null
+      }
+    ],
+    "total": 19,
+    "truncated": false
+  },
+  "references": {
+    "items": [
+      {
+        "source": "ghsa",
+        "provider": "GitHub",
+        "pointer": "fixed-source-record:ghsa:630cb1349b8ba225d931cfa1bd5128c08c9962d8:GHSA-35rc-2vcv-r6q5#/references/0",
+        "record_key": null,
+        "native_id": "GHSA-35rc-2vcv-r6q5",
+        "fingerprint": null,
+        "data": {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-15409",
+          "name": null,
+          "tags": []
+        }
+      },
+      {
+        "source": "cvelistV5",
+        "provider": "sonicwall",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/cna/references/0",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "url": "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0008",
+          "name": null,
+          "tags": [
+            "vendor-advisory"
+          ]
+        }
+      },
+      {
+        "source": "cvelistV5",
+        "provider": "CISA-ADP",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/adp/0/references/0",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-15409",
+          "name": null,
+          "tags": [
+            "government-resource"
+          ]
+        }
+      }
+    ],
+    "total": 3,
+    "truncated": false
+  },
+  "writeups": {
+    "items": [],
+    "total": 0,
+    "truncated": false
+  },
+  "research_resources": {
+    "items": [
+      {
+        "resource_id": "candidate_4e86bfcf6a5bb3d8d631",
+        "subject": "SonicWall SMA 1000 pre-auth to root exploit chain: CVE-2026-15409 /wsproxy SSRF chained with CVE-2026-15410 path traversal, weaponized by INC Ransomware",
+        "summary": "Resecurity provides a consolidated technical analysis of two chained SonicWall SMA 1000 zero-days exploited in the wild since June 2026. The report reconstructs the source-code-level root cause of both vulnerabilities: CVE-2026-15409 is a pre-authentication /wsproxy SSRF that allows unauthenticated WebSocket tunneling to localhost-only services via spoofed client identifiers (User-Agent: SMA Connect Agent, bmID=-3389); CVE-2026-15410 is a path-traversal flaw in the remove_hotfix workflow of ctrl-service that concatenates caller-supplied paths without normalization, allowing traversal sequences to resolve to attacker-controlled files executed as root. The full attack chain is detailed step-by-step from a single unauthenticated HTTP request through CouchDB interaction, staged payload execution, and root privilege escalation. Post-exploitation malware analysis covers ROOTRUN (setuid root backdoor), KNUCKLEBALL (Python injector loading embedded JAR archives into legitimate SonicWall JVM processes), Suo5 (HTTP proxy for covert tunneling), and ORANGETAIL (custom Java web shell with AES-encrypted C2). The report links the exploitation cluster to INC Ransomware, documents attacker infrastructure including a pressure-tactic domain (helprans.com), and provides IOCs and defensive recommendations. An additional non-CVE-assigned weakness is documented: the ctrl-service password is derived from the world-readable hardware UUID on physical appliances. The SonicWall PSIRT advisory and Rapid7 independent analysis corroborate the vulnerability details, exploit chain, and active exploitation.",
+        "url": "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain",
+        "title": "From WSProxy to Root: INC ransomware and SonicWall SMA Exploit Chain",
+        "resource_type": "research",
+        "provider": "resecurity.com",
+        "author_or_org": "Resecurity",
+        "published_at": "2026-08-01",
+        "claims": [
+          {
+            "category": "root_cause",
+            "statement": "CVE-2026-15409: The /wsproxy WebSocket-to-TCP proxy handler accepts attacker-controlled host, port, and serviceType parameters without authentication, origin validation, or backend whitelisting, allowing unauthenticated external attackers to open WebSocket tunnels to localhost-only services.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          },
+          {
+            "category": "root_cause",
+            "statement": "CVE-2026-15410: The remove_hotfix workflow in ctrl-service concatenates the caller-supplied hotfix path without normalization or chroot, allowing path-traversal sequences to resolve to attacker-controlled files outside the hotfix directory, which are then chmod'd and executed as root.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          },
+          {
+            "category": "exploit_chain",
+            "statement": "The full attack chain proceeds: (1) unauthenticated WebSocket upgrade to /wsproxy with spoofed bmID=-3389 and SMA Connect Agent User-Agent; (2) tunnel to Erlang/CouchDB on localhost:1050; (3) CouchDB interaction to read/write files as couchdb user; (4) stage payload in /tmp; (5) invoke sysCtrl.execRemoveHotfix with path traversal to execute the staged script as root; (6) deploy KNUCKLEBALL, Suo5, and ORANGETAIL malware with persistence via /etc/init.d/workplace and /var/lib/unit/conf.json.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          },
+          {
+            "category": "exploitation_observation",
+            "statement": "Pre-disclosure exploitation by threat actor UTA0533 began on June 22, 2026, before the July 14, 2026 advisory. INC Ransomware has since emerged as the dominant actor weaponizing the full chain, with multiple new victims published on their DLS between July 17 and August 1, 2026 across Australia, US, UAE, Colombia, Switzerland, and other countries.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          },
+          {
+            "category": "technical_detail",
+            "statement": "On physical SMA appliances, the ctrl-service Basic-auth password is derived from the world-readable /sys/class/dmi/id/product_uuid, allowing any local user or service account to compute administrative credentials after obtaining a low-privilege foothold.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          },
+          {
+            "category": "technical_detail",
+            "statement": "Post-exploitation malware includes KNUCKLEBALL (Python injector loading embedded JAR archives into legitimate SonicWall processes), Suo5 (open-source HTTP proxy for covert tunneling), and ORANGETAIL (custom Java web shell similar to Behinder with encrypted C2 over HTTPS), all injected into memory to reduce forensic footprint.",
+            "support": "source_stated",
+            "source_urls": [
+              "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "role": "reference",
+            "url": "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0008",
+            "title": "SonicWall SMA1000 Series Appliances Affected By Multiple Vulnerabilities",
+            "provider": "sonicwall.com",
+            "source_type": "advisory",
+            "author_or_org": "SonicWall PSIRT",
+            "published_at": "2026-07-14"
+          },
+          {
+            "role": "reference",
+            "url": "https://www.rapid7.com/blog/post/etr-rapid7-mdr-team-discovers-new-sonicwall-sma1000-zero-days-being-actively-exploited-cve-2026-15409-cve-2026-15410",
+            "title": "Rapid7 MDR Team Discovers New SonicWall SMA1000 Zero Days being Actively Exploited (CVE-2026-15409, CVE-2026-15410)",
+            "provider": "rapid7.com",
+            "source_type": "research",
+            "author_or_org": "Rapid7",
+            "published_at": "2026-07-15"
+          },
+          {
+            "role": "research_writeup",
+            "url": "https://www.resecurity.com/blog/article/from-wsproxy-to-root-inc-ransomware-and-sonicwall-sma-exploit-chain",
+            "title": "From WSProxy to Root: INC ransomware and SonicWall SMA Exploit Chain",
+            "provider": "resecurity.com",
+            "source_type": "research",
+            "author_or_org": "Resecurity",
+            "published_at": "2026-08-01"
+          }
+        ],
+        "provenance": {
+          "source": "eip-wiki-v3",
+          "native_id": "candidate_4e86bfcf6a5bb3d8d631",
+          "fingerprint": "sha256:8d8b9f286ffd45f25f884233166dd8177e57c69acb2611bffdacd1a4bc41fb92",
+          "record_key": "review_814d05fed3ca50023a74",
+          "provider": "resecurity.com",
+          "pointer": "feed/records/candidate_4e86bfcf6a5bb3d8d631.json"
+        }
+      }
+    ],
+    "total": 1,
+    "truncated": false
+  },
+  "affected": {
+    "items": [
+      {
+        "source": "cvelistV5",
+        "provider": "sonicwall",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/cna/affected/0",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vendor": "SonicWall",
+          "product": "SMA1000",
+          "versions": {
+            "versions": [
+              {
+                "status": "affected",
+                "version": "12.4.3-03245",
+                "versionType": "custom",
+                "lessThanOrEqual": "12.4.3-03434"
+              },
+              {
+                "status": "affected",
+                "version": "12.5.0-02283",
+                "versionType": "custom",
+                "lessThanOrEqual": "12.5.0-02800"
+              }
+            ],
+            "platforms": [
+              "Linux"
+            ],
+            "defaultStatus": "unknown"
+          },
+          "ecosystem": null,
+          "package_name": null
+        }
+      },
+      {
+        "source": "kev",
+        "provider": "CISA",
+        "pointer": "fixed-source-record:kev:sha256:16acee8334e59e44ccbaed4da7d02b409144061542b64ad74a9443fb7842a828:CVE-2026-15409",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vendor": "SonicWall",
+          "product": "SMA1000 Appliances",
+          "versions": {},
+          "ecosystem": null,
+          "package_name": null
+        }
+      }
+    ],
+    "total": 2,
+    "truncated": false
+  },
+  "weaknesses": {
+    "items": [
+      {
+        "source": "cvelistV5",
+        "provider": "sonicwall",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409#/containers/cna/problemTypes",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "cwe_id": "CWE-918",
+          "description": null
+        }
+      }
+    ],
+    "total": 1,
+    "truncated": false
+  },
+  "lifecycle": {
+    "items": [
+      {
+        "source": "cvelistV5",
+        "provider": "sonicwall",
+        "pointer": "fixed-source-record:cvelistV5:c7ab3e3421136e67fc6e30014a48e7c55be474b3:CVE-2026-15409",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vulnerability_id": "CVE-2026-15409",
+          "state": "PUBLISHED",
+          "rejected": false,
+          "withdrawn": false,
+          "published_at": "2026-07-14T19:39:34.808000Z",
+          "modified_at": "2026-08-04T03:56:14.089000Z",
+          "reasons": []
+        }
+      },
+      {
+        "source": "vulncheck-kev",
+        "provider": "VulnCheck",
+        "pointer": "fixed-source-record:vulncheck-kev:sha256:ba0ee09db8709b21576105ce86ebcfb00d8a5c3685096768b6f84896e1c5e507:cve:CVE-2026-15409",
+        "record_key": null,
+        "native_id": "cve:CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vulnerability_id": "CVE-2026-15409",
+          "state": "published",
+          "rejected": false,
+          "withdrawn": false,
+          "published_at": "2026-07-14T00:00:00Z",
+          "modified_at": "2026-08-02T15:29:06.312642Z",
+          "reasons": []
+        }
+      },
+      {
+        "source": "nvd",
+        "provider": "PSIRT@sonicwall.com",
+        "pointer": "fixed-source-record:nvd:sha256:3fc3bc41a87dddb15ea6b76c867baf58ec66aaeca79eb2e3c7b399676fc9431e:CVE-2026-15409",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vulnerability_id": "CVE-2026-15409",
+          "state": "Analyzed",
+          "rejected": false,
+          "withdrawn": false,
+          "published_at": "2026-07-14T20:16:56.783000Z",
+          "modified_at": "2026-07-16T05:16:18.293000Z",
+          "reasons": []
+        }
+      },
+      {
+        "source": "ghsa",
+        "provider": "GitHub",
+        "pointer": "fixed-source-record:ghsa:630cb1349b8ba225d931cfa1bd5128c08c9962d8:GHSA-35rc-2vcv-r6q5",
+        "record_key": null,
+        "native_id": "GHSA-35rc-2vcv-r6q5",
+        "fingerprint": null,
+        "data": {
+          "vulnerability_id": "GHSA-35RC-2VCV-R6Q5",
+          "state": "published",
+          "rejected": false,
+          "withdrawn": false,
+          "published_at": "2026-07-14T21:32:16Z",
+          "modified_at": "2026-07-14T21:32:16Z",
+          "reasons": []
+        }
+      },
+      {
+        "source": "kev",
+        "provider": "CISA",
+        "pointer": "fixed-source-record:kev:sha256:16acee8334e59e44ccbaed4da7d02b409144061542b64ad74a9443fb7842a828:CVE-2026-15409",
+        "record_key": null,
+        "native_id": "CVE-2026-15409",
+        "fingerprint": null,
+        "data": {
+          "vulnerability_id": "CVE-2026-15409",
+          "state": "published",
+          "rejected": false,
+          "withdrawn": false,
+          "published_at": "2026-07-14T00:00:00Z",
+          "modified_at": null,
+          "reasons": []
+        }
+      }
+    ],
+    "total": 5,
+    "truncated": false
+  }
+}
