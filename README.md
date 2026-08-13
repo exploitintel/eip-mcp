@@ -71,6 +71,31 @@ inherit your shell `PATH`.
 The local command connects to `https://exploit-intel.com`; no API configuration
 is needed.
 
+### Optional: Docker
+
+Build the image directly from this checkout:
+
+```sh
+docker build -t eip-mcp .
+docker run --rm -i eip-mcp
+```
+
+For a stdio MCP client, use `docker` as the command:
+
+```json
+{
+  "mcpServers": {
+    "eip": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "eip-mcp"]
+    }
+  }
+}
+```
+
+Containerized Streamable HTTP operation is covered in the
+[self-hosting guide](docs/self-hosting.md#docker).
+
 ## What assistants can do
 
 - Search and inspect CVEs and GHSAs with affected products, version ranges,

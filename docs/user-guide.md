@@ -49,6 +49,31 @@ absolute path returned by `command -v eip-mcp`.
 The local server connects to `https://exploit-intel.com`; users do not need to
 set an API URL.
 
+### Optional: Docker stdio
+
+Build the image from a source checkout:
+
+```sh
+docker build -t eip-mcp .
+docker run --rm -i eip-mcp
+```
+
+The image runs as an unprivileged user. A Docker-backed client definition is:
+
+```json
+{
+  "mcpServers": {
+    "eip": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "eip-mcp"]
+    }
+  }
+}
+```
+
+For Streamable HTTP, follow the container example in the
+[self-hosting guide](self-hosting.md#docker).
+
 ## Configuration
 
 | Variable | Default | Purpose |

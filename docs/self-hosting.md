@@ -23,6 +23,29 @@ eip-mcp --transport streamable-http \
 Passing HTTP-only options under stdio is a configuration error. HTTP is always
 stateless.
 
+## Docker
+
+Build and start the HTTP transport from a source checkout:
+
+```sh
+docker build -t eip-mcp .
+docker run --rm \
+  --read-only \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
+  -p 127.0.0.1:8000:8000 \
+  -e EIP_MCP_ALLOWED_HOSTS=localhost:8000,127.0.0.1:8000 \
+  eip-mcp \
+  --transport streamable-http \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --path /mcp
+```
+
+The container runs as an unprivileged user. Binding the published port to
+`127.0.0.1` keeps it local to the host. A public deployment still requires the
+reverse proxy, TLS, host validation, and edge controls described below.
+
 ## Network boundary
 
 The process provides no authentication, caller quotas, or rate limiting. Keep
