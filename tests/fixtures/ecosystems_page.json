@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "ecosystem": "Linux",
+      "vulnerability_count": 27432,
+      "package_count": 1
+    },
+    {
+      "ecosystem": "npm",
+      "vulnerability_count": 6847,
+      "package_count": 3511
+    },
+    {
+      "ecosystem": "Maven",
+      "vulnerability_count": 6837,
+      "package_count": 3192
+    },
+    {
+      "ecosystem": "Packagist",
+      "vulnerability_count": 6239,
+      "package_count": 1058
+    },
+    {
+      "ecosystem": "PyPI",
+      "vulnerability_count": 5799,
+      "package_count": 1525
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}

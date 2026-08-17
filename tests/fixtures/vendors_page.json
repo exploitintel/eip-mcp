@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "vendor": "Linux",
+      "vulnerability_count": 14830,
+      "product_count": 11
+    },
+    {
+      "vendor": "Microsoft",
+      "vulnerability_count": 10102,
+      "product_count": 1563
+    },
+    {
+      "vendor": "Oracle Corporation",
+      "vulnerability_count": 6268,
+      "product_count": 713
+    },
+    {
+      "vendor": "Google",
+      "vulnerability_count": 5793,
+      "product_count": 115
+    },
+    {
+      "vendor": "IBM",
+      "vulnerability_count": 5066,
+      "product_count": 741
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}

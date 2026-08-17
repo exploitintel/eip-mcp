@@ -1,0 +1,1614 @@
+{
+  "items": [
+    {
+      "owner": {
+        "public_id": 4276882345466207,
+        "title": "PhanHoangKhang/React2Shell",
+        "source": "repository-inventory",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "native_id": "github:github.com:1336972874",
+        "url": "https://github.com/PhanHoangKhang/React2Shell",
+        "owner_name": "PhanHoangKhang",
+        "published_at": "2026-08-17T09:51:01Z"
+      },
+      "public_id": 2223337929475218,
+      "lab_unit_id": "labunit-548e57c3d9303c5e7e03b82f52e66d7b7d93ab71b44099323e3e5db4341412ea",
+      "packet_id": "docker-lab-packet-3edb18e81592a4978ec260e568fdd6d792f8e9f319d40a188ee1eee472e7230b",
+      "packet_sha256": "sha256:e1f51c580318d9c5238476f6ca869b49d903e404171b19cc73432259bb118a33",
+      "anchor_kind": "compose_stack",
+      "anchor_directories": [
+        "lab"
+      ],
+      "compose_manifest_paths": [
+        "lab/docker-compose.yml"
+      ],
+      "shape": "compose_with_builds",
+      "service_count": 2,
+      "compose_manifest_count": 1,
+      "dockerfile_count": 2,
+      "cve_ids": [
+        "CVE-2025-55182"
+      ],
+      "screenshot": null,
+      "text_files_omitted": 0,
+      "binary_files_uninspected": 2,
+      "evidence_omissions_present": false,
+      "analysis_status": "available",
+      "analysis_id": "sha256:9a69fc028c746bf978bac7b21d24658ff673c1fe4ee1561c6b16e52ab4bdd240",
+      "analysis_contract": "eip-docker-lab-analysis-v1",
+      "analysis_model": "deepseek-v4-pro:cloud",
+      "analysis": {
+        "components": [
+          {
+            "name": "vulnerable-app",
+            "roles": [
+              "vulnerable Next.js target"
+            ],
+            "evidence": [
+              {
+                "path": "lab/docker-compose.yml",
+                "line_end": 16,
+                "line_start": 5
+              },
+              {
+                "path": "lab/vulnerable/Dockerfile",
+                "line_end": 22,
+                "line_start": 1
+              },
+              {
+                "path": "lab/vulnerable/package.json",
+                "line_end": 26,
+                "line_start": 1
+              }
+            ],
+            "description": "Builds from lab/vulnerable with Next.js 15.0.0-rc.1, runs `npm run dev`, exposes port 3000 mapped to 127.0.0.1:3001, and sets a dummy secret environment variable."
+          },
+          {
+            "name": "patched-app",
+            "roles": [
+              "patched Next.js comparison target"
+            ],
+            "evidence": [
+              {
+                "path": "lab/docker-compose.yml",
+                "line_end": 28,
+                "line_start": 18
+              },
+              {
+                "path": "lab/patched/Dockerfile",
+                "line_end": 23,
+                "line_start": 1
+              },
+              {
+                "path": "lab/patched/package.json",
+                "line_end": 26,
+                "line_start": 1
+              }
+            ],
+            "description": "Builds from lab/patched with Next.js 16.3.1, runs `npm run dev`, exposes port 3000 mapped to 127.0.0.1:3002, and sets a dummy secret environment variable."
+          },
+          {
+            "name": "isolated-lab network",
+            "roles": [
+              "private Docker bridge network"
+            ],
+            "evidence": [
+              {
+                "path": "lab/docker-compose.yml",
+                "line_end": 35,
+                "line_start": 31
+              }
+            ],
+            "description": "Declares a bridge network named isolated-lab used by both services."
+          },
+          {
+            "name": "PoC guide",
+            "roles": [
+              "exploit validation instructions"
+            ],
+            "evidence": [
+              {
+                "path": "lab/poc/poc_reference.md",
+                "line_end": 66,
+                "line_start": 1
+              }
+            ],
+            "description": "Provides curl commands to send multipart payloads to the vulnerable and patched targets and check for an exposed_secret.txt artifact."
+          }
+        ],
+        "lab_unit_id": "labunit-548e57c3d9303c5e7e03b82f52e66d7b7d93ab71b44099323e3e5db4341412ea",
+        "limitations": [
+          "The actual payload.json and payload2.txt contents are not included as complete text in evidence_files, so the exploit payload behavior is not fully inspectable.",
+          "Two binary favicon.ico files are uninspected.",
+          "The README claims network isolation with `internal: true`, but the supplied docker-compose.yml does not contain that setting; the visible network is a standard bridge driver.",
+          "The README dependency matrix lists patched Next.js as 15.0.3, but the supplied patched package.json and lockfile use 16.3.1.",
+          "The detection scanner referenced in the README is not included in the supplied evidence files."
+        ],
+        "exercise_path": [
+          {
+            "step": 1,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 36,
+                "line_start": 33
+              }
+            ],
+            "description": "Clone the repository"
+          },
+          {
+            "step": 2,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 42,
+                "line_start": 37
+              }
+            ],
+            "description": "Start the lab with docker-compose up -d --build"
+          },
+          {
+            "step": 3,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 52,
+                "line_start": 43
+              }
+            ],
+            "description": "Run the detection scanner against lab/patched and lab/vulnerable"
+          },
+          {
+            "step": 4,
+            "evidence": [
+              {
+                "path": "lab/poc/poc_reference.md",
+                "line_end": 25,
+                "line_start": 17
+              }
+            ],
+            "description": "Clean marker artifacts from both containers using docker exec"
+          },
+          {
+            "step": 5,
+            "evidence": [
+              {
+                "path": "lab/poc/poc_reference.md",
+                "line_end": 66,
+                "line_start": 27
+              }
+            ],
+            "description": "Send multipart POST payloads to the vulnerable and patched targets and verify exposed_secret.txt"
+          }
+        ],
+        "prerequisites": [
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 31,
+                "line_start": 28
+              }
+            ],
+            "description": "Docker Desktop with Engine 24.0.0+ and Compose v2.20.0+"
+          },
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 31,
+                "line_start": 28
+              }
+            ],
+            "description": "Python 3.8+ for the detection scanner"
+          },
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 31,
+                "line_start": 28
+              }
+            ],
+            "description": "cURL available for PoC requests"
+          },
+          {
+            "evidence": [
+              {
+                "path": "lab/docker-compose.yml",
+                "line_end": 28,
+                "line_start": 5
+              }
+            ],
+            "description": "Build contexts lab/vulnerable and lab/patched with package manifests and source files"
+          }
+        ],
+        "safety_reason": {
+          "evidence": [
+            {
+              "path": "lab/docker-compose.yml",
+              "line_end": 28,
+              "line_start": 5
+            },
+            {
+              "path": "lab/poc/poc_reference.md",
+              "line_end": 66,
+              "line_start": 17
+            },
+            {
+              "path": "README.md",
+              "line_end": 82,
+              "line_start": 1
+            }
+          ],
+          "description": "Visible behavior is confined to the documented localhost lab targets. The PoC uses curl against 127.0.0.1:3001/3002, docker exec only removes marker files inside the lab containers, and no host persistence, external exfiltration, credential theft, or unrelated target activity is evidenced."
+        },
+        "lab_assessment": {
+          "evidence": [
+            {
+              "path": "README.md",
+              "line_end": 82,
+              "line_start": 1
+            },
+            {
+              "path": "lab/poc/poc_reference.md",
+              "line_end": 66,
+              "line_start": 1
+            }
+          ],
+          "description": "The README explicitly describes a reproducible dual-container Docker environment for analyzing, exploiting, and validating mitigations for CVE-2025-55182, with in-scope localhost targets and a PoC guide.",
+          "classification": "vulnerability_lab"
+        },
+        "safety_verdict": "no_harmful_behavior_observed",
+        "cve_assessments": [
+          {
+            "cve_id": "CVE-2025-55182",
+            "verdict": "supported",
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 82,
+                "line_start": 1
+              },
+              {
+                "path": "lab/poc/poc_reference.md",
+                "line_end": 66,
+                "line_start": 1
+              },
+              {
+                "path": "lab/vulnerable/package.json",
+                "line_end": 14,
+                "line_start": 10
+              },
+              {
+                "path": "lab/patched/package.json",
+                "line_end": 14,
+                "line_start": 10
+              }
+            ],
+            "description": "The README and PoC guide explicitly associate the lab with CVE-2025-55182, and the vulnerable service pins Next.js 15.0.0-rc.1 while the patched service pins Next.js 16.3.1, consistent with the stated vulnerable/patched comparison."
+          }
+        ],
+        "environment_summary": {
+          "evidence": [
+            {
+              "path": "lab/docker-compose.yml",
+              "line_end": 36,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 82,
+              "line_start": 1
+            }
+          ],
+          "description": "A dual-container Docker Compose lab with a vulnerable Next.js 15.0.0-rc.1 app and a patched Next.js 16.3.1 app, both bound to localhost, intended to demonstrate CVE-2025-55182 (React2Shell)."
+        },
+        "suspicious_indicators": []
+      },
+      "analyzed_at": "2026-08-17T15:20:23.074028Z"
+    },
+    {
+      "owner": {
+        "public_id": 5583879620796326,
+        "title": "HORKimhab/CVE-2026-59310",
+        "source": "repository-inventory",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "native_id": "github:github.com:1336848000",
+        "url": "https://github.com/HORKimhab/CVE-2026-59310",
+        "owner_name": "HORKimhab",
+        "published_at": "2026-08-17T07:51:46Z"
+      },
+      "public_id": 7863701827754520,
+      "lab_unit_id": "labunit-2a42518fd352354592e816224f3ee64cea010e0f3949f6a61dbd14f2cb7c07d2",
+      "packet_id": "docker-lab-packet-1c1ce8a010f5342b4e38484d87c368e35401371a8ede0731de3e7b5d451bc433",
+      "packet_sha256": "sha256:b64c5dcc76d9110f161cfea1be5303953414836f63c50425eaa8fe5a20918cca",
+      "anchor_kind": "compose_stack",
+      "anchor_directories": [
+        "CVE-2026-59310-fankh"
+      ],
+      "compose_manifest_paths": [
+        "CVE-2026-59310-fankh/docker-compose.yml"
+      ],
+      "shape": "compose_with_builds",
+      "service_count": 2,
+      "compose_manifest_count": 1,
+      "dockerfile_count": 2,
+      "cve_ids": [
+        "CVE-2026-59310"
+      ],
+      "screenshot": null,
+      "text_files_omitted": 0,
+      "binary_files_uninspected": 0,
+      "evidence_omissions_present": false,
+      "analysis_status": "available",
+      "analysis_id": "sha256:bda7f1ed398885aedd2c3e89b9f7d7a15bfb4d05c4e2f0a10e0132b90348b6d9",
+      "analysis_contract": "eip-docker-lab-analysis-v1",
+      "analysis_model": "deepseek-v4-pro:cloud",
+      "analysis": {
+        "components": [
+          {
+            "name": "vulnerable-app",
+            "roles": [
+              "vulnerable target",
+              "Flask web application"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/vulnerable-app/app.py",
+                "line_end": 97,
+                "line_start": 1
+              },
+              {
+                "path": "CVE-2026-59310-fankh/docker-compose.yml",
+                "line_end": 22,
+                "line_start": 8
+              }
+            ],
+            "description": "A Flask app exposing /api/syslog that reads files using an unsanitized 'file' query parameter, allowing path traversal. It also has a /api/syslog/safe endpoint for comparison."
+          },
+          {
+            "name": "patched-app",
+            "roles": [
+              "patched target",
+              "Flask web application"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/patched-app/app.py",
+                "line_end": 136,
+                "line_start": 1
+              },
+              {
+                "path": "CVE-2026-59310-fankh/docker-compose.yml",
+                "line_end": 38,
+                "line_start": 24
+              }
+            ],
+            "description": "A Flask app with sanitization and path validation on /api/syslog/upload and /api/syslog/read endpoints, intended to demonstrate the fix."
+          },
+          {
+            "name": "poc.py",
+            "roles": [
+              "PoC scanner",
+              "detection script"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/poc.py",
+                "line_end": 585,
+                "line_start": 1
+              },
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 35,
+                "line_start": 20
+              }
+            ],
+            "description": "A Python script that detects VMware vCenter and attempts path traversal payloads against syslog-related endpoints. It is described as detection-only and does not perform destructive operations."
+          },
+          {
+            "name": "run-tests.sh",
+            "roles": [
+              "test runner"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/run-tests.sh",
+                "line_end": 44,
+                "line_start": 1
+              }
+            ],
+            "description": "Shell script that waits for services, checks health endpoints, and runs poc.py against both vulnerable and patched apps."
+          },
+          {
+            "name": "run-tests.ps1",
+            "roles": [
+              "test runner"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/run-tests.ps1",
+                "line_end": 52,
+                "line_start": 1
+              }
+            ],
+            "description": "PowerShell script that performs the same health checks and PoC runs as run-tests.sh for Windows."
+          }
+        ],
+        "lab_unit_id": "labunit-2a42518fd352354592e816224f3ee64cea010e0f3949f6a61dbd14f2cb7c07d2",
+        "limitations": [
+          "The PoC script contains a --callback option for OOB detection, but no callback URL is used in the visible test scripts and no external recipient is hardcoded.",
+          "The patched-app and vulnerable-app README files are listed in the file inventory but not included in evidence_files, so their content is uninspected.",
+          "The Dockerfiles use base images from Docker Hub, which are not inspected for supply-chain risk."
+        ],
+        "exercise_path": [
+          {
+            "step": 1,
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 44,
+                "line_start": 40
+              }
+            ],
+            "description": "Clone the repository and navigate to the CVE directory."
+          },
+          {
+            "step": 2,
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 48,
+                "line_start": 45
+              }
+            ],
+            "description": "Start both applications with docker-compose up -d."
+          },
+          {
+            "step": 3,
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 52,
+                "line_start": 49
+              }
+            ],
+            "description": "Run the test script (run-tests.sh or run-tests.ps1) to execute the PoC against both apps."
+          },
+          {
+            "step": 4,
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/vulnerable-app/app.py",
+                "line_end": 60,
+                "line_start": 30
+              },
+              {
+                "path": "CVE-2026-59310-fankh/patched-app/app.py",
+                "line_end": 50,
+                "line_start": 15
+              }
+            ],
+            "description": "Observe the vulnerable app returning arbitrary files via path traversal and the patched app rejecting traversal attempts."
+          }
+        ],
+        "prerequisites": [
+          {
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 48,
+                "line_start": 40
+              }
+            ],
+            "description": "Docker and Docker Compose must be installed to build and run the two services."
+          },
+          {
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/poc.py",
+                "line_end": 20,
+                "line_start": 1
+              }
+            ],
+            "description": "Python 3 and required packages (requests, urllib3) are needed to run poc.py."
+          },
+          {
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/docker-compose.yml",
+                "line_end": 38,
+                "line_start": 8
+              }
+            ],
+            "description": "The vulnerable and patched apps must be reachable at localhost:8080 and localhost:8081 respectively."
+          }
+        ],
+        "safety_reason": {
+          "evidence": [
+            {
+              "path": "CVE-2026-59310-fankh/poc.py",
+              "line_end": 10,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-59310-fankh/run-tests.sh",
+              "line_end": 44,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-59310-fankh/run-tests.ps1",
+              "line_end": 52,
+              "line_start": 1
+            }
+          ],
+          "description": "All visible behavior targets the lab's own vulnerable and patched containers. The PoC is explicitly detection-only, the test scripts only call localhost endpoints, and there is no evidence of host compromise, persistence, credential theft, or external payloads."
+        },
+        "lab_assessment": {
+          "evidence": [
+            {
+              "path": "CVE-2026-59310-fankh/README.md",
+              "line_end": 88,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-59310-fankh/vulnerable-app/app.py",
+              "line_end": 10,
+              "line_start": 1
+            }
+          ],
+          "description": "The README explicitly describes a Docker-based test environment with vulnerable and patched applications for CVE-2026-59310, and the vulnerable app is marked intentionally vulnerable for educational use.",
+          "classification": "vulnerability_lab"
+        },
+        "safety_verdict": "no_harmful_behavior_observed",
+        "cve_assessments": [
+          {
+            "cve_id": "CVE-2026-59310",
+            "verdict": "supported",
+            "evidence": [
+              {
+                "path": "CVE-2026-59310-fankh/README.md",
+                "line_end": 20,
+                "line_start": 1
+              },
+              {
+                "path": "CVE-2026-59310-fankh/vulnerable-app/app.py",
+                "line_end": 10,
+                "line_start": 1
+              },
+              {
+                "path": "CVE-2026-59310-fankh/poc.py",
+                "line_end": 10,
+                "line_start": 1
+              }
+            ],
+            "description": "The repository path, README, vulnerable app comments, and PoC all consistently identify CVE-2026-59310 as a path traversal vulnerability in a syslog-like endpoint, and the vulnerable app demonstrates unsanitized file path construction."
+          }
+        ],
+        "environment_summary": {
+          "evidence": [
+            {
+              "path": "CVE-2026-59310-fankh/docker-compose.yml",
+              "line_end": 45,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-59310-fankh/README.md",
+              "line_end": 88,
+              "line_start": 1
+            }
+          ],
+          "description": "A Docker Compose lab for CVE-2026-59310 that runs a vulnerable Flask app and a patched Flask app side by side, with a PoC scanner and test scripts for comparison."
+        },
+        "suspicious_indicators": []
+      },
+      "analyzed_at": "2026-08-17T11:03:35.586521Z"
+    },
+    {
+      "owner": {
+        "public_id": 5452032492192863,
+        "title": "CuteeCat/CVE-2026-73633",
+        "source": "repository-inventory",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "native_id": "github:github.com:1335859397",
+        "url": "https://github.com/CuteeCat/CVE-2026-73633",
+        "owner_name": "CuteeCat",
+        "published_at": "2026-08-16T11:30:03Z"
+      },
+      "public_id": 839707534410144,
+      "lab_unit_id": "labunit-8c0040c4dd32ffcbe3cd52bae5250ae257c8faada103d8a9e4875e066b1ff551",
+      "packet_id": "docker-lab-packet-0951f88268d6c4dcd97920695aa0bc40766ce4d524c23ebafb661c57a7dc8819",
+      "packet_sha256": "sha256:e035f11a6248c43a7bba06f98bf496a3d21b24de8108af13e1a86af65ebd6fc7",
+      "anchor_kind": "compose_stack",
+      "anchor_directories": [
+        "docker"
+      ],
+      "compose_manifest_paths": [
+        "docker/docker-compose.yml"
+      ],
+      "shape": "compose_with_builds_and_images",
+      "service_count": 1,
+      "compose_manifest_count": 1,
+      "dockerfile_count": 1,
+      "cve_ids": [
+        "CVE-2026-73633"
+      ],
+      "screenshot": null,
+      "text_files_omitted": 0,
+      "binary_files_uninspected": 0,
+      "evidence_omissions_present": false,
+      "analysis_status": "available",
+      "analysis_id": "sha256:5914e02ad1f99fa617169281851b2dcbef67623a281d807ed467791c6605c125",
+      "analysis_contract": "eip-docker-lab-analysis-v1",
+      "analysis_model": "deepseek-v4-pro:cloud",
+      "analysis": {
+        "components": [
+          {
+            "name": "struts-login service",
+            "roles": [
+              "web application",
+              "vulnerable target"
+            ],
+            "evidence": [
+              {
+                "path": "docker/docker-compose.yml",
+                "line_end": 7,
+                "line_start": 2
+              }
+            ],
+            "description": "A containerized Struts 7.1.1 login application built from the local Dockerfile and exposed on port 8080."
+          },
+          {
+            "name": "Dockerfile",
+            "roles": [
+              "build and runtime definition"
+            ],
+            "evidence": [
+              {
+                "path": "docker/Dockerfile",
+                "line_end": 14,
+                "line_start": 1
+              }
+            ],
+            "description": "Multi-stage build using Maven 3.9 with Eclipse Temurin 17 to compile the WAR, then Tomcat 10.1 with JDK 17 to run it."
+          },
+          {
+            "name": "LoginAction",
+            "roles": [
+              "Struts action",
+              "login logic"
+            ],
+            "evidence": [
+              {
+                "path": "docker/app/src/main/java/com/example/LoginAction.java",
+                "line_end": 58,
+                "line_start": 1
+              }
+            ],
+            "description": "Java action class that checks hardcoded credentials admin/123456 and returns success or failure."
+          },
+          {
+            "name": "struts.xml",
+            "roles": [
+              "Struts configuration"
+            ],
+            "evidence": [
+              {
+                "path": "docker/app/src/main/resources/struts.xml",
+                "line_end": 19,
+                "line_start": 1
+              }
+            ],
+            "description": "Configures the login action with JSON plugin and default stack interceptors."
+          },
+          {
+            "name": "login.jsp",
+            "roles": [
+              "frontend login page"
+            ],
+            "evidence": [
+              {
+                "path": "docker/app/src/main/webapp/login.jsp",
+                "line_end": 58,
+                "line_start": 1
+              }
+            ],
+            "description": "HTML page with JavaScript that submits username and password to login.action via AJAX and displays the JSON response."
+          },
+          {
+            "name": "web.xml",
+            "roles": [
+              "web application descriptor"
+            ],
+            "evidence": [
+              {
+                "path": "docker/app/src/main/webapp/WEB-INF/web.xml",
+                "line_end": 21,
+                "line_start": 1
+              }
+            ],
+            "description": "Maps the Struts2 filter to all URLs and sets login.jsp as the welcome file."
+          },
+          {
+            "name": "pom.xml",
+            "roles": [
+              "Maven project configuration"
+            ],
+            "evidence": [
+              {
+                "path": "docker/app/pom.xml",
+                "line_end": 52,
+                "line_start": 1
+              }
+            ],
+            "description": "Declares dependencies on struts2-core and struts2-json-plugin version 7.1.1 and configures WAR packaging."
+          }
+        ],
+        "lab_unit_id": "labunit-8c0040c4dd32ffcbe3cd52bae5250ae257c8faada103d8a9e4875e066b1ff551",
+        "limitations": [
+          "No exploit code or CVE details are included, so the vulnerability association cannot be verified.",
+          "The packet does not include the full repository contents beyond the docker directory, so other files may exist that are not analyzed."
+        ],
+        "exercise_path": [
+          {
+            "step": 1,
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 29,
+                "line_start": 28
+              }
+            ],
+            "description": "Navigate to the docker directory."
+          },
+          {
+            "step": 2,
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 30,
+                "line_start": 29
+              }
+            ],
+            "description": "Build and start the container with docker compose up -d --build."
+          },
+          {
+            "step": 3,
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 32,
+                "line_start": 32
+              }
+            ],
+            "description": "Access the login page at http://localhost:8080/."
+          },
+          {
+            "step": 4,
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 43,
+                "line_start": 36
+              }
+            ],
+            "description": "Submit credentials to login.action; admin/123456 returns success, other credentials return failure."
+          }
+        ],
+        "prerequisites": [
+          {
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 30,
+                "line_start": 27
+              }
+            ],
+            "description": "Docker and Docker Compose must be installed to build and run the environment."
+          },
+          {
+            "evidence": [
+              {
+                "path": "docker/Dockerfile",
+                "line_end": 6,
+                "line_start": 1
+              }
+            ],
+            "description": "The application is built from source using Maven inside the Docker build stage."
+          },
+          {
+            "evidence": [
+              {
+                "path": "docker/docker-compose.yml",
+                "line_end": 7,
+                "line_start": 6
+              }
+            ],
+            "description": "Host port 8080 must be available for mapping to the container."
+          }
+        ],
+        "safety_reason": {
+          "evidence": [
+            {
+              "path": "docker/docker-compose.yml",
+              "line_end": 8,
+              "line_start": 1
+            },
+            {
+              "path": "docker/Dockerfile",
+              "line_end": 14,
+              "line_start": 1
+            },
+            {
+              "path": "docker/README.md",
+              "line_end": 60,
+              "line_start": 1
+            }
+          ],
+          "description": "The visible evidence shows only a self-contained Struts login demo with no exploit payload, external communication, host modification, persistence, or destructive behavior. The port mapping is a standard lab prerequisite."
+        },
+        "lab_assessment": {
+          "evidence": [
+            {
+              "path": "docker/README.md",
+              "line_end": 3,
+              "line_start": 1
+            },
+            {
+              "path": "docker/app/pom.xml",
+              "line_end": 18,
+              "line_start": 17
+            }
+          ],
+          "description": "The repository is named CVE-2026-73633 and the unit is a Struts 7.1.1 login demo, indicating a vulnerability reproduction or exploit exercise environment for that CVE.",
+          "classification": "vulnerability_lab"
+        },
+        "safety_verdict": "no_harmful_behavior_observed",
+        "cve_assessments": [
+          {
+            "cve_id": "CVE-2026-73633",
+            "verdict": "insufficient_evidence",
+            "evidence": [
+              {
+                "path": "docker/README.md",
+                "line_end": 3,
+                "line_start": 1
+              }
+            ],
+            "description": "The repository name and unit reference CVE-2026-73633, but no exploit code, vulnerability description, or CVE details are present in the supplied evidence to confirm the association."
+          }
+        ],
+        "environment_summary": {
+          "evidence": [
+            {
+              "path": "docker/docker-compose.yml",
+              "line_end": 8,
+              "line_start": 1
+            },
+            {
+              "path": "docker/Dockerfile",
+              "line_end": 14,
+              "line_start": 1
+            },
+            {
+              "path": "docker/README.md",
+              "line_end": 3,
+              "line_start": 1
+            }
+          ],
+          "description": "A Dockerized Apache Struts 7.1.1 login demo application built with Maven and deployed on Tomcat 10.1, exposed on host port 8080."
+        },
+        "suspicious_indicators": []
+      },
+      "analyzed_at": "2026-08-16T15:08:23.688370Z"
+    },
+    {
+      "owner": {
+        "public_id": 6016836285277257,
+        "title": "rakib-nyc/nullorigin",
+        "source": "repository-inventory",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "native_id": "github:github.com:1335537979",
+        "url": "https://github.com/rakib-nyc/nullorigin",
+        "owner_name": "rakib-nyc",
+        "published_at": "2026-08-16T01:17:41Z"
+      },
+      "public_id": 1920705673820223,
+      "lab_unit_id": "labunit-ea9934eaa6ec9d127c51f9b42c03b2a96017af35dc68b290dcdd16568d90d41a",
+      "packet_id": "docker-lab-packet-c73e8526559bc18073730f40e0c7fbde5ca4ac0ce471728c462f232e40e89af3",
+      "packet_sha256": "sha256:11ac8e24f89c5279d9448e903627dd57b87844c063b7bdb378547649c8c94a8a",
+      "anchor_kind": "compose_stack",
+      "anchor_directories": [
+        "."
+      ],
+      "compose_manifest_paths": [
+        "docker-compose.yml"
+      ],
+      "shape": "compose_with_builds_and_images",
+      "service_count": 2,
+      "compose_manifest_count": 1,
+      "dockerfile_count": 1,
+      "cve_ids": [
+        "CVE-2021-42574"
+      ],
+      "screenshot": null,
+      "text_files_omitted": 0,
+      "binary_files_uninspected": 0,
+      "evidence_omissions_present": false,
+      "analysis_status": "available",
+      "analysis_id": "sha256:17b757458296dfef17397816334a7c98e31f1dea0ea3a97e726370e51ce8f298",
+      "analysis_contract": "eip-docker-lab-analysis-v1",
+      "analysis_model": "deepseek-v4-pro:cloud",
+      "analysis": {
+        "components": [
+          {
+            "name": "nullorigin",
+            "roles": [
+              "reverse proxy",
+              "sanitization middleware",
+              "CLI tool"
+            ],
+            "evidence": [
+              {
+                "path": "Dockerfile",
+                "line_end": 61,
+                "line_start": 1
+              },
+              {
+                "path": "nullorigin/proxy/server.py",
+                "line_end": 364,
+                "line_start": 1
+              },
+              {
+                "path": "nullorigin/cli.py",
+                "line_end": 752,
+                "line_start": 1
+              }
+            ],
+            "description": "A Python FastAPI service that forwards requests to upstream AI providers, sanitizes text, image, audio, document, and source-code responses, and exposes /health and /telemetry endpoints. It can run as a CLI for file purging, inspection, benchmarking, and dataset generation."
+          },
+          {
+            "name": "ollama",
+            "roles": [
+              "local model server",
+              "text rewrite backend"
+            ],
+            "evidence": [
+              {
+                "path": "docker-compose.yml",
+                "line_end": 45,
+                "line_start": 30
+              },
+              {
+                "path": "nullorigin.yaml",
+                "line_end": 50,
+                "line_start": 40
+              }
+            ],
+            "description": "An Ollama container used as a sibling service to provide local language-model inference for the text paraphraser backend. The Compose file maps port 11434 and persists model data in a named volume."
+          },
+          {
+            "name": "nullorigin.yaml",
+            "roles": [
+              "configuration file"
+            ],
+            "evidence": [
+              {
+                "path": "docker-compose.yml",
+                "line_end": 20,
+                "line_start": 15
+              },
+              {
+                "path": "nullorigin.yaml",
+                "line_end": 106,
+                "line_start": 1
+              }
+            ],
+            "description": "Default configuration for proxy, text, media, and audio sanitization settings. It is mounted read-only into the nullorigin container and copied into the image."
+          },
+          {
+            "name": "source scanner",
+            "roles": [
+              "CVE-2021-42574 detection",
+              "CVE-2021-42694 detection"
+            ],
+            "evidence": [
+              {
+                "path": "nullorigin/engines/code/source_scanner.py",
+                "line_end": 268,
+                "line_start": 1
+              },
+              {
+                "path": "tests/test_code_engine.py",
+                "line_end": 250,
+                "line_start": 1
+              }
+            ],
+            "description": "A code engine that scans source files for bidirectional control characters and homoglyph identifiers, reporting Trojan Source and mixed-script token findings. It removes bidi controls and invisible characters but does not NFKC-normalize or paraphrase code."
+          },
+          {
+            "name": "benchmark harness",
+            "roles": [
+              "watermark robustness evaluation",
+              "dataset generation"
+            ],
+            "evidence": [
+              {
+                "path": "nullorigin/evaluation/runner.py",
+                "line_end": 534,
+                "line_start": 1
+              },
+              {
+                "path": "nullorigin/evaluation/datasets.py",
+                "line_end": 358,
+                "line_start": 1
+              }
+            ],
+            "description": "Generates synthetic KGW-watermarked text, C2PA-tagged images, and watermarked audio, then runs the sanitization pipeline and measures z-score reduction, SSIM, PSNR, and semantic fidelity."
+          }
+        ],
+        "lab_unit_id": "labunit-ea9934eaa6ec9d127c51f9b42c03b2a96017af35dc68b290dcdd16568d90d41a",
+        "limitations": [
+          "The packet does not include the full repository contents beyond the selected evidence files; some files listed in the inventory are not included as complete text.",
+          "The Compose file and Dockerfile are structural candidates only; runnability and vulnerability are not verified.",
+          "No binary files were present for analysis."
+        ],
+        "exercise_path": [
+          {
+            "step": 1,
+            "evidence": [
+              {
+                "path": "docker-compose.yml",
+                "line_end": 10,
+                "line_start": 1
+              }
+            ],
+            "description": "Start the Compose stack with docker compose up -d"
+          },
+          {
+            "step": 2,
+            "evidence": [
+              {
+                "path": "docker-compose.yml",
+                "line_end": 10,
+                "line_start": 1
+              },
+              {
+                "path": "README.md",
+                "line_end": 310,
+                "line_start": 300
+              }
+            ],
+            "description": "Pull the local rewrite model into the Ollama sidecar"
+          },
+          {
+            "step": 3,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 180,
+                "line_start": 150
+              }
+            ],
+            "description": "Point a client at the proxy and send requests with an x-nullorigin-provider header"
+          },
+          {
+            "step": 4,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 560,
+                "line_start": 500
+              },
+              {
+                "path": "nullorigin/cli.py",
+                "line_end": 280,
+                "line_start": 200
+              }
+            ],
+            "description": "Run nullorigin purge or inspect on source files to detect CVE-2021-42574 and CVE-2021-42694 indicators"
+          },
+          {
+            "step": 5,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 650,
+                "line_start": 600
+              },
+              {
+                "path": "nullorigin/evaluation/runner.py",
+                "line_end": 50,
+                "line_start": 1
+              }
+            ],
+            "description": "Run benchmarks to measure watermark removal effectiveness"
+          }
+        ],
+        "prerequisites": [
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 210,
+                "line_start": 200
+              }
+            ],
+            "description": "Docker 20.10+ with Compose v2"
+          },
+          {
+            "evidence": [
+              {
+                "path": "docker-compose.yml",
+                "line_end": 10,
+                "line_start": 1
+              },
+              {
+                "path": "README.md",
+                "line_end": 310,
+                "line_start": 300
+              }
+            ],
+            "description": "Ollama model pulled into the sidecar, e.g. llama3.2:3b"
+          },
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 180,
+                "line_start": 150
+              }
+            ],
+            "description": "Upstream AI provider API keys for proxy use"
+          },
+          {
+            "evidence": [
+              {
+                "path": "pyproject.toml",
+                "line_end": 30,
+                "line_start": 1
+              }
+            ],
+            "description": "Python 3.10+ and optional extras for local installation"
+          }
+        ],
+        "safety_reason": {
+          "evidence": [
+            {
+              "path": "docker-compose.yml",
+              "line_end": 50,
+              "line_start": 1
+            },
+            {
+              "path": "Dockerfile",
+              "line_end": 61,
+              "line_start": 1
+            },
+            {
+              "path": "nullorigin/proxy/server.py",
+              "line_end": 364,
+              "line_start": 1
+            },
+            {
+              "path": "nullorigin/engines/code/source_scanner.py",
+              "line_end": 268,
+              "line_start": 1
+            }
+          ],
+          "description": "Visible behavior is confined to the lab's own containers and local/operator-selected upstream endpoints. The proxy forwards requests to configured providers, sanitizes responses, and exposes local telemetry. The source scanner detects and removes bidi controls. No evidence shows host modification, persistence, credential theft, unexplained external payloads, or automatic targeting of unrelated systems. Port mappings and the public-bind flag are documented lab prerequisites, not unexpected harmful actions."
+        },
+        "lab_assessment": {
+          "evidence": [
+            {
+              "path": "README.md",
+              "line_end": 20,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 40,
+              "line_start": 30
+            },
+            {
+              "path": "nullorigin/engines/code/source_scanner.py",
+              "line_end": 30,
+              "line_start": 1
+            }
+          ],
+          "description": "The README explicitly frames the project as a research artifact for watermarking robustness evaluation and source-code auditing for Trojan Source and homoglyph attacks, citing CVE-2021-42574 and CVE-2021-42694. It implements attacks against watermarking schemes and a source-code scanner for those CVEs, which is vulnerability-research activity.",
+          "classification": "vulnerability_lab"
+        },
+        "safety_verdict": "no_harmful_behavior_observed",
+        "cve_assessments": [
+          {
+            "cve_id": "CVE-2021-42574",
+            "verdict": "supported",
+            "evidence": [
+              {
+                "path": "nullorigin/engines/code/source_scanner.py",
+                "line_end": 30,
+                "line_start": 1
+              },
+              {
+                "path": "nullorigin/engines/code/source_scanner.py",
+                "line_end": 180,
+                "line_start": 150
+              },
+              {
+                "path": "tests/test_code_engine.py",
+                "line_end": 50,
+                "line_start": 20
+              }
+            ],
+            "description": "The source scanner explicitly detects and removes bidirectional control characters, labels them as Trojan Source, and cites CVE-2021-42574 in findings and documentation. Tests verify detection and removal."
+          }
+        ],
+        "environment_summary": {
+          "evidence": [
+            {
+              "path": "docker-compose.yml",
+              "line_end": 50,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 20,
+              "line_start": 1
+            }
+          ],
+          "description": "A Docker Compose stack for NullOrigin, a research artifact described as 'Universal AI Provenance & Watermark Sanitization Middleware'. It runs a Python FastAPI reverse proxy that sanitizes AI provider responses and an Ollama sidecar for local text rewriting. The environment is a local research/benchmarking setup, not a conventional exploit lab."
+        },
+        "suspicious_indicators": []
+      },
+      "analyzed_at": "2026-08-16T21:11:28.787135Z"
+    },
+    {
+      "owner": {
+        "public_id": 4372941273358586,
+        "title": "judgedbykira/CVE-2026-20896-Gitea-Authentication-Bypass",
+        "source": "repository-inventory",
+        "provider_type": "github",
+        "provider_host": "github.com",
+        "native_id": "github:github.com:1335340081",
+        "url": "https://github.com/judgedbykira/CVE-2026-20896-Gitea-Authentication-Bypass",
+        "owner_name": "judgedbykira",
+        "published_at": "2026-08-15T19:01:05Z"
+      },
+      "public_id": 5131049113798109,
+      "lab_unit_id": "labunit-0234150bfadacc8a5ac0b122c261a1e446410f823d1d4582e9943ed60b92d17a",
+      "packet_id": "docker-lab-packet-9b55a107fbe1da75180667cdf98136d6281eaa8a7b8032c73e578c593ac46808",
+      "packet_sha256": "sha256:c678077e9b9263670223b2822847af209d2c71a4eed7e8fd199d96bd440b764b",
+      "anchor_kind": "standalone_dockerfile_directory",
+      "anchor_directories": [
+        "."
+      ],
+      "compose_manifest_paths": [],
+      "shape": "standalone_single_dockerfile",
+      "service_count": null,
+      "compose_manifest_count": 0,
+      "dockerfile_count": 1,
+      "cve_ids": [
+        "CVE-2026-20896"
+      ],
+      "screenshot": null,
+      "text_files_omitted": 0,
+      "binary_files_uninspected": 0,
+      "evidence_omissions_present": false,
+      "analysis_status": "available",
+      "analysis_id": "sha256:23be1a23812c4f74673fa1fbf003730b880505ba36238c0e35b31df815f43e38",
+      "analysis_contract": "eip-docker-lab-analysis-v1",
+      "analysis_model": "deepseek-v4-pro:cloud",
+      "analysis": {
+        "components": [
+          {
+            "name": "Gitea 1.26.2 container",
+            "roles": [
+              "vulnerable target application",
+              "self-hosted Git service"
+            ],
+            "evidence": [
+              {
+                "path": "Dockerfile",
+                "line_end": 1,
+                "line_start": 1
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 7,
+                "line_start": 5
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 35,
+                "line_start": 10
+              }
+            ],
+            "description": "The Dockerfile uses the official gitea/gitea:1.26.2 image, configures SQLite storage, locks installation, and enables reverse-proxy authentication. A custom entrypoint starts Gitea, waits for health, and creates a local admin user jbkira with a hardcoded password."
+          },
+          {
+            "name": "lab-entrypoint script",
+            "roles": [
+              "container startup script",
+              "lab account provisioning"
+            ],
+            "evidence": [
+              {
+                "path": "Dockerfile",
+                "line_end": 35,
+                "line_start": 10
+              }
+            ],
+            "description": "A shell script embedded in the Dockerfile that starts the original Gitea entrypoint in the background, waits for the health endpoint, creates the admin user jbkira, and then waits for the Gitea process."
+          },
+          {
+            "name": "CVE-2026-20896.py PoC script",
+            "roles": [
+              "exploit proof-of-concept",
+              "session cookie theft demonstration"
+            ],
+            "evidence": [
+              {
+                "path": "CVE-2026-20896.py",
+                "line_end": 57,
+                "line_start": 1
+              }
+            ],
+            "description": "A Python script that accepts a target URL and username, sends a GET request with a forged X-WEBAUTH-USER header, and prints any cookies returned by the server. It includes a banner warning that unauthorized use is illegal."
+          }
+        ],
+        "lab_unit_id": "labunit-0234150bfadacc8a5ac0b122c261a1e446410f823d1d4582e9943ed60b92d17a",
+        "limitations": [
+          "The packet does not include a Compose file; the lab is defined only by a standalone Dockerfile.",
+          "The Dockerfile relies on the upstream gitea/gitea:1.26.2 image, whose full contents are not inspected.",
+          "The PoC script disables TLS verification with verify=False, but this is a common convenience in lab scripts and not a concrete harmful action.",
+          "The README references an external image hosted on GitHub user attachments, but the image content is not included in the packet."
+        ],
+        "exercise_path": [
+          {
+            "step": 1,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 23,
+                "line_start": 23
+              }
+            ],
+            "description": "Build the Docker image from the supplied Dockerfile."
+          },
+          {
+            "step": 2,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 25,
+                "line_start": 25
+              }
+            ],
+            "description": "Run the container, mapping port 3000 to the host."
+          },
+          {
+            "step": 3,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 27,
+                "line_start": 27
+              },
+              {
+                "path": "README.md",
+                "line_end": 29,
+                "line_start": 29
+              },
+              {
+                "path": "CVE-2026-20896.py",
+                "line_end": 17,
+                "line_start": 13
+              }
+            ],
+            "description": "Send a request to the Gitea instance with a forged X-WEBAUTH-USER header for a known username, either manually via a proxy or using the provided PoC script."
+          },
+          {
+            "step": 4,
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 29,
+                "line_start": 29
+              },
+              {
+                "path": "CVE-2026-20896.py",
+                "line_end": 25,
+                "line_start": 20
+              }
+            ],
+            "description": "Observe that the server returns a session cookie for the impersonated user, demonstrating the authentication bypass."
+          }
+        ],
+        "prerequisites": [
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 21,
+                "line_start": 21
+              },
+              {
+                "path": "README.md",
+                "line_end": 23,
+                "line_start": 23
+              },
+              {
+                "path": "README.md",
+                "line_end": 25,
+                "line_start": 25
+              }
+            ],
+            "description": "Docker must be installed to build and run the lab container."
+          },
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 25,
+                "line_start": 25
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 12,
+                "line_start": 12
+              }
+            ],
+            "description": "The Gitea container must be reachable on port 3000, either locally or via a mapped port."
+          },
+          {
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 27,
+                "line_start": 27
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 28,
+                "line_start": 28
+              }
+            ],
+            "description": "The attacker must know an existing username on the Gitea instance, such as the lab-created jbkira account."
+          },
+          {
+            "evidence": [
+              {
+                "path": "CVE-2026-20896.py",
+                "line_end": 1,
+                "line_start": 1
+              }
+            ],
+            "description": "The PoC script requires Python with the requests library installed."
+          }
+        ],
+        "safety_reason": {
+          "evidence": [
+            {
+              "path": "Dockerfile",
+              "line_end": 46,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-20896.py",
+              "line_end": 57,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 29,
+              "line_start": 29
+            },
+            {
+              "path": "README.md",
+              "line_end": 45,
+              "line_start": 45
+            }
+          ],
+          "description": "All visible behavior is directed at the lab's own Gitea container. The Dockerfile only configures the vulnerable service and creates a local admin account inside the container. The PoC script sends a forged header to a user-supplied URL and prints cookies; it does not download payloads, persist, reach the host, or target external systems. The README explicitly warns that unauthorized use is illegal and frames the script for lab or authorized penetration testing."
+        },
+        "lab_assessment": {
+          "evidence": [
+            {
+              "path": "README.md",
+              "line_end": 1,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 5,
+              "line_start": 5
+            },
+            {
+              "path": "README.md",
+              "line_end": 21,
+              "line_start": 21
+            },
+            {
+              "path": "Dockerfile",
+              "line_end": 1,
+              "line_start": 1
+            },
+            {
+              "path": "Dockerfile",
+              "line_end": 7,
+              "line_start": 5
+            }
+          ],
+          "description": "The README explicitly describes a critical authentication-bypass vulnerability in Gitea, provides a Dockerfile to run the vulnerable version, and includes a PoC script to exploit it. The Dockerfile enables the vulnerable reverse-proxy authentication setting and creates a local admin account for verification.",
+          "classification": "vulnerability_lab"
+        },
+        "safety_verdict": "no_harmful_behavior_observed",
+        "cve_assessments": [
+          {
+            "cve_id": "CVE-2026-20896",
+            "verdict": "supported",
+            "evidence": [
+              {
+                "path": "README.md",
+                "line_end": 5,
+                "line_start": 5
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 1,
+                "line_start": 1
+              },
+              {
+                "path": "Dockerfile",
+                "line_end": 7,
+                "line_start": 7
+              },
+              {
+                "path": "CVE-2026-20896.py",
+                "line_end": 17,
+                "line_start": 13
+              }
+            ],
+            "description": "The README explicitly identifies CVE-2026-20896 as a critical authentication-bypass vulnerability in Gitea Docker images up to 1.26.2, caused by REVERSE_PROXY_TRUSTED_PROXIES=* and exploitable via a forged X-WEBAUTH-USER header. The Dockerfile pins gitea/gitea:1.26.2 and enables reverse-proxy authentication, matching the described vulnerable configuration. The PoC script implements the forged header attack."
+          }
+        ],
+        "environment_summary": {
+          "evidence": [
+            {
+              "path": "Dockerfile",
+              "line_end": 46,
+              "line_start": 1
+            },
+            {
+              "path": "README.md",
+              "line_end": 182,
+              "line_start": 1
+            },
+            {
+              "path": "CVE-2026-20896.py",
+              "line_end": 57,
+              "line_start": 1
+            }
+          ],
+          "description": "A Docker-based lab for reproducing CVE-2026-20896, an authentication bypass in Gitea 1.26.2. The Dockerfile builds a Gitea container with reverse-proxy authentication enabled and a custom entrypoint that creates a local admin user. The README documents the vulnerability, lab setup, and a Python PoC script that sends a forged X-WEBAUTH-USER header to steal a session cookie."
+        },
+        "suspicious_indicators": []
+      },
+      "analyzed_at": "2026-08-15T21:10:01.850137Z"
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5,
+  "statistics": {
+    "total": 2356,
+    "cve_linked": 2223,
+    "analyzed": 2332,
+    "screenshots": 89,
+    "compose_units": 1316
+  }
+}

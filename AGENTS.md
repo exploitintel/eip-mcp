@@ -128,6 +128,15 @@ weeks, because the SDK drops unknown arguments (`extra="ignore"`); `declared_arg
 closes that, and `tests/test_declared_arguments.py` holds the ledger tying every declared
 parameter to an effect test, so coverage here is a count and not an impression.
 
+`tests/test_parser_agreement.py` is the third, and it exists because neither live
+file runs in CI: both skip without `EIP_MCP_TEST_API_BASE_URL`, so a row parser
+drifted from its renderer and reported "returned nothing" while the tool was
+returning correct rows. It runs those same parsers against recorded payloads and
+compares every field against the payload the renderer was given, so a renamed
+heading, a moved separator or a wrong capture group fails on the pull request.
+It claims nothing about the API - only that our own two halves still read each
+other.
+
 ```sh
 python3 -m venv --clear .venv   # --clear: a uv-made .venv has no pip
 . .venv/bin/activate

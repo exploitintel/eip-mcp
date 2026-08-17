@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "vendor": "Microsoft",
+      "product": "Windows Server 2019",
+      "vulnerability_count": 4131
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Windows Server 2019 (Server Core installation)",
+      "vulnerability_count": 4034
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Windows 10 Version 1809",
+      "vulnerability_count": 3762
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Windows Server 2016",
+      "vulnerability_count": 3677
+    },
+    {
+      "vendor": "Microsoft",
+      "product": "Windows Server 2022",
+      "vulnerability_count": 3485
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}

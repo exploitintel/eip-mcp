@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "public_id": 995519679364935,
+      "source_scope": "exploitdb",
+      "external_id": "Metasploit",
+      "display_name": "Metasploit",
+      "profile_url": null,
+      "roles": [
+        "author"
+      ],
+      "poc_count": 1778,
+      "vulnerability_count": 1592
+    },
+    {
+      "public_id": 6829545809831357,
+      "source_scope": "metasploit",
+      "external_id": "h00die",
+      "display_name": "h00die",
+      "profile_url": null,
+      "roles": [
+        "author"
+      ],
+      "poc_count": 157,
+      "vulnerability_count": 136
+    },
+    {
+      "public_id": 4883508454176829,
+      "source_scope": "github",
+      "external_id": "51722811",
+      "display_name": "RandomRobbieBF",
+      "profile_url": "https://github.com/RandomRobbieBF",
+      "roles": [
+        "owner"
+      ],
+      "poc_count": 181,
+      "vulnerability_count": 181
+    },
+    {
+      "public_id": 1147786005834834,
+      "source_scope": "github",
+      "external_id": "188819918",
+      "display_name": "Nxploited",
+      "profile_url": "https://github.com/Nxploited",
+      "roles": [
+        "owner"
+      ],
+      "poc_count": 157,
+      "vulnerability_count": 159
+    }
+  ],
+  "next_cursor": null
+}

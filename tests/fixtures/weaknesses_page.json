@@ -1,0 +1,406 @@
+{
+  "items": [
+    {
+      "cwe_id": "CWE-79",
+      "record_type": "weakness",
+      "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 47287
+    },
+    {
+      "cwe_id": "CWE-89",
+      "record_type": "weakness",
+      "name": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 20464
+    },
+    {
+      "cwe_id": "CWE-119",
+      "record_type": "weakness",
+      "name": "Improper Restriction of Operations within the Bounds of a Memory Buffer",
+      "status": "Stable",
+      "abstraction": "Class",
+      "vulnerability_count": 15259
+    },
+    {
+      "cwe_id": "CWE-787",
+      "record_type": "weakness",
+      "name": "Out-of-bounds Write",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 14751
+    },
+    {
+      "cwe_id": "CWE-20",
+      "record_type": "weakness",
+      "name": "Improper Input Validation",
+      "status": "Stable",
+      "abstraction": "Class",
+      "vulnerability_count": 14518
+    },
+    {
+      "cwe_id": "CWE-200",
+      "record_type": "weakness",
+      "name": "Exposure of Sensitive Information to an Unauthorized Actor",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 12439
+    },
+    {
+      "cwe_id": "CWE-22",
+      "record_type": "weakness",
+      "name": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 10163
+    },
+    {
+      "cwe_id": "CWE-352",
+      "record_type": "weakness",
+      "name": "Cross-Site Request Forgery (CSRF)",
+      "status": "Stable",
+      "abstraction": "Compound",
+      "vulnerability_count": 9751
+    },
+    {
+      "cwe_id": "CWE-862",
+      "record_type": "weakness",
+      "name": "Missing Authorization",
+      "status": "Incomplete",
+      "abstraction": "Class",
+      "vulnerability_count": 9524
+    },
+    {
+      "cwe_id": "CWE-125",
+      "record_type": "weakness",
+      "name": "Out-of-bounds Read",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 9433
+    },
+    {
+      "cwe_id": "CWE-416",
+      "record_type": "weakness",
+      "name": "Use After Free",
+      "status": "Stable",
+      "abstraction": "Variant",
+      "vulnerability_count": 8295
+    },
+    {
+      "cwe_id": "CWE-94",
+      "record_type": "weakness",
+      "name": "Improper Control of Generation of Code ('Code Injection')",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 7312
+    },
+    {
+      "cwe_id": "CWE-284",
+      "record_type": "weakness",
+      "name": "Improper Access Control",
+      "status": "Incomplete",
+      "abstraction": "Pillar",
+      "vulnerability_count": 6974
+    },
+    {
+      "cwe_id": "CWE-78",
+      "record_type": "weakness",
+      "name": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 6595
+    },
+    {
+      "cwe_id": "CWE-74",
+      "record_type": "weakness",
+      "name": "Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+      "status": "Incomplete",
+      "abstraction": "Class",
+      "vulnerability_count": 5645
+    },
+    {
+      "cwe_id": "CWE-476",
+      "record_type": "weakness",
+      "name": "NULL Pointer Dereference",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 5603
+    },
+    {
+      "cwe_id": "CWE-264",
+      "record_type": "category",
+      "name": "Permissions, Privileges, and Access Controls",
+      "status": "Obsolete",
+      "abstraction": null,
+      "vulnerability_count": 5522
+    },
+    {
+      "cwe_id": "CWE-287",
+      "record_type": "weakness",
+      "name": "Improper Authentication",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 5337
+    },
+    {
+      "cwe_id": "CWE-269",
+      "record_type": "weakness",
+      "name": "Improper Privilege Management",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 5013
+    },
+    {
+      "cwe_id": "CWE-863",
+      "record_type": "weakness",
+      "name": "Incorrect Authorization",
+      "status": "Incomplete",
+      "abstraction": "Class",
+      "vulnerability_count": 4627
+    },
+    {
+      "cwe_id": "CWE-120",
+      "record_type": "weakness",
+      "name": "Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')",
+      "status": "Incomplete",
+      "abstraction": "Base",
+      "vulnerability_count": 4526
+    },
+    {
+      "cwe_id": "CWE-434",
+      "record_type": "weakness",
+      "name": "Unrestricted Upload of File with Dangerous Type",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 4403
+    },
+    {
+      "cwe_id": "CWE-77",
+      "record_type": "weakness",
+      "name": "Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 4349
+    },
+    {
+      "cwe_id": "CWE-400",
+      "record_type": "weakness",
+      "name": "Uncontrolled Resource Consumption",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 4333
+    },
+    {
+      "cwe_id": "CWE-121",
+      "record_type": "weakness",
+      "name": "Stack-based Buffer Overflow",
+      "status": "Draft",
+      "abstraction": "Variant",
+      "vulnerability_count": 3688
+    },
+    {
+      "cwe_id": "CWE-190",
+      "record_type": "weakness",
+      "name": "Integer Overflow or Wraparound",
+      "status": "Stable",
+      "abstraction": "Base",
+      "vulnerability_count": 3476
+    },
+    {
+      "cwe_id": "CWE-918",
+      "record_type": "weakness",
+      "name": "Server-Side Request Forgery (SSRF)",
+      "status": "Incomplete",
+      "abstraction": "Base",
+      "vulnerability_count": 3330
+    },
+    {
+      "cwe_id": "CWE-502",
+      "record_type": "weakness",
+      "name": "Deserialization of Untrusted Data",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 3213
+    },
+    {
+      "cwe_id": "CWE-306",
+      "record_type": "weakness",
+      "name": "Missing Authentication for Critical Function",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 3025
+    },
+    {
+      "cwe_id": "CWE-122",
+      "record_type": "weakness",
+      "name": "Heap-based Buffer Overflow",
+      "status": "Draft",
+      "abstraction": "Variant",
+      "vulnerability_count": 2781
+    },
+    {
+      "cwe_id": "CWE-399",
+      "record_type": "category",
+      "name": "Resource Management Errors",
+      "status": "Draft",
+      "abstraction": null,
+      "vulnerability_count": 2701
+    },
+    {
+      "cwe_id": "CWE-362",
+      "record_type": "weakness",
+      "name": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 2648
+    },
+    {
+      "cwe_id": "CWE-310",
+      "record_type": "category",
+      "name": "Cryptographic Issues",
+      "status": "Draft",
+      "abstraction": null,
+      "vulnerability_count": 2516
+    },
+    {
+      "cwe_id": "CWE-639",
+      "record_type": "weakness",
+      "name": "Authorization Bypass Through User-Controlled Key",
+      "status": "Incomplete",
+      "abstraction": "Base",
+      "vulnerability_count": 2426
+    },
+    {
+      "cwe_id": "CWE-770",
+      "record_type": "weakness",
+      "name": "Allocation of Resources Without Limits or Throttling",
+      "status": "Incomplete",
+      "abstraction": "Base",
+      "vulnerability_count": 2396
+    },
+    {
+      "cwe_id": "CWE-732",
+      "record_type": "weakness",
+      "name": "Incorrect Permission Assignment for Critical Resource",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 1944
+    },
+    {
+      "cwe_id": "CWE-401",
+      "record_type": "weakness",
+      "name": "Missing Release of Memory after Effective Lifetime",
+      "status": "Draft",
+      "abstraction": "Variant",
+      "vulnerability_count": 1917
+    },
+    {
+      "cwe_id": "CWE-798",
+      "record_type": "weakness",
+      "name": "Use of Hard-coded Credentials",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1824
+    },
+    {
+      "cwe_id": "CWE-601",
+      "record_type": "weakness",
+      "name": "URL Redirection to Untrusted Site ('Open Redirect')",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1752
+    },
+    {
+      "cwe_id": "CWE-285",
+      "record_type": "weakness",
+      "name": "Improper Authorization",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 1743
+    },
+    {
+      "cwe_id": "CWE-276",
+      "record_type": "weakness",
+      "name": "Incorrect Default Permissions",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1727
+    },
+    {
+      "cwe_id": "CWE-59",
+      "record_type": "weakness",
+      "name": "Improper Link Resolution Before File Access ('Link Following')",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1708
+    },
+    {
+      "cwe_id": "CWE-522",
+      "record_type": "weakness",
+      "name": "Insufficiently Protected Credentials",
+      "status": "Incomplete",
+      "abstraction": "Class",
+      "vulnerability_count": 1648
+    },
+    {
+      "cwe_id": "CWE-295",
+      "record_type": "weakness",
+      "name": "Improper Certificate Validation",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1545
+    },
+    {
+      "cwe_id": "CWE-611",
+      "record_type": "weakness",
+      "name": "Improper Restriction of XML External Entity Reference",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1365
+    },
+    {
+      "cwe_id": "CWE-98",
+      "record_type": "weakness",
+      "name": "Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')",
+      "status": "Draft",
+      "abstraction": "Variant",
+      "vulnerability_count": 1283
+    },
+    {
+      "cwe_id": "CWE-189",
+      "record_type": "category",
+      "name": "Numeric Errors",
+      "status": "Draft",
+      "abstraction": null,
+      "vulnerability_count": 1252
+    },
+    {
+      "cwe_id": "CWE-532",
+      "record_type": "weakness",
+      "name": "Insertion of Sensitive Information into Log File",
+      "status": "Incomplete",
+      "abstraction": "Base",
+      "vulnerability_count": 1236
+    },
+    {
+      "cwe_id": "CWE-427",
+      "record_type": "weakness",
+      "name": "Uncontrolled Search Path Element",
+      "status": "Draft",
+      "abstraction": "Base",
+      "vulnerability_count": 1223
+    },
+    {
+      "cwe_id": "CWE-668",
+      "record_type": "weakness",
+      "name": "Exposure of Resource to Wrong Sphere",
+      "status": "Draft",
+      "abstraction": "Class",
+      "vulnerability_count": 1203
+    }
+  ],
+  "next_cursor": null,
+  "limit": 50
+}

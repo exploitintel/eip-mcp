@@ -61,13 +61,6 @@ def test_code_search_states_relevance_is_textual(codesearch_jndi):
     assert "quality" in lowered
 
 
-def test_code_search_discloses_truncated_vulnerability_ids(codesearch_jndi):
-    out = format_code_search(codesearch_jndi)
-    for item in codesearch_jndi["items"]:
-        if item.get("vulnerability_ids_truncated"):
-            assert "more" in out.lower()
-
-
 def test_code_search_discloses_truncation_on_a_crafted_item():
     """The recorded page has nothing truncated, so cover the branch directly."""
     out = format_code_search(

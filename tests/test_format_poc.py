@@ -2121,20 +2121,21 @@ def test_an_unfiltered_page_carries_no_language_notice():
 # `Catalog additions` was the only trend heading naming no period, so a missing
 # current month read identically to a month with zero additions. Its two siblings
 # say "(completed months)" / "(completed quarters)".
-def test_every_trend_series_heading_names_its_period():
+def test_every_trend_series_heading_names_its_period(statistics, trends):
+    """Every series heading must name its period, and every case must run.
+
+    The hand-written samples this used to build had the wrong shape -
+    `cve_published` is an object with `points`, not a list with `bucket` - so
+    that series rendered no headings at all and `continue` swallowed it. Slice
+    the recorded payload instead, so the shapes cannot drift apart, and assert
+    that headings exist rather than skipping when they do not.
+    """
     import re
 
-    for series, sample in (
-        ("cve_published", {"cve_published": [{"bucket": "2026-07-01", "count": 1}]}),
-        ("catalog_additions", {"catalog_additions": [{"source": "cisa", "buckets": []}]}),
-        ("poc_supply", {"poc_supply": [{"source": "exploitdb", "buckets": []}]}),
-    ):
-        page = format_statistics(
-            {"vulnerabilities": 1}, {**sample, "as_of": "2026-08-04"}, series
-        )
+    for series in ("cve_published", "catalog_additions", "poc_supply"):
+        page = format_statistics(statistics, trends, series)
         headings = [ln for ln in page.splitlines() if ln.startswith("## ")]
-        if not headings:
-            continue
+        assert headings, f"{series} rendered no heading, so it asserts nothing"
         assert re.search(r"\(completed (months|quarters)\)", headings[0]), (
             f"{series} heading names no period: {headings[0]!r} - a missing bucket "
             f"cannot be told from a zero bucket"
