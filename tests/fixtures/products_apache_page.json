@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "vendor": "apache",
+      "product": "HTTP Server",
+      "vulnerability_count": 21
+    },
+    {
+      "vendor": "apache",
+      "product": "OFBiz",
+      "vulnerability_count": 21
+    },
+    {
+      "vendor": "apache",
+      "product": "Struts",
+      "vulnerability_count": 18
+    },
+    {
+      "vendor": "apache",
+      "product": "inlong",
+      "vulnerability_count": 17
+    },
+    {
+      "vendor": "apache",
+      "product": "Tomcat",
+      "vulnerability_count": 16
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}

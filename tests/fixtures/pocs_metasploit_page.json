@@ -1,0 +1,1160 @@
+{
+  "items": [
+    {
+      "artifact_id": "e0979fa2-fdc2-56a2-bfa2-45ac34e5d1bf",
+      "source": "metasploit",
+      "kind": "exploit",
+      "native_id": "exploit_multi/http/langflow_unauth_rce_cve_2026_33017",
+      "provider_type": "metasploit",
+      "provider_host": "github.com",
+      "record_key": null,
+      "title": "Langflow Unauth RCE",
+      "description": "Langflow versions prior to 1.9.0 are susceptible to unauthenticated remote code execution through the\n          /api/v1/build_public_tmp/<flow_id>/flow endpoint. A remote and unauthenticated attacker can send crafted\n          HTTP requests to execute arbitrary code.",
+      "url": "https://github.com/rapid7/metasploit-framework/blob/9f74eb0a48ca7f8039c2618e359c2e80f998ac89/modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+      "locator": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+      "metadata_locator": null,
+      "metadata_fingerprint": null,
+      "author": "Richard Howe <rhowe425>",
+      "owner_name": null,
+      "owner_id": null,
+      "language": "Ruby",
+      "stars": null,
+      "published_at": "2026-08-11T16:13:20Z",
+      "fingerprint": null,
+      "public_id": 1443789525267589,
+      "source_artifact_id": "metasploit:exploit_multi/http/langflow_unauth_rce_cve_2026_33017",
+      "catalog_kind": "metasploit-exploit",
+      "content_revision": "9f74eb0a48ca7f8039c2618e359c2e80f998ac89",
+      "file_count": 1,
+      "byte_count": null,
+      "association_providers": [
+        "metasploit"
+      ],
+      "vulnerability_count": 1,
+      "exact_copy_count": 0,
+      "contributors": [
+        {
+          "public_id": 6058537809841013,
+          "source_scope": "metasploit",
+          "external_id": "Diamorphine",
+          "display_name": "Diamorphine",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 3780421437619633,
+          "source_scope": "metasploit",
+          "external_id": "Richard Howe <rhowe425>",
+          "display_name": "Richard Howe <rhowe425>",
+          "profile_url": null,
+          "role": "author"
+        }
+      ],
+      "analysis": {
+        "artifact_id": "e0979fa2-fdc2-56a2-bfa2-45ac34e5d1bf",
+        "model": "deepseek-v4-pro:cloud",
+        "technical_analyzed_at": "2026-08-11T20:50:43.827202Z",
+        "technical": {
+          "contract": "eip-poc-technical-analysis-v1",
+          "classification": "exploit",
+          "confidence": 1.0,
+          "summary": "A Metasploit exploit module that sends a crafted HTTP POST request to the /api/v1/build_public_tmp/<flow_id>/flow endpoint of Langflow to achieve unauthenticated remote code execution by injecting Python code into a flow definition.",
+          "language": [
+            "Ruby"
+          ],
+          "attack_types": [
+            "Code Injection",
+            "Remote Code Execution"
+          ],
+          "target_software": [
+            "Langflow"
+          ],
+          "requires_auth": "no",
+          "prerequisites": [
+            {
+              "text": "A valid public flow UUID (FLOW_ID) must be provided.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 95,
+                  "line_end": 96
+                }
+              ]
+            },
+            {
+              "text": "The target Langflow instance must be running a version prior to 1.9.0.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 87,
+                  "line_end": 88
+                }
+              ]
+            }
+          ],
+          "behavior": [
+            {
+              "text": "Sends a GET request to /api/v1/version to check if the target is a vulnerable Langflow instance.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 66,
+                  "line_end": 71
+                }
+              ]
+            },
+            {
+              "text": "Constructs a JSON payload containing a flow definition with a custom Python component that includes attacker-controlled code.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 110,
+                  "line_end": 119
+                }
+              ]
+            },
+            {
+              "text": "Sends a POST request to /api/v1/build_public_tmp/<flow_id>/flow with the crafted JSON payload to trigger code execution on the server.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 182,
+                  "line_end": 192
+                }
+              ]
+            }
+          ],
+          "classification_reason": {
+            "text": "The artifact is a complete Metasploit exploit module that actively sends a malicious HTTP request to execute arbitrary Python code on a remote target. It includes a check method for vulnerability detection and an exploit method that delivers a payload, which is the defining characteristic of an exploit.",
+            "citations": [
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                "line_start": 8,
+                "line_end": 8
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                "line_start": 94,
+                "line_end": 201
+              }
+            ]
+          },
+          "limitations": [
+            "Analysis is based solely on the provided module source code and metadata; framework mixins, libraries, and external payloads are not expanded.",
+            "The artifact's behavior is inferred from static code analysis; the code was not executed."
+          ]
+        },
+        "backdoor_reviewed_at": "2026-08-11T20:50:41.918860Z",
+        "backdoor_review": {
+          "contract": "eip-poc-backdoor-review-v1",
+          "verdict": "no_backdoor_observed",
+          "confidence": 0.95,
+          "summary": "The Metasploit module exploits CVE-2026-33017 by sending a crafted HTTP POST request containing attacker-controlled Python code to the vulnerable endpoint. The module constructs a payload that is executed by the target's exec() call, which is the documented vulnerability behavior. No concealed backdoor, unrelated remote access, persistence, or deceptive payload targeting the module operator was observed.",
+          "findings": [],
+          "observables": [
+            {
+              "type": "exploit_mechanism",
+              "value": "Sends attacker-supplied Python code in the 'data' parameter of a POST request to /api/v1/build_public_tmp/<flow_id>/flow",
+              "context": "This is the documented exploitation path for CVE-2026-33017, where the endpoint passes the supplied code to exec() without sandboxing.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 110,
+                  "line_end": 119
+                },
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 182,
+                  "line_end": 192
+                }
+              ]
+            },
+            {
+              "type": "payload_injection",
+              "value": "Metasploit payload encoded and embedded into the injected Python code at line 118",
+              "context": "The module uses the standard Metasploit payload mechanism to deliver the operator-chosen payload to the target. This is normal exploit behavior.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/langflow_unauth_rce_cve_2026_33017.rb",
+                  "line_start": 118,
+                  "line_end": 118
+                }
+              ]
+            }
+          ],
+          "confidence_rationale": "The entire module source is available and readable. The code performs only the documented exploit steps: version check, payload construction, and sending the exploit request. No obfuscation, hidden functionality, or operator-targeting behavior is present.",
+          "limitations": [
+            "Only the module source and metadata were reviewed; Metasploit framework mixins, libraries, and external payloads were not expanded or analyzed.",
+            "Binary files were not inspected (none present in this evidence)."
+          ]
+        }
+      },
+      "vulnerability_ids": [
+        "CVE-2026-33017"
+      ],
+      "vulnerability_ids_truncated": false
+    },
+    {
+      "artifact_id": "9c1cab58-3eb9-5f5b-967d-06034bcec327",
+      "source": "metasploit",
+      "kind": "exploit",
+      "native_id": "exploit_multi/http/ghostcms_auth_rce_cve_2026_29053",
+      "provider_type": "metasploit",
+      "provider_host": "github.com",
+      "record_key": null,
+      "title": "Ghost CMS Remote Code Execution",
+      "description": "This module exploits a Remote Code Execution (RCE) vulnerability in Ghost CMS.\n          Specifically crafted malicious themes can execute arbitrary code on the server running Ghost.\n\n          The affected versions include all releases from 0.7.2 up to and including 6.19.0.\n          For versions 5.105.0-5.130.5 and 6.0.0-6.10.3, the module also leverages a 2FA bypass.",
+      "url": "https://github.com/rapid7/metasploit-framework/blob/9f74eb0a48ca7f8039c2618e359c2e80f998ac89/modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+      "locator": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+      "metadata_locator": null,
+      "metadata_fingerprint": null,
+      "author": "Maksim Rogov",
+      "owner_name": null,
+      "owner_id": null,
+      "language": "Ruby",
+      "stars": null,
+      "published_at": "2026-08-05T14:55:10Z",
+      "fingerprint": null,
+      "public_id": 5065322037765089,
+      "source_artifact_id": "metasploit:exploit_multi/http/ghostcms_auth_rce_cve_2026_29053",
+      "catalog_kind": "metasploit-exploit",
+      "content_revision": "9f74eb0a48ca7f8039c2618e359c2e80f998ac89",
+      "file_count": 1,
+      "byte_count": null,
+      "association_providers": [
+        "metasploit"
+      ],
+      "vulnerability_count": 2,
+      "exact_copy_count": 0,
+      "contributors": [
+        {
+          "public_id": 275685061988240,
+          "source_scope": "metasploit",
+          "external_id": "Cristian-Alexandru Staicu",
+          "display_name": "Cristian-Alexandru Staicu",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 5645392045238873,
+          "source_scope": "metasploit",
+          "external_id": "Maksim Rogov",
+          "display_name": "Maksim Rogov",
+          "profile_url": null,
+          "role": "author"
+        }
+      ],
+      "analysis": {
+        "artifact_id": "9c1cab58-3eb9-5f5b-967d-06034bcec327",
+        "model": "deepseek-v4-pro:cloud",
+        "technical_analyzed_at": "2026-08-07T19:15:51.751045Z",
+        "technical": {
+          "contract": "eip-poc-technical-analysis-v1",
+          "classification": "exploit",
+          "confidence": 1.0,
+          "summary": "A Metasploit module that exploits CVE-2026-29053 (RCE via malicious themes) and optionally CVE-2026-22594 (2FA bypass) in Ghost CMS. It authenticates, injects a Handlebars SSTI payload into a theme archive, uploads and activates the theme, then triggers code execution.",
+          "language": [
+            "Ruby"
+          ],
+          "attack_types": [
+            "Remote Code Execution",
+            "Server-Side Template Injection",
+            "Authentication Bypass"
+          ],
+          "target_software": [
+            "Ghost CMS"
+          ],
+          "requires_auth": "yes",
+          "prerequisites": [
+            {
+              "text": "Valid credentials or authentication material (password, API key, session cookie, session secret, or invite link) for a Ghost CMS instance.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 87,
+                  "line_end": 98
+                }
+              ]
+            },
+            {
+              "text": "Target Ghost CMS version between 0.7.2 and 6.19.0 inclusive.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 44,
+                  "line_end": 44
+                }
+              ]
+            }
+          ],
+          "behavior": [
+            {
+              "text": "Authenticates to Ghost CMS using one of several methods: password, API key, invite flow, session secret, or cookie.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 588,
+                  "line_end": 632
+                }
+              ]
+            },
+            {
+              "text": "Optionally exploits CVE-2026-22594 to bypass 2FA by adding skipEmailVerification: true to the login request.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 314,
+                  "line_end": 318
+                }
+              ]
+            },
+            {
+              "text": "Downloads the active theme or uses a local template, then injects a Handlebars SSTI payload that executes an OS command via child_process.exec.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 218,
+                  "line_end": 233
+                }
+              ]
+            },
+            {
+              "text": "Uploads the malicious theme, activates it, and triggers the payload by requesting a tag, page, or author route that renders the injected template.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 683,
+                  "line_end": 710
+                }
+              ]
+            },
+            {
+              "text": "Cleans up by reverting to the original theme, deleting the malicious theme, and removing created content and accounts.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 654,
+                  "line_end": 681
+                }
+              ]
+            }
+          ],
+          "classification_reason": {
+            "text": "The module is a fully implemented Metasploit exploit that authenticates, injects a payload into a theme, uploads it, and triggers remote code execution. It is not a scanner, writeup, or stub.",
+            "citations": [
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                "line_start": 1,
+                "line_end": 712
+              }
+            ]
+          },
+          "limitations": [
+            "Analysis is based on the module source code only; Metasploit framework mixins, libraries, and external payloads are not expanded.",
+            "The artifact was not executed; classification is based on static analysis of the provided Ruby source."
+          ]
+        },
+        "backdoor_reviewed_at": "2026-08-07T19:15:56.316159Z",
+        "backdoor_review": {
+          "contract": "eip-poc-backdoor-review-v1",
+          "verdict": "no_backdoor_observed",
+          "confidence": 0.95,
+          "summary": "The reviewed Metasploit module source code implements a standard exploit for CVE-2026-29053 (Ghost CMS RCE via malicious themes) and CVE-2026-22594 (2FA bypass). All behavior is consistent with the stated exploit purpose: authenticating to Ghost CMS, crafting a theme containing a payload, uploading it, and triggering execution. No concealed backdoor, unrelated payload, or operator-directed harm was observed.",
+          "findings": [],
+          "observables": [
+            {
+              "type": "payload_execution",
+              "value": "process.mainModule.require('child_process').exec(String.fromCharCode(...))",
+              "context": "The module constructs a JavaScript payload that executes the attacker-supplied command via child_process.exec. This is the core RCE mechanism for the exploit.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 227,
+                  "line_end": 228
+                }
+              ]
+            },
+            {
+              "type": "authentication_bypass",
+              "value": "skipEmailVerification: true",
+              "context": "The module conditionally sets skipEmailVerification to bypass 2FA for vulnerable versions, matching CVE-2026-22594.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 314,
+                  "line_end": 317
+                }
+              ]
+            },
+            {
+              "type": "cleanup_routine",
+              "value": "cleanup method reverts theme, deletes malicious theme, removes content, invitations, and temporary accounts",
+              "context": "The module includes a cleanup method that attempts to restore the original theme and remove artifacts created during exploitation, which is normal for a Metasploit module.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/ghostcms_auth_rce_cve_2026_29053.rb",
+                  "line_start": 654,
+                  "line_end": 681
+                }
+              ]
+            }
+          ],
+          "confidence_rationale": "The entire source code of the module was provided and reviewed. All logic directly supports the described exploit. No obfuscation, hidden payloads, or unrelated actions were found. Confidence is high but not absolute because the review is limited to the module source; framework mixins and external payloads are not expanded.",
+          "limitations": [
+            "Only the module source file was reviewed; Metasploit framework mixins, libraries, and external payloads are not included in the evidence.",
+            "The actual payload.encoded content is not expanded; the module uses the standard Metasploit payload mechanism."
+          ]
+        }
+      },
+      "vulnerability_ids": [
+        "CVE-2026-22594",
+        "CVE-2026-29053"
+      ],
+      "vulnerability_ids_truncated": false
+    },
+    {
+      "artifact_id": "bbc103f4-72cd-5505-9469-d83e38627cec",
+      "source": "metasploit",
+      "kind": "exploit",
+      "native_id": "exploit_multi/http/wp_batch_desync_rce",
+      "provider_type": "metasploit",
+      "provider_host": "github.com",
+      "record_key": null,
+      "title": "WordPress WP2Shell REST API Batch Route Confusion SQLi to RCE",
+      "description": "This module chains two WordPress core vulnerabilities, together known as\n          WP2Shell, to gain unauthenticated remote code execution against default\n          installs of WordPress 6.9.0-6.9.4 and 7.0.0-7.0.1.\n          The vulnerabilities are fixed in WordPress 6.9.5 and 7.0.2.\n\n          CVE-2026-60137 is an SQL injection in WP_Query's author__not_in parameter, and\n          CVE-2026-63030 is a REST API batch endpoint route-confusion bug that lets an\n          unauthenticated request reach that injection.\n\n          The module uses the injection to read the database table prefix and the\n          administrator user ID, poisons WordPress' object cache to publish a crafted\n          customizer changeset, and re-enters the REST API with administrator privileges\n          to create a new administrator account. It then logs in as that account, uploads\n          a plugin containing a Metasploit payload, and executes it for a session. Once a\n          session is obtained the uploaded plugin is removed, and the created administrator\n          account is removed as well unless KeepAdmin is set.",
+      "url": "https://github.com/rapid7/metasploit-framework/blob/9f74eb0a48ca7f8039c2618e359c2e80f998ac89/modules/exploits/multi/http/wp_batch_desync_rce.rb",
+      "locator": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+      "metadata_locator": null,
+      "metadata_fingerprint": null,
+      "author": "Adam Kues",
+      "owner_name": null,
+      "owner_id": null,
+      "language": "Ruby",
+      "stars": null,
+      "published_at": "2026-07-31T19:33:29Z",
+      "fingerprint": null,
+      "public_id": 8866873961444911,
+      "source_artifact_id": "metasploit:exploit_multi/http/wp_batch_desync_rce",
+      "catalog_kind": "metasploit-exploit",
+      "content_revision": "9f74eb0a48ca7f8039c2618e359c2e80f998ac89",
+      "file_count": 1,
+      "byte_count": null,
+      "association_providers": [
+        "metasploit"
+      ],
+      "vulnerability_count": 2,
+      "exact_copy_count": 0,
+      "contributors": [
+        {
+          "public_id": 2501218137391742,
+          "source_scope": "metasploit",
+          "external_id": "Adam Kues",
+          "display_name": "Adam Kues",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 763099738422081,
+          "source_scope": "metasploit",
+          "external_id": "Crypto-Cat",
+          "display_name": "Crypto-Cat",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 5186144320010243,
+          "source_scope": "metasploit",
+          "external_id": "TF1T",
+          "display_name": "TF1T",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 3324036448136442,
+          "source_scope": "metasploit",
+          "external_id": "dtro",
+          "display_name": "dtro",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 5636424691752029,
+          "source_scope": "metasploit",
+          "external_id": "haongo",
+          "display_name": "haongo",
+          "profile_url": null,
+          "role": "author"
+        }
+      ],
+      "analysis": {
+        "artifact_id": "bbc103f4-72cd-5505-9469-d83e38627cec",
+        "model": "deepseek-v4-pro:cloud",
+        "technical_analyzed_at": "2026-08-07T15:08:51.474102Z",
+        "technical": {
+          "contract": "eip-poc-technical-analysis-v1",
+          "classification": "exploit",
+          "confidence": 1.0,
+          "summary": "A Metasploit exploit module that chains CVE-2026-60137 (SQL injection) and CVE-2026-63030 (REST API batch route confusion) to achieve unauthenticated remote code execution on WordPress 6.9.0-6.9.4 and 7.0.0-7.0.1. It uses SQL injection to read the database prefix and admin ID, poisons the object cache to publish a crafted customizer changeset, re-enters the REST API with admin privileges to create a new administrator account, logs in, uploads a plugin containing a Metasploit payload, and executes it.",
+          "language": [
+            "Ruby"
+          ],
+          "attack_types": [
+            "SQL Injection",
+            "Remote Code Execution",
+            "Privilege Escalation"
+          ],
+          "target_software": [
+            "WordPress"
+          ],
+          "requires_auth": "no",
+          "prerequisites": [
+            {
+              "text": "Target must be running a vulnerable version of WordPress (6.9.0-6.9.4 or 7.0.0-7.0.1) with the REST API batch endpoint reachable.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 44,
+                  "line_end": 46
+                }
+              ]
+            },
+            {
+              "text": "At least one published post or page must exist on the target for oEmbed resolution.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 193,
+                  "line_end": 193
+                }
+              ]
+            },
+            {
+              "text": "The target must not use a persistent object cache that prevents forged UNION rows from surviving into the cache.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 163,
+                  "line_end": 163
+                }
+              ]
+            }
+          ],
+          "behavior": [
+            {
+              "text": "Checks if the target is running a vulnerable WordPress version and confirms the batch route-confusion SQL injection is exploitable via in-band UNION.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 125,
+                  "line_end": 171
+                }
+              ]
+            },
+            {
+              "text": "Discovers the WordPress database table prefix and an existing administrator user ID via SQL injection.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 255,
+                  "line_end": 286
+                }
+              ]
+            },
+            {
+              "text": "Seeds oEmbed cache posts by injecting forged posts containing embed shortcodes, then extracts their post IDs.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 301,
+                  "line_end": 321
+                }
+              ]
+            },
+            {
+              "text": "Builds a poison graph and forged wp_posts rows to poison the object cache, then triggers the escalation chain to create a new administrator account via the REST API.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 323,
+                  "line_end": 347
+                }
+              ]
+            },
+            {
+              "text": "Logs in as the newly created administrator, uploads a plugin containing a Metasploit payload, and executes it to obtain a session.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 215,
+                  "line_end": 222
+                }
+              ]
+            },
+            {
+              "text": "Cleans up by removing the uploaded plugin and the created administrator account (unless KeepAdmin is set).",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 224,
+                  "line_end": 238
+                }
+              ]
+            }
+          ],
+          "classification_reason": {
+            "text": "The artifact is a complete Metasploit exploit module that actively exercises the vulnerabilities to achieve remote code execution. It includes code to check for vulnerability, perform SQL injection, poison the object cache, escalate privileges, create an admin account, upload a payload, and execute it. The module type is 'exploit' and the description states it 'gain[s] unauthenticated remote code execution'.",
+            "citations": [
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                "line_start": 1,
+                "line_end": 812
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                "line_start": 42,
+                "line_end": 58
+              }
+            ]
+          },
+          "limitations": [
+            "Only the module source code and metadata are provided; Metasploit framework mixins, libraries, and external payloads are not included.",
+            "The analysis is based solely on static review of the source code; the module was not executed, and its behavior is inferred from the code logic."
+          ]
+        },
+        "backdoor_reviewed_at": "2026-08-07T15:08:55.246790Z",
+        "backdoor_review": {
+          "contract": "eip-poc-backdoor-review-v1",
+          "verdict": "no_backdoor_observed",
+          "confidence": 0.95,
+          "summary": "The module is a standard Metasploit exploit that chains two WordPress CVEs to achieve unauthenticated RCE. It creates an admin account, uploads a payload plugin, executes it, and cleans up. No concealed operator-directed harm, unrelated payloads, or deceptive behavior was found.",
+          "findings": [],
+          "observables": [
+            {
+              "type": "credential_creation",
+              "value": "Administrator account created with random username/password",
+              "context": "The module creates a new WordPress administrator account to upload and execute a payload. This is documented exploit behavior, not a backdoor.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 328,
+                  "line_end": 333
+                }
+              ]
+            },
+            {
+              "type": "payload_upload",
+              "value": "Plugin containing Metasploit payload uploaded and executed",
+              "context": "The module uploads a plugin containing the user-selected Metasploit payload and triggers it. This is standard Metasploit exploit behavior.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 427,
+                  "line_end": 443
+                }
+              ]
+            },
+            {
+              "type": "cleanup",
+              "value": "Created admin account and plugin removed after session",
+              "context": "The module removes the created admin account and uploaded plugin after obtaining a session, unless KeepAdmin is set. This is normal cleanup, not concealment.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_batch_desync_rce.rb",
+                  "line_start": 224,
+                  "line_end": 238
+                }
+              ]
+            }
+          ],
+          "confidence_rationale": "The entire module source was reviewed. All behavior aligns with the documented exploit chain: SQL injection, privilege escalation, admin creation, payload upload, and cleanup. No hidden or deceptive functionality was observed.",
+          "limitations": [
+            "Only the module source and metadata were reviewed; framework mixins, libraries, and external payloads were not expanded or analyzed.",
+            "Binary files were not inspected; metadata-only analysis was performed for any non-text content."
+          ]
+        }
+      },
+      "vulnerability_ids": [
+        "CVE-2026-60137",
+        "CVE-2026-63030"
+      ],
+      "vulnerability_ids_truncated": false
+    },
+    {
+      "artifact_id": "4b33f0e8-923e-55d9-91bc-39efd00e5268",
+      "source": "metasploit",
+      "kind": "exploit",
+      "native_id": "exploit_linux/http/pterodactyl_locales_locale_json",
+      "provider_type": "metasploit",
+      "provider_host": "github.com",
+      "record_key": null,
+      "title": "Pterodactyl Panel CVE-2025-49132 Remote Code Execution",
+      "description": "This module exploits a vulnerability in Pterodactyl Panel before version 1.11.11 that allows unauthenticated\n          remote code execution through improper handling of locale file operations. The vulnerability\n          exists in the locale.json endpoint which allows path traversal and arbitrary file creation. Code execution\n          is in the context of the user running the webserver.\n\n          The exploit leverages PEAR (PHP Extension and Application Repository) for command injection by creating a\n          malicious payload file in the /tmp through path traversal, then executing it via PHP execution with pearcmd.",
+      "url": "https://github.com/rapid7/metasploit-framework/blob/9f74eb0a48ca7f8039c2618e359c2e80f998ac89/modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+      "locator": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+      "metadata_locator": null,
+      "metadata_fingerprint": null,
+      "author": "0xtensho",
+      "owner_name": null,
+      "owner_id": null,
+      "language": "Ruby",
+      "stars": null,
+      "published_at": "2026-07-27T14:34:14Z",
+      "fingerprint": null,
+      "public_id": 8056584117802897,
+      "source_artifact_id": "metasploit:exploit_linux/http/pterodactyl_locales_locale_json",
+      "catalog_kind": "metasploit-exploit",
+      "content_revision": "9f74eb0a48ca7f8039c2618e359c2e80f998ac89",
+      "file_count": 1,
+      "byte_count": null,
+      "association_providers": [
+        "metasploit"
+      ],
+      "vulnerability_count": 1,
+      "exact_copy_count": 0,
+      "contributors": [
+        {
+          "public_id": 5333940269106772,
+          "source_scope": "metasploit",
+          "external_id": "0xtensho",
+          "display_name": "0xtensho",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 2655620829627078,
+          "source_scope": "metasploit",
+          "external_id": "jheysel-r7",
+          "display_name": "jheysel-r7",
+          "profile_url": null,
+          "role": "author"
+        }
+      ],
+      "analysis": {
+        "artifact_id": "4b33f0e8-923e-55d9-91bc-39efd00e5268",
+        "model": "deepseek-v4-pro:cloud",
+        "technical_analyzed_at": "2026-07-30T13:16:33.927281Z",
+        "technical": {
+          "contract": "eip-poc-technical-analysis-v1",
+          "classification": "exploit",
+          "confidence": 1.0,
+          "summary": "Metasploit module that exploits CVE-2025-49132 in Pterodactyl Panel < 1.11.11 to achieve unauthenticated remote code execution via path traversal and PEAR command injection through the /locales/locale.json endpoint.",
+          "language": [
+            "ruby"
+          ],
+          "attack_types": [
+            "code injection",
+            "path traversal"
+          ],
+          "target_software": [
+            "Pterodactyl Panel"
+          ],
+          "requires_auth": "no",
+          "prerequisites": [
+            {
+              "text": "Target must be running Pterodactyl Panel version < 1.11.11",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 21,
+                  "line_end": 21
+                }
+              ]
+            },
+            {
+              "text": "Target must have the /locales/locale.json endpoint accessible",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 75,
+                  "line_end": 75
+                }
+              ]
+            }
+          ],
+          "behavior": [
+            {
+              "text": "Sends a GET request to /locales/locale.json with path traversal in the locale parameter to create a PHP payload file in /tmp via PEAR config-create command injection",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 155,
+                  "line_end": 159
+                }
+              ]
+            },
+            {
+              "text": "Sends a second GET request to /locales/locale.json to execute the uploaded PHP payload by including it via namespace parameter",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 162,
+                  "line_end": 166
+                }
+              ]
+            },
+            {
+              "text": "Payload is a PHP one-liner that executes a Metasploit-generated command payload using system()",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 151,
+                  "line_end": 153
+                }
+              ]
+            }
+          ],
+          "classification_reason": {
+            "text": "The module is a complete Metasploit exploit that includes check, upload, and execute methods to achieve remote code execution on a vulnerable target. It generates and delivers a payload, not merely detecting the vulnerability.",
+            "citations": [
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                "line_start": 8,
+                "line_end": 8
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                "line_start": 107,
+                "line_end": 113
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                "line_start": 115,
+                "line_end": 135
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                "line_start": 137,
+                "line_end": 149
+              }
+            ]
+          },
+          "limitations": [
+            "Analysis is based on module source code only; framework mixins, libraries, and external payloads are not expanded.",
+            "No runtime behavior or target interaction was observed; classification relies on static code analysis of the provided Ruby source."
+          ]
+        },
+        "backdoor_reviewed_at": "2026-07-30T13:16:33.919911Z",
+        "backdoor_review": {
+          "contract": "eip-poc-backdoor-review-v1",
+          "verdict": "no_backdoor_observed",
+          "confidence": 0.95,
+          "summary": "The reviewed Metasploit module source code implements a standard remote code execution exploit for CVE-2025-49132 in Pterodactyl Panel. It uses path traversal and PEAR command injection to upload and execute a user-supplied payload. No backdoor, deceptive payload, or concealed operator-directed harm was observed. The module's behavior is consistent with its documented purpose.",
+          "findings": [],
+          "observables": [
+            {
+              "type": "exploit_mechanism",
+              "value": "Path traversal via locale.json endpoint to create a PHP file in /tmp, then execute it via PEAR command injection",
+              "context": "The module exploits the vulnerability as described in the CVE and module metadata. It does not perform any unrelated actions.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 20,
+                  "line_end": 27
+                },
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 107,
+                  "line_end": 113
+                },
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 155,
+                  "line_end": 160
+                },
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 162,
+                  "line_end": 167
+                }
+              ]
+            },
+            {
+              "type": "payload_generation",
+              "value": "<?=system('#{payload.encoded}')?>",
+              "context": "The module generates a PHP one-liner that executes the Metasploit payload. This is a standard technique for command execution exploits.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 151,
+                  "line_end": 153
+                }
+              ]
+            },
+            {
+              "type": "cleanup_registration",
+              "value": "register_file_for_cleanup(payload_file)",
+              "context": "The module registers the uploaded payload file for cleanup, which is a standard Metasploit practice and not indicative of backdoor behavior.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/linux/http/pterodactyl_locales_locale_json.rb",
+                  "line_start": 133,
+                  "line_end": 133
+                }
+              ]
+            }
+          ],
+          "confidence_rationale": "The entire module source code (168 lines) was reviewed. All actions are directly related to exploiting the stated vulnerability. No hidden URLs, hardcoded credentials, unrelated data exfiltration, or persistence mechanisms were found. The module uses standard Metasploit APIs for payload encoding and cleanup.",
+          "limitations": [
+            "Only the module source code and metadata were reviewed. The Metasploit framework mixins (e.g., Msf::Exploit::Remote::HttpClient, Msf::Exploit::FileDropper) and the external payload generation logic were not expanded or inspected.",
+            "Binary files were not present in the evidence.",
+            "The review does not assess the safety or reliability of the exploit against the target application."
+          ]
+        }
+      },
+      "vulnerability_ids": [
+        "CVE-2025-49132"
+      ],
+      "vulnerability_ids_truncated": false
+    },
+    {
+      "artifact_id": "a3f17b27-257b-5217-a117-1bab77bb556f",
+      "source": "metasploit",
+      "kind": "exploit",
+      "native_id": "exploit_multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891",
+      "provider_type": "metasploit",
+      "provider_host": "github.com",
+      "record_key": null,
+      "title": "WordPress Unauthenticated RCE via Pix for WooCommerce plugin",
+      "description": "This Metasploit module exploits an Unauthenticated Arbitrary File Upload vulnerability in the Pix for WooCommerce plugin for WordPress.\n\n          Attackers can leverage the missing capability check and insufficient file type validation in the 'lkn_pix_for_woocommerce_c6_save_settings' function to upload arbitrary files to the affected server, which may lead to remote code execution under the web server's privileges.\n\n          The affected versions include all releases up to and including 1.5.0.",
+      "url": "https://github.com/rapid7/metasploit-framework/blob/9f74eb0a48ca7f8039c2618e359c2e80f998ac89/modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+      "locator": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+      "metadata_locator": null,
+      "metadata_fingerprint": null,
+      "author": "Maksim Rogov",
+      "owner_name": null,
+      "owner_id": null,
+      "language": "Ruby",
+      "stars": null,
+      "published_at": "2026-07-19T10:12:09Z",
+      "fingerprint": null,
+      "public_id": 3220156840352883,
+      "source_artifact_id": "metasploit:exploit_multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891",
+      "catalog_kind": "metasploit-exploit",
+      "content_revision": "9f74eb0a48ca7f8039c2618e359c2e80f998ac89",
+      "file_count": 1,
+      "byte_count": null,
+      "association_providers": [
+        "metasploit"
+      ],
+      "vulnerability_count": 1,
+      "exact_copy_count": 0,
+      "contributors": [
+        {
+          "public_id": 4420986005290639,
+          "source_scope": "metasploit",
+          "external_id": "Alexis Lafontaine",
+          "display_name": "Alexis Lafontaine",
+          "profile_url": null,
+          "role": "author"
+        },
+        {
+          "public_id": 5645392045238873,
+          "source_scope": "metasploit",
+          "external_id": "Maksim Rogov",
+          "display_name": "Maksim Rogov",
+          "profile_url": null,
+          "role": "author"
+        }
+      ],
+      "analysis": {
+        "artifact_id": "a3f17b27-257b-5217-a117-1bab77bb556f",
+        "model": "deepseek-v4-pro:cloud",
+        "technical_analyzed_at": "2026-07-31T18:11:43.545929Z",
+        "technical": {
+          "contract": "eip-poc-technical-analysis-v1",
+          "classification": "exploit",
+          "confidence": 1.0,
+          "summary": "A Metasploit module that exploits an unauthenticated arbitrary file upload vulnerability in the Pix for WooCommerce WordPress plugin (CVE-2026-3891) to achieve remote code execution by uploading a PHP payload and triggering it.",
+          "language": [
+            "ruby"
+          ],
+          "attack_types": [
+            "arbitrary file upload",
+            "remote code execution"
+          ],
+          "target_software": [
+            "WordPress",
+            "Pix for WooCommerce plugin"
+          ],
+          "requires_auth": "no",
+          "prerequisites": [
+            {
+              "text": "Target must be running a vulnerable version of the Pix for WooCommerce plugin (<= 1.5.0).",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 23,
+                  "line_end": 23
+                }
+              ]
+            },
+            {
+              "text": "The WordPress site must have the admin-ajax.php endpoint accessible.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 71,
+                  "line_end": 71
+                }
+              ]
+            }
+          ],
+          "behavior": [
+            {
+              "text": "Retrieves an AJAX nonce by sending a POST request to admin-ajax.php with action 'lkn_pix_for_woocommerce_generate_nonce'.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 66,
+                  "line_end": 88
+                }
+              ]
+            },
+            {
+              "text": "Uploads a PHP payload file via a multipart POST request to admin-ajax.php, using the action 'lkn_pix_for_woocommerce_c6_save_settings' and the retrieved nonce.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 90,
+                  "line_end": 112
+                }
+              ]
+            },
+            {
+              "text": "Triggers the uploaded PHP payload by sending a GET request to the predicted file path under wp-content/plugins/payment-gateway-pix-for-woocommerce/Includes/files/certs_c6/.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 114,
+                  "line_end": 124
+                }
+              ]
+            }
+          ],
+          "classification_reason": {
+            "text": "The module's exploit method orchestrates file upload and execution to achieve remote code execution, which is the definition of an exploit. The source code includes functions to upload a payload and trigger it, and the metadata describes it as an exploit module.",
+            "citations": [
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                "line_start": 121,
+                "line_end": 124
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                "line_start": 6,
+                "line_end": 6
+              },
+              {
+                "packet_index": 1,
+                "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                "line_start": 18,
+                "line_end": 24
+              }
+            ]
+          },
+          "limitations": [
+            "Analysis is based solely on the module source code and metadata; framework mixins, libraries, and external payloads are not included.",
+            "The evidence does not include runtime behavior, target interaction, or verification of exploit success."
+          ]
+        },
+        "backdoor_reviewed_at": "2026-07-31T18:11:37.159257Z",
+        "backdoor_review": {
+          "contract": "eip-poc-backdoor-review-v1",
+          "verdict": "no_backdoor_observed",
+          "confidence": 0.95,
+          "summary": "The Metasploit module source code implements a standard exploit for CVE-2026-3891, an unauthenticated arbitrary file upload vulnerability in the Pix for WooCommerce WordPress plugin. The module retrieves a nonce, uploads a PHP payload via a multipart POST request, and triggers the payload. No backdoor, deceptive payload, or concealed operator-directed harm is present. The module's behavior is consistent with its documented purpose.",
+          "findings": [],
+          "observables": [
+            {
+              "type": "exploit_behavior",
+              "value": "Standard Metasploit exploit module for CVE-2026-3891",
+              "context": "The module performs a nonce retrieval, file upload, and payload trigger, which matches the described vulnerability and is typical for a Metasploit exploit. No unrelated or concealed actions are observed.",
+              "citations": [
+                {
+                  "packet_index": 1,
+                  "path": "modules/exploits/multi/http/wp_plugin_pix_unauth_rce_cve_2026_3891.rb",
+                  "line_start": 66,
+                  "line_end": 124
+                }
+              ]
+            }
+          ],
+          "confidence_rationale": "The entire module source code (126 lines) is provided and reviewed. The code is straightforward, with no obfuscation, hidden payloads, or unrelated network calls. The module's actions are limited to exploiting the stated vulnerability. Confidence is high but not absolute due to the inherent trust in the Metasploit framework's mixins and libraries, which are not included in the evidence.",
+          "limitations": [
+            "Only the module source code and metadata are reviewed; Metasploit framework mixins, libraries, and external payloads are not expanded or analyzed.",
+            "The review does not verify the correctness or safety of the exploit against a live target."
+          ]
+        }
+      },
+      "vulnerability_ids": [
+        "CVE-2026-3891"
+      ],
+      "vulnerability_ids_truncated": false
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5,
+  "statistics": {
+    "total": 73590,
+    "exploitdb": 46647,
+    "metasploit": 3348,
+    "repositories": 23595
+  }
+}

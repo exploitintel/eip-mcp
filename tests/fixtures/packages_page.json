@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "ecosystem": "npm",
+      "package_name": "openclaw",
+      "vulnerability_count": 588
+    },
+    {
+      "ecosystem": "npm",
+      "package_name": "n8n",
+      "vulnerability_count": 139
+    },
+    {
+      "ecosystem": "npm",
+      "package_name": "parse-server",
+      "vulnerability_count": 116
+    },
+    {
+      "ecosystem": "npm",
+      "package_name": "flowise",
+      "vulnerability_count": 112
+    },
+    {
+      "ecosystem": "npm",
+      "package_name": "electron",
+      "vulnerability_count": 65
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}

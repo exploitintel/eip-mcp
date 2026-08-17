@@ -541,13 +541,23 @@ async def test_client_bounds_parallel_api_fanout():
 
 
 async def test_queued_request_shares_the_whole_call_deadline():
-    entered = 0
+    # Peak concurrency, not total entries. Both calls share one deadline and so
+    # expire at the same instant, and whichever cancels first releases the slot;
+    # whether the queued call then enters is a scheduling coin flip that made
+    # `entered == 1` flake under load. Entering after the first call is gone is
+    # the limiter working. Entering beside it is the bypass this guards.
+    active = 0
+    peak = 0
     errors = []
 
     async def handler(request):
-        nonlocal entered
-        entered += 1
-        await anyio.sleep(0.2)
+        nonlocal active, peak
+        active += 1
+        peak = max(peak, active)
+        try:
+            await anyio.sleep(2.0)
+        finally:
+            active -= 1
         return httpx2.Response(200, json={"ok": True})
 
     async def call(client):
@@ -556,9 +566,13 @@ async def test_queued_request_shares_the_whole_call_deadline():
         except ApiUnavailable as exc:
             errors.append(str(exc))
 
+    # The deadline is four times the per-operation timeout, so 0.02 gave this
+    # test an 80ms budget - tight enough that a loaded machine could miss it for
+    # reasons that say nothing about the limiter. The invariant needs the
+    # handler to outlast the deadline, not the deadline to be small.
     settings = Settings(
         api_base_url="http://api.test",
-        request_timeout_seconds=0.02,
+        request_timeout_seconds=0.05,
         max_concurrent_api_requests=1,
     )
     client = EipApiClient(settings, transport=httpx2.MockTransport(handler))
@@ -569,8 +583,11 @@ async def test_queued_request_shares_the_whole_call_deadline():
     finally:
         await client.aclose()
 
-    assert entered == 1, "the queued call bypassed the one-request capacity limit"
-    assert len(errors) == 2
+    assert peak == 1, (
+        f"the queued call bypassed the one-request capacity limit: peak={peak}, "
+        f"errors={errors}"
+    )
+    assert len(errors) == 2, f"expected both calls to time out, got {errors}"
     assert all("did not complete in time" in error for error in errors)
 
 

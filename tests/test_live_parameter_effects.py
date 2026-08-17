@@ -49,18 +49,46 @@ from eip_mcp_v3.tools import (
     EipTools,
 )
 
+# Every heading `format_labs._analysis` can emit. Matching only two of them
+# read a stored analysis as absent whenever one of the others was the only
+# heading rendered.
+_ANALYSIS_MARKERS = (
+    "Model-reported",
+    "Model-stated",
+    "Model safety reasoning",
+    "Model assessment",
+    "Model environment summary",
+    "Model suspicious indicator",
+)
+
 
 def lab_rows(page: str) -> list[dict]:
     rows = []
     for block in _blocks(page, "Lab"):
         rows.append(
             {
-                "kind": (
-                    (m := re.search(r"^` [^`]+ ` · ` ([^`]+) `", block, re.M))
-                    and m.group(1)
+                # The identity line is anchor_kind, then shape, then counts.
+                # Reading a fixed position captured `shape` while the assertion
+                # below and its comment both mean `anchor_kind`; both happen to
+                # contain the family word, so the mistake never showed. Keep
+                # every span and let the caller match against all of them.
+                "kinds": _bare_spans(_span_first_bits(block)),
+                # Both read the whole block before, so a repository title
+                # containing either phrase forged them.
+                "linked": not any(
+                    _unspanned(line).strip() == "Linked vulnerabilities: none returned"
+                    for line in _row_lines(block)
                 ),
-                "linked": "Linked vulnerabilities: none returned" not in block,
-                "analysis": "Model-reported" in block or "Model-stated" in block,
+                # `_analysis` can emit any one of these headings alone, so
+                # matching only two of them read a stored analysis as absent.
+                # The whole-row scan and the quote skip are defence in depth:
+                # the first heading always precedes any blank line, and a
+                # "> "-prefixed body line cannot start with a marker anyway.
+                "analysis": any(
+                    _unspanned(line).startswith(_ANALYSIS_MARKERS)
+                    for line in block.splitlines()[1:]
+                    if not line.lstrip().startswith(">")
+                ),
             }
         )
     return rows
@@ -89,6 +117,21 @@ _NUM = r"[\d,]+(?:\.\d+)?"
 
 def _n(text: str) -> float:
     return float(text.replace(",", ""))
+
+
+_FENCED = re.compile(r"(?m)^(`{3,})[^\n]*\n.*?^\1[ \t]*$", re.S)
+
+
+def _outside_fences(page: str) -> str:
+    """Blank fenced regions, keeping the line count.
+
+    `code_block()` writes corpus source at column 0, so a snippet containing
+    "## Match in ` … `" injected a phantom row with an attacker-chosen path and
+    source, and a snippet echoing the cursor sentence forged the cursor this
+    suite then sent back to the API. Page-level patterns must not read inside a
+    fence.
+    """
+    return _FENCED.sub(lambda m: "\n" * m.group(0).count("\n"), page)
 
 
 def _truncated(page: str) -> bool:
@@ -123,7 +166,7 @@ def _blocks(page: str, *headings: str) -> list[str]:
     parser is reading the wrong page. Say so rather than returning nothing.
     """
     pattern = "|".join(re.escape(h) for h in headings)
-    parts = re.split(rf"(?m)^## (?:{pattern}) ", page)
+    parts = re.split(rf"(?m)^## (?:{pattern}) ", _outside_fences(page))
     # `cap()` cuts at a character offset, so it can slice a heading in half. A
     # truncated page cannot testify about the renderer's headings.
     if len(parts) == 1 and not _truncated(page):
@@ -149,9 +192,23 @@ def vuln_rows(page: str) -> list[dict]:
         cvss = re.search(rf"^CVSS (?:` v[\d.]+ ` )?` ({_NUM}) `", block, re.M)
         sev = re.search(r"^CVSS (?:` v[\d.]+ ` )?` [^`]+ ` ` ([A-Z]+) `", block, re.M)
         version = re.search(r"^CVSS ` v([\d.]+) `", block, re.M)
-        epss = re.search(rf"EPSS ` ({_NUM}) `", block)
-        pocs = re.search(rf"^({_NUM}) linked PoCs?", block, re.M)
-        nuclei = re.search(rf"({_NUM}) Nuclei templates?", block)
+        # These four read the whole block before, so a corpus title containing
+        # "EPSS ` 0.99999 `", "4242 Nuclei templates", "CISA KEV listed" or
+        # "known ransomware use" forged them. The title is a code span, so
+        # blanking spans leaves only labels this renderer wrote.
+        # `_unspanned` decides whether a label is one this renderer wrote; the
+        # value itself lives inside the span, so read it from the original line.
+        epss_value = next(
+            (
+                value
+                for line in _row_lines(block)
+                if (value := _labelled_span(line, "EPSS"))
+            ),
+            None,
+        )
+        counts = "\n".join(_unspanned(line) for line in _row_lines(block))
+        pocs = re.search(rf"(?m)^({_NUM}) linked PoCs?", counts)
+        nuclei = re.search(rf"({_NUM}) Nuclei templates?", counts)
         rows.append(
             {
                 "cve": cve.group(1) if cve else None,
@@ -159,50 +216,11 @@ def vuln_rows(page: str) -> list[dict]:
                 "cvss": _n(cvss.group(1)) if cvss else None,
                 "severity": sev.group(1) if sev else None,
                 "cvss_version": version.group(1) if version else None,
-                "epss": _n(epss.group(1)) if epss else None,
+                "epss": _n(epss_value) if epss_value else None,
                 "pocs": _n(pocs.group(1)) if pocs else 0.0,
                 "nuclei": _n(nuclei.group(1)) if nuclei else 0.0,
-                "kev": "CISA KEV listed" in block,
-                "ransomware": "known ransomware use" in block,
-            }
-        )
-    return rows
-
-
-def artifact_rows(page: str) -> list[dict]:
-    rows = []
-    for block in _blocks(page, "Artifact"):
-        source = re.match(r"` [^`]+ ` · ` ([^`]+) `", block)
-        kind = re.search(r"^` ([a-z-]+) ` · provider type", block, re.M)
-        date = re.search(r"source date ` (\d{4}-\d{2}-\d{2}) `", block)
-        lang = re.search(r"· ` ([A-Za-z+#][\w+# ]*) ` · source date", block)
-        rows.append(
-            {
-                "artifact_id": (m := re.search(r"artifact_id: ` ([^`]+) `", block)) and m.group(1),
-                "source": source.group(1) if source else None,
-                "catalog_kind": kind.group(1) if kind else None,
-                "source_date": date.group(1) if date else None,
-                "language": lang.group(1) if lang else None,
-                "linked": bool(
-                    (m := re.search(r"([\d,]+) linked vulnerabilit", block)) and _n(m.group(1)) > 0
-                ),
-                "contributor_ids": {
-                    int(value) for value in re.findall(r"author_id #(\d+)", block)
-                },
-            }
-        )
-    return rows
-
-
-def code_rows(page: str) -> list[dict]:
-    rows = []
-    for block in _blocks(page, "Match in"):
-        path = re.match(r"` ([^`]+) `", block)
-        source = re.search(r"^artifact ` [^`]+ ` · ` ([^`]+) `", block, re.M)
-        rows.append(
-            {
-                "path": path.group(1) if path else None,
-                "source": source.group(1) if source else None,
+                "kev": "CISA KEV listed" in counts,
+                "ransomware": "known ransomware use" in counts,
             }
         )
     return rows
@@ -211,6 +229,142 @@ def code_rows(page: str) -> list[dict]:
 # `inline()` escalates the code-span delimiter when the value itself contains a
 # backtick, so a fixed single backtick silently fails to match those rows.
 _SPAN = r"(`+) (.+?) \1"
+# `inline()` appends this outside the closing delimiter when it shortens a value.
+_CUT = r"(?: …truncated| …)?"
+
+# `inline()` marks a value it had to shorten outside the closing delimiter, so
+# the marker lands on a bit that is otherwise a bare span.
+_BIT = re.compile(rf"{_SPAN}{_CUT}$")
+
+
+_SPAN_RE = re.compile(_SPAN)
+
+
+def _unspanned(line: str) -> str:
+    """The line with its code spans blanked, character for character.
+
+    Labels are rendered outside spans and corpus values inside them, so a
+    "source date ` … `" forged inside a corpus value vanishes here while the
+    real label survives. Blanking preserves length so an offset found in the
+    blanked line still points at the same character in the original.
+    """
+    return _SPAN_RE.sub(lambda m: " " * len(m.group(0)), line)
+
+
+def _labelled_span(line: str, label: str) -> str | None:
+    """The span following `label`, where `label` is one this renderer wrote.
+
+    Reading the value with a plain search finds the leftmost match, so a corpus
+    span rendered earlier on the same line wins - `language` set to
+    "source date ` 1999-01-01 `" forged the artifact's date. Locate the label
+    in the blanked line, then read the value at exactly that offset.
+    """
+    for m in re.finditer(re.escape(label), _unspanned(line)):
+        value = re.compile(rf"{re.escape(label)} {_SPAN}").match(line, m.start())
+        if value:
+            return value.group(2)
+    return None
+
+
+def _row_lines(block: str) -> list[str]:
+    """The lines belonging to this row.
+
+    `_blocks` splits on the heading, so line 0 is the heading tail, which
+    carries the row's own identity rather than its facts. The final block also
+    runs to the end of the page and would otherwise pick up the cursor line, so
+    stop at the blank line that separates a row from what follows it.
+    """
+    lines = []
+    for line in block.splitlines()[1:]:
+        if not line.strip():
+            break
+        lines.append(line)
+    return lines
+
+
+def _span_first_bits(block: str) -> list[str]:
+    """The row's first " · "-joined line that begins with a bare span."""
+    for line in _row_lines(block):
+        if re.match(rf"{_SPAN}(?: · | \[|$)", line):
+            return line.split(" · ")
+    return []
+
+
+def _bare_spans(bits: list[str]) -> list[str]:
+    """The bits that are nothing but a code span, as their values.
+
+    Both callers split on " · " first, so a bit cannot hold two whole spans.
+    """
+    return [m.group(2) for bit in bits if (m := _BIT.fullmatch(bit.strip()))]
+
+
+def artifact_rows(page: str) -> list[dict]:
+    rows = []
+    for block in _blocks(page, "Artifact"):
+        # The heading is "` #id ` · ` source `", but `_artifact_heading` drops
+        # the id span when the record has no public_id. `_public_id_span`
+        # always renders "#<id>", so pick the span that is not one rather than
+        # trusting a position - otherwise a record with no source reports its
+        # own public id as the source.
+        heading = _bare_spans(block.splitlines()[0].split(" · ")) if block else []
+        source = next((s for s in reversed(heading) if not s.startswith("#")), None)
+        # `catalog_kind` and `language` are deliberately not read. The renderer
+        # emits them as bare spans in a " · " chain whose every other member
+        # carries a word, so recovering which is which means guessing - by
+        # position, by neighbour, or by a client-side closed set. All three
+        # were tried and all three returned wrong values. They come back when
+        # `format.py` labels them the way it labels provider, counts and date.
+        date = next(
+            (
+                value
+                for line in _row_lines(block)
+                if (value := _labelled_span(line, "source date"))
+            ),
+            None,
+        )
+        rows.append(
+            {
+                "artifact_id": next(
+                    (
+                        m.group(2)
+                        for line in _row_lines(block)
+                        if _unspanned(line).lstrip().startswith("artifact_id:")
+                        and (m := re.search(rf"artifact_id: {_SPAN}", line))
+                    ),
+                    None,
+                ),
+                "source": source,
+                "source_date": date,
+                "linked": any(
+                    (m := re.search(r"([\d,]+) linked vulnerabilit", _unspanned(line)))
+                    and _n(m.group(1)) > 0
+                    for line in _row_lines(block)
+                ),
+            }
+        )
+    return rows
+
+
+def code_rows(page: str) -> list[dict]:
+    blocks = _blocks(page, "Match in")
+    rows = []
+    for block in blocks:
+        # `_SPAN`, not a fixed backtick: a corpus file path may contain one, and
+        # `inline()` then widens the delimiter. The old pattern returned None,
+        # which the disjointness assertions read as a repeated page.
+        path = re.match(_SPAN, block)
+        # `source` is deliberately not read here: it is a bare span, so a hit
+        # without one promotes the catalog kind into its place. The filter test
+        # reads it from the structured channel instead.
+        if path:
+            rows.append({"path": path.group(2)})
+        elif block.startswith("(path not returned)"):
+            # The renderer says so itself when the API omits the path. That is
+            # an API omission, not a disagreement between these two halves.
+            rows.append({"path": None})
+    _expect_parsed(page, blocks, rows, "code match")
+    return rows
+
 
 # Anchored to the whole role line. An unanchored `source ` ...`` search crosses
 # newlines, so a display name containing " · source " bound `source_scope` to
@@ -220,7 +374,7 @@ _SPAN = r"(`+) (.+?) \1"
 _AUTHOR_ROLE_LINE = re.compile(
     r"(?m)^((?:Author|Repository owner)(?: / (?:Author|Repository owner))*)"
     r" · source (`+) (.+?) \2"
-    r" · source identity (`+) (.+?) \4\s*$"
+    rf" · source identity (`+) (.+?) \4{_CUT}\s*$"
 )
 
 
@@ -337,7 +491,7 @@ def product_rows(page: str) -> list[tuple[str, str]]:
     rows = []
     for block in blocks:
         product = re.match(_SPAN, block)
-        vendor = re.search(r"(?m)^Vendor: (`+) (.+?) \1\s*$", block)
+        vendor = re.search(rf"(?m)^Vendor: (`+) (.+?) \1{_CUT}\s*$", block)
         if product and vendor:
             rows.append((vendor.group(2), product.group(2)))
     _expect_parsed(page, blocks, rows, "product")
@@ -365,7 +519,7 @@ def package_rows(page: str) -> list[tuple[str, str]]:
     rows = []
     for block in blocks:
         package = re.match(_SPAN, block)
-        ecosystem = re.search(r"(?m)^Ecosystem: (`+) (.+?) \1\s*$", block)
+        ecosystem = re.search(rf"(?m)^Ecosystem: (`+) (.+?) \1{_CUT}\s*$", block)
         if package and ecosystem:
             rows.append((ecosystem.group(2), package.group(2)))
     _expect_parsed(page, blocks, rows, "package")
@@ -384,9 +538,22 @@ def _nonincreasing(values: list[float | str]) -> bool:
     return all(a >= b for a, b in zip(present, present[1:], strict=False))
 
 
+def _comparable(values: list) -> int:
+    """How many of a sort column were actually read.
+
+    Comparing nothing is not monotonicity: an all-None column makes
+    `_nonincreasing` vacuously true, so a renamed label used to leave the sort
+    unverified while green.
+    """
+    return len([v for v in values if v is not None])
+
+
 def _cursor(page: str) -> str | None:
+    # Outside fences: a snippet echoing this sentence forged the cursor, which
+    # the caller then sent back to the API as `cursor=`.
     m = re.search(
-        r"changing any of them is refused rather than silently re-paged:\n` (\S+) `", page
+        r"changing any of them is refused rather than silently re-paged:\n` (\S+) `",
+        _outside_fences(page),
     )
     return m.group(1) if m else None
 
@@ -444,6 +611,10 @@ async def test_lab_query_limit_and_cursor_take_effect(tools):
     first = await tools.search_labs(query=token, limit=1)
     assert title in first
     cursor = _cursor(first)
+    # Conditional on purpose, unlike the directory cursor tests: this queries a
+    # 12-character prefix of one lab's own title, so a corpus where exactly one
+    # lab matches has no second page and offers no cursor. Requiring one here
+    # fails against a healthy API.
     if cursor:
         second = await tools.search_labs(query=token, limit=1, cursor=cursor)
         assert first != second
@@ -453,12 +624,21 @@ async def test_lab_query_limit_and_cursor_take_effect(tools):
 async def test_lab_kind_is_reflected_by_every_result(tools, kind):
     page = await tools.search_labs(kind=kind, limit=10)
     rows = lab_rows(page)
+    assert rows, f"kind={kind} returned no lab units"
     if kind == "all":
-        assert rows
-    elif rows:
-        # The API filter is a family selector. Rows retain the more precise
-        # source-backed anchor kind (`compose_stack`, `dockerfile_single`, ...).
-        assert all(kind in (row["kind"] or "") for row in rows)
+        return
+    # The API filter is a family selector. Rows retain the more precise
+    # source-backed identity (`compose_stack`, `standalone_dockerfile_directory`,
+    # and the shape beside it), so the family must appear in one of them.
+    # `kinds` is [anchor_kind, shape]. A lab missing its anchor kind would put
+    # the shape at index 0, silently reinstating the bug this parser was
+    # rewritten to fix, so require both before indexing.
+    assert all(len(row["kinds"]) == 2 for row in rows), (
+        "a lab row parsed no anchor kind, so kinds[0] would be the shape"
+    )
+    # Matching any span would accept a compose-family lab returned for
+    # kind="dockerfile" on the strength of its shape alone.
+    assert all(kind in row["kinds"][0] for row in rows)
 
 
 @pytest.mark.parametrize("association", LAB_ASSOCIATIONS)
@@ -653,6 +833,7 @@ async def test_vendor_cursor_returns_a_disjoint_page(tools):
     cursor = _cursor(first)
     assert cursor, "vendor directory returned no cursor"
     second = await tools.browse_vendors(limit=2, cursor=cursor)
+    assert vendor_rows(second), "the second page returned no rows, so disjointness proves nothing"
     assert set(vendor_rows(first)).isdisjoint(vendor_rows(second))
 
 
@@ -673,6 +854,7 @@ async def test_product_vendor_query_limit_and_cursor_take_effect(tools):
     cursor = _cursor(first)
     assert cursor, "product directory returned no cursor"
     second = product_rows(await tools.browse_products(vendor=vendor, limit=2, cursor=cursor))
+    assert second, "the second page returned no rows, so disjointness proves nothing"
     assert set(rows).isdisjoint(second)
 
 
@@ -695,6 +877,9 @@ async def test_ecosystem_cursor_returns_a_disjoint_page(tools):
     cursor = _cursor(first)
     assert cursor, "ecosystem directory returned no cursor"
     second = await tools.browse_ecosystems(limit=2, cursor=cursor)
+    assert ecosystem_rows(second), (
+        "the second page returned no rows, so disjointness proves nothing"
+    )
     assert set(ecosystem_rows(first)).isdisjoint(ecosystem_rows(second))
 
 
@@ -723,6 +908,7 @@ async def test_package_ecosystem_query_limit_and_cursor_take_effect(tools):
     second = package_rows(
         await tools.browse_packages(ecosystem=ecosystem, limit=2, cursor=cursor)
     )
+    assert second, "the second page returned no rows, so disjointness proves nothing"
     assert set(rows).isdisjoint(second)
 
 
@@ -744,6 +930,7 @@ async def test_weakness_query_limit_and_cursor_take_effect(tools):
     cursor = _cursor(first)
     assert cursor, "CWE catalog returned no cursor"
     second = weakness_rows(await tools.browse_weaknesses(limit=2, cursor=cursor))
+    assert second, "the second page returned no rows, so disjointness proves nothing"
     assert set(rows).isdisjoint(second)
 
 
@@ -802,6 +989,9 @@ async def test_sort_orders_the_page_by_its_key(tools, sort, key):
     rows = vuln_rows(await tools.search_vulnerabilities(sort=sort, limit=25))
     assert len(rows) > 1
     values = [r[key] for r in rows]
+    assert _comparable(values) > 1, (
+        f"sort={sort}: only {_comparable(values)} of {len(values)} rows yielded a {key}"
+    )
     assert _nonincreasing(values), f"sort={sort} produced non-monotonic {key}: {values}"
 
 
@@ -945,14 +1135,6 @@ async def test_exploit_source_holds_on_every_row(tools, source):
     assert not off, f"source={source} returned {off}"
 
 
-@pytest.mark.parametrize("kind", CATALOG_KINDS)
-async def test_catalog_kind_holds_on_every_row(tools, kind):
-    rows = artifact_rows(await tools.search_exploits(catalog_kind=kind, limit=10))
-    assert rows, f"catalog_kind={kind} returned nothing"
-    off = {r["catalog_kind"] for r in rows if r["catalog_kind"] != kind}
-    assert not off, f"catalog_kind={kind} returned {off}"
-
-
 @pytest.mark.parametrize("association", ASSOCIATIONS)
 async def test_association_holds_on_every_row(tools, association):
     rows = artifact_rows(await tools.search_exploits(association=association, limit=10))
@@ -963,17 +1145,14 @@ async def test_association_holds_on_every_row(tools, association):
         assert not any(r["linked"] for r in rows)
 
 
-async def test_language_holds_on_every_row(tools):
-    rows = artifact_rows(await tools.search_exploits(language="Ruby", limit=10))
-    assert rows, "language=Ruby returned nothing"
-    off = {r["language"] for r in rows if r["language"] != "Ruby"}
-    assert not off, f"language=Ruby returned {off}"
-
-
 async def test_source_date_from_excludes_earlier_rows(tools):
     cutoff = "2025-01-01"
     rows = artifact_rows(await tools.search_exploits(source_date_from=cutoff, limit=20))
     assert rows, "source_date_from returned nothing"
+    assert all(r["source_date"] for r in rows), (
+        "an undated row on a date-filtered page: either the page is not "
+        "excluding undated artifacts, or artifact_rows lost the date"
+    )
     early = [r["source_date"] for r in rows if r["source_date"] and r["source_date"] < cutoff]
     assert not early, f"source_date_from={cutoff} returned {early}"
 
@@ -982,6 +1161,10 @@ async def test_source_date_to_excludes_later_rows(tools):
     cutoff = "2015-01-01"
     rows = artifact_rows(await tools.search_exploits(source_date_to=cutoff, limit=20))
     assert rows, "source_date_to returned nothing"
+    assert all(r["source_date"] for r in rows), (
+        "an undated row on a date-filtered page: either the page is not "
+        "excluding undated artifacts, or artifact_rows lost the date"
+    )
     late = [r["source_date"] for r in rows if r["source_date"] and r["source_date"] > cutoff]
     assert not late, f"source_date_to={cutoff} returned {late}"
 
@@ -993,7 +1176,11 @@ async def test_source_date_bounds_compose(tools):
         )
     )
     assert rows, "a bounded window returned nothing"
-    assert all(r["source_date"].startswith("2020") for r in rows if r["source_date"])
+    assert all(r["source_date"] for r in rows), (
+        "an undated row on a date-filtered page: either the page is not "
+        "excluding undated artifacts, or artifact_rows lost the date"
+    )
+    assert all(r["source_date"].startswith("2020") for r in rows)
 
 
 @pytest.mark.parametrize("limit", [1, 5, 100])
@@ -1052,6 +1239,31 @@ async def test_artifact_id_rejects_a_non_uuid_and_reports_a_miss(tools):
     assert str(bad.value) != str(absent.value)
 
 
+@pytest.mark.parametrize("kind", CATALOG_KINDS)
+async def test_catalog_kind_holds_on_every_row(tools, kind):
+    """Read from the structured channel, not the rendered page.
+
+    `catalog_kind` and `language` render as bare spans in a " · " chain whose
+    every other member carries a word, so recovering them from the text means
+    guessing which span is which. Three attempts at that returned wrong values
+    and blamed the API for it. The structured result carries the API's own
+    values, which is what "the filter holds on every row" actually means.
+    """
+    result = await tools.search_exploits(catalog_kind=kind, limit=10)
+    rows = result.structured.data["items"]
+    assert rows, f"catalog_kind={kind} returned nothing"
+    off = {r.get("catalog_kind") for r in rows if r.get("catalog_kind") != kind}
+    assert not off, f"catalog_kind={kind} returned {off}"
+
+
+async def test_language_holds_on_every_row(tools):
+    result = await tools.search_exploits(language="Ruby", limit=10)
+    rows = result.structured.data["items"]
+    assert rows, "language=Ruby returned nothing"
+    off = {r.get("language") for r in rows if r.get("language") != "Ruby"}
+    assert not off, f"language=Ruby returned {off}"
+
+
 # ==========================================================================
 # search_exploit_code - 6 parameters
 # ==========================================================================
@@ -1066,10 +1278,17 @@ async def test_code_query_is_required_and_restricts(tools):
 
 @pytest.mark.parametrize("source", POC_SOURCES)
 async def test_code_source_holds_on_every_row(tools, source):
-    rows = code_rows(await tools.search_exploit_code(query="http", source=source, limit=5))
+    """Read from the structured channel, as `catalog_kind` and `language` do.
+
+    On the rendered line the source is a bare span, so a record without one
+    promotes the catalog kind into its place. The structured result carries the
+    API's own value and needs no inference.
+    """
+    result = await tools.search_exploit_code(query="http", source=source, limit=5)
+    rows = result.structured.data["items"]
     if not rows:
         pytest.skip(f"no code matches in {source}")
-    off = {r["source"] for r in rows if r["source"] != source}
+    off = {r.get("source") for r in rows if r.get("source") != source}
     assert not off, f"source={source} returned {off}"
 
 

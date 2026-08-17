@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "ecosystem": "PyPI",
+      "package_name": "tensorflow",
+      "vulnerability_count": 433
+    },
+    {
+      "ecosystem": "PyPI",
+      "package_name": "tensorflow-gpu",
+      "vulnerability_count": 427
+    },
+    {
+      "ecosystem": "PyPI",
+      "package_name": "tensorflow-cpu",
+      "vulnerability_count": 423
+    },
+    {
+      "ecosystem": "PyPI",
+      "package_name": "Django",
+      "vulnerability_count": 147
+    },
+    {
+      "ecosystem": "PyPI",
+      "package_name": "open-webui",
+      "vulnerability_count": 133
+    }
+  ],
+  "next_cursor": null,
+  "limit": 5
+}
