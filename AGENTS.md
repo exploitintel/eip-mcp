@@ -129,11 +129,24 @@ closes that, and `tests/test_declared_arguments.py` holds the ledger tying every
 parameter to an effect test, so coverage here is a count and not an impression.
 
 ```sh
-pytest -q                                                     # no failures; see CONTRIBUTING.md on skips
-# live run: no failures; skips must be the corpus-conditional ones only
-EIP_MCP_TEST_API_BASE_URL=<url> pytest tests/test_live.py tests/test_live_parameter_effects.py -v
+python3 -m venv --clear .venv   # --clear: a uv-made .venv has no pip
+. .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python -m pip install -e .
+! git grep --untracked -n -I -P '[\x{2013}\x{2014}]' -- .   # CI rejects en/em dashes
 ruff check src tests
+pytest -q --cov=eip_mcp_v3 --cov-fail-under=95   # skips: see CONTRIBUTING.md
+# live run: no failures; skips must be the corpus-conditional ones only
+EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com \
+  pytest tests/test_live.py tests/test_live_parameter_effects.py -v
 ```
+
+That is the `quality` job, where CI runs the dash check first. `pytest -q`
+alone passes while the coverage floor and the dash check fail on push. A second
+job, `package`, also gates every PR: it builds the wheel and sdist, runs
+`twine check`, installs both into clean environments, and asserts the release
+file manifest. Changing `pyproject.toml` or a packaged document needs
+`python -m build` locally too.
 
 Do not pin exact pass counts here or in the README. Every commit that adds a test
 invalidates them, they were stale twice in a row, and a stale count is worse than
@@ -163,6 +176,30 @@ sized by CommonMark's backtick-run rule, and parsing to a second renderer's rule
 would mean giving that up. A maintainer should know where the guarantee ends rather
 than read the tests as universal. If a client that renders with `python-markdown`
 ever becomes a target, that is a redesign, not a patch.
+
+## Layout
+
+Request path: `__main__` parses and configures, `server` registers the surface,
+`tools` handles a call, `api_client` fetches, `format*` renders, `structured`
+wraps the result.
+
+- `__main__.py` - CLI entry point. stdio by default, HTTP behind a proxy.
+- `server.py` - server construction, `TOOL_ORDER`, prompt and resource
+  registration, and the per-tool parameter types.
+- `tools.py` - the handlers. Thin by rule: validate, call, render, cap.
+- `api_client.py` - the only HTTP caller. `_ALLOWED_PATHS` is the path
+  allowlist; `_check_path` raises outside the `ApiError` hierarchy on purpose.
+- `format.py` and its siblings `format_artifact`, `format_common`,
+  `format_discovery`, `format_labs`, `format_stix`, `format_system` -
+  rendering, per surface.
+- `text.py` - sanitation and bounding for untrusted corpus text.
+- `structured.py` - the `eip-mcp-result-v1` envelope, and the split of the
+  configured output ceiling between the human brief and the structured channel.
+  The ceiling value itself is in `config.py`.
+- `declared_arguments.py` - the ledger tying every declared parameter to an
+  observable effect, because the SDK drops unknown arguments.
+- `prompts.py` - the four workflow prompts and the usage-guide resource body.
+- `config.py`, `errors.py` - runtime configuration and error types.
 
 ## Documents
 
