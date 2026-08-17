@@ -16,7 +16,7 @@ It must not:
 - acquire, parse, or execute source feeds or PoC code;
 - call an LLM or expose unstored model output;
 - invent EIP scores, confidence, reliability, or exploitation claims;
-- import from any repository in the `EIPv3/` workspace.
+- import from any other Exploit Intel repository.
 
 Its only dependency on EIP is the public HTTP API contract.
 
@@ -97,9 +97,10 @@ the check was off.
 
 `:*` is the SDK's own suffix form and is a **prefix test, not a port wildcard** -
 `host.startswith(base + ":")`, so `mcp.example.test:*` accepts
-`mcp.example.test:8080.evil.com`. Never describe it as matching any port; the README
-states what it does and `tests/test_host_allowlist_matching.py` pins that against the
-SDK. Allowlist entries are lowercased and registered with and without the root dot,
+`mcp.example.test:8080.evil.com`. Never describe it as matching any port;
+`docs/self-hosting.md` states what it does and
+`tests/test_host_allowlist_matching.py` pins that against the SDK. Allowlist
+entries are lowercased and registered with and without the root dot,
 which normalises *our* list only. Do not make the SDK's `Host` comparison
 case-insensitive to close the remaining gap - a mixed-case `Host` failing closed is
 the documented behaviour, not a bug to trade a security control for.
@@ -128,8 +129,8 @@ closes that, and `tests/test_declared_arguments.py` holds the ledger tying every
 parameter to an effect test, so coverage here is a count and not an impression.
 
 ```sh
-pytest -q                                                     # no failures; skips are the live tests
-# no failures; skips must be the corpus-conditional ones only
+pytest -q                                                     # no failures; see CONTRIBUTING.md on skips
+# live run: no failures; skips must be the corpus-conditional ones only
 EIP_MCP_TEST_API_BASE_URL=<url> pytest tests/test_live.py tests/test_live_parameter_effects.py -v
 ruff check src tests
 ```
@@ -137,15 +138,16 @@ ruff check src tests
 Do not pin exact pass counts here or in the README. Every commit that adds a test
 invalidates them, they were stale twice in a row, and a stale count is worse than
 none: it teaches the next reader to ignore the line. The invariants above - zero
-failures and skips confined to the live group - are what a reader can actually
-check, and they hold across every commit.
+failures, and skips confined to the live group plus the one exception
+`CONTRIBUTING.md` names - are what a reader can actually check, and they hold
+across every commit.
 
 The zero-match code-search live check must remain a successful empty-page assertion;
 an empty result is not service degradation.
 
 ### Known limitation: injection containment is CommonMark-specific
 
-The containment tests - `tests/test_token_containment.py` and the formatter suites -
+The containment tests - the formatter suites and `tests/test_text.py` -
 parse rendered output with CommonMark (`markdown_it`), which is the norm MCP clients
 follow, and under it every corpus value is inert. **The guarantee is CommonMark's, not
 Markdown's in general.** Review found that under `python-markdown`, a different and
@@ -164,15 +166,19 @@ ever becomes a target, that is a redesign, not a patch.
 
 ## Documents
 
-`README.md` and this file describe the server as shipped and must match the code; a
-wrong claim in either is a defect, because this repository is built to be published.
-Keep caller-visible limitations in the README rather than retaining dated audit
-journals or comparison prompts that become stale as the API and tool surface evolve.
+`README.md`, `docs/user-guide.md`, `docs/self-hosting.md` and this file describe
+the server as shipped and must match the code; a wrong claim in any of them is a
+defect, because this repository is built to be published. Caller-visible
+limitations belong in the guide that owns the surface - the HTTP `Host` and
+`421` behaviour in `docs/self-hosting.md`, tool and pagination bounds in
+`docs/user-guide.md` - rather than in dated audit journals or comparison prompts
+that become stale as the API and tool surface evolve.
 
 ## Development
 
-Never commit secrets or concrete host details. `EIP_API_BASE_URL` is required at
-runtime and belongs in the environment.
+Never commit secrets or concrete host details. `EIP_API_BASE_URL` overrides the
+public default in `config.py` and belongs in the environment.
 
 Use a short-lived `agent/*` branch and a pull request for behavioral changes. Run
-`ruff check src tests` and `pytest` before publishing.
+the quality suite in `CONTRIBUTING.md` before publishing; CI runs it, plus
+wheel and sdist smoke tests.

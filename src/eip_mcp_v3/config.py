@@ -165,7 +165,8 @@ def _normalize_host_entries(entries: tuple[str, ...]) -> tuple[str, ...]:
 
     Neither widens what an attacker can reach: both forms resolve to the name the
     operator already listed. A ``Host`` header in mixed case still fails closed;
-    that requirement is documented in the README rather than papered over here.
+    that requirement is documented in ``docs/self-hosting.md`` rather than
+    papered over here.
     """
     normalized: list[str] = []
     for entry in entries:

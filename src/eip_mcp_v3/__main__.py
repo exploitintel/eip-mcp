@@ -178,9 +178,9 @@ def warn_if_not_loopback(host: str) -> None:
     """Say so on stderr - never stdout - when the bind is not loopback.
 
     Not a refusal: a container's network namespace makes ``0.0.0.0`` the correct
-    and only workable choice. But the defaults, the systemd unit and the README are
-    all loopback for a reason, and nothing else in the process signals that this
-    particular run left that behind.
+    and only workable choice. But the defaults, the systemd unit and the
+    self-hosting guide are all loopback for a reason, and nothing else in the
+    process signals that this particular run left that behind.
     """
     if _is_loopback(host):
         return
@@ -249,7 +249,7 @@ def _refuse_slash_redirects(server: Any) -> None:
     runs first, in routing. So ``POST /mcp/`` with any ``Host`` at all returned
     ``307`` with ``location: http://<that host>/mcp``: the allowlist bypassed, and
     an attacker-chosen name reflected verbatim into a redirect. ``POST /mcp``
-    correctly gives ``421``, which is the invariant the README states.
+    correctly gives ``421``, the invariant ``docs/self-hosting.md`` states.
 
     ``run()`` builds the app by calling ``self.streamable_http_app(...)``, so
     replacing that bound attribute lets the flag be cleared on the real app
