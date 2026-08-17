@@ -1,8 +1,9 @@
 # eip-mcp user guide
 
-`eip-mcp` exposes the public, read-only Exploit Intelligence Platform API to
-MCP clients. Most users should connect directly to the hosted endpoint. Install
-the Python package only for a client that requires a local stdio command.
+`eip-mcp` exposes a read-only Exploit Intelligence Platform API, the public one
+by default, to MCP clients. Most users should connect directly to the hosted
+endpoint. Install the Python package for a client that requires a local stdio
+command, or to self-host the HTTP transport.
 
 ## Connection options
 
@@ -78,7 +79,8 @@ For Streamable HTTP, follow the container example in the
 
 | Variable | Default | Purpose |
 |---|---:|---|
-| `EIP_MCP_TIMEOUT_SECONDS` | `30` | Positive, finite upstream request timeout |
+| `EIP_API_BASE_URL` | `https://exploit-intel.com` | API origin the server reads from; the `--api-base-url` flag overrides it |
+| `EIP_MCP_TIMEOUT_SECONDS` | `30` | Positive, finite per-operation upstream timeout; each upstream request is bounded in total at four times this value, and a tool may issue more than one |
 | `EIP_MCP_MAX_OUTPUT_CHARS` | `40000` | Complete serialized result ceiling; minimum `4096` |
 | `EIP_MCP_MAX_CONCURRENT_API_REQUESTS` | `8` | Per-process upstream concurrency bound from `1` to `64` |
 
@@ -92,7 +94,7 @@ HTTP-transport settings are documented separately in the
 | `get_corpus_readiness` | Corpus freshness, policy revision, checkpoint, build time, and code-search readiness |
 | `get_corpus_statistics` | Corpus totals and an optional pre-aggregated trend series |
 | `search_vulnerabilities` | Full-text vulnerability search with severity, CWE, product, package, exploitation, artifact, sort, and cursor controls |
-| `get_vulnerability` | Attributed vulnerability brief with explicitly selected bounded sections |
+| `get_vulnerability` | Attributed vulnerability brief returning a default set of bounded sections; `sections` narrows it |
 | `get_vulnerability_stix` | API-owned current STIX 2.1 bundle for one vulnerability |
 | `browse_vendors` | Source-native vendor directory |
 | `browse_products` | Source-native products for one exact vendor |
@@ -122,9 +124,13 @@ pocs  artifacts  related_artifacts  nuclei  labs  references  writeups
 affected  weaknesses  lifecycle  research
 ```
 
-Each section is independently bounded. A high `section_limit` can still cross
-the complete output ceiling, especially for metadata-rich Nuclei templates;
-the response discloses that cut and identifies the narrowing control.
+Each section is independently bounded. Without `sections`, the tool returns
+`pocs`, `nuclei`, `research`, `writeups`, `references`, `affected`,
+`weaknesses`, and `lifecycle`; passing `[]` returns the brief with no expanded
+sections. `section_limit` defaults to `10` and accepts up to `50`. A high
+`section_limit` can still cross the complete output ceiling, especially for
+metadata-rich Nuclei templates; the response discloses that cut and identifies
+the narrowing control.
 
 ### PoC groups and counts
 
@@ -145,9 +151,11 @@ artifacts.
 
 ## Pagination
 
-Collection tools return one bounded page. If `next_cursor` is present, repeat
-the tool call with that cursor and every other argument - including `limit` - kept
-unchanged. Cursors are opaque and bound to the complete query.
+Collection tools return one bounded page. `limit` defaults to `25` and accepts
+up to `100`, except `search_exploit_code`, which accepts up to `50`. If
+`next_cursor` is present, repeat the tool call with that cursor and every other
+argument - including `limit` - kept unchanged. Cursors are opaque and bound to
+the complete query.
 
 The MCP server does not automatically traverse an unbounded corpus. Assistants
 should narrow broad requests before asking for additional pages.
@@ -196,7 +204,7 @@ configuration.
 ### The API cannot be reached
 
 Run `get_corpus_readiness` to distinguish a service problem from a valid empty
-result. Connection errors identify the attempted public origin without
+result. Connection errors identify the configured API origin without
 including access tokens.
 
 ### A page cursor is rejected

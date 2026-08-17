@@ -1,7 +1,7 @@
 """Live integration tests against a real EIP API.
 
 Run with:
-    EIP_MCP_TEST_API_BASE_URL=http://127.0.0.1:13002 pytest tests/test_live.py -v
+    EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com pytest tests/test_live.py -v
 """
 
 import asyncio
@@ -1712,7 +1712,7 @@ async def test_http_still_rejects_a_mixed_case_host_header():
 
     Normalising our own entries cannot make the SDK's `==` case-insensitive, and
     loosening that matcher to fix an ergonomics complaint is not a trade this repo
-    makes. 421 is the honest outcome; the README says so.
+    makes. 421 is the honest outcome; `docs/self-hosting.md` says so.
 
     The allowlist is written in mixed case here and the accepted request is sent in
     lowercase, which is the half that *is* fixed - without entry normalisation this

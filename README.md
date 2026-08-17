@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://exploit-intel.com">
-    <img src="docs/assets/eip-hero-banner.svg" alt="Exploit Intelligence Platform" width="100%">
+    <img src="https://raw.githubusercontent.com/exploitintel/eip-mcp/main/docs/assets/eip-hero-banner.svg" alt="Exploit Intelligence Platform" width="100%">
   </a>
 </p>
 
@@ -20,9 +20,9 @@ intelligence, exploit artifacts, readable PoC source, Docker labs, discovery
 directories, STIX, and corpus statistics. Most users can connect to EIP's
 hosted MCP endpoint directly - there is no package or API key to install.
 
-`eip-mcp` is read-only. It talks only to the public EIP API, exposes no download
-tool, never executes acquired content, and never claims that an exploit works,
-is verified, reliable, effective, or safe.
+`eip-mcp` is read-only. It talks only to an EIP read API, the public one by
+default, exposes no download tool, never executes acquired content, and never
+claims that an exploit works, is verified, reliable, effective, or safe.
 
 ## Connect
 
@@ -42,11 +42,11 @@ named `EIP`. If your assistant can configure integrations for you, tell it:
 
 No local package, API key, or EIP account is required.
 
-### Optional: local stdio server
+### Optional: local Python package
 
-Use the Python package only when a client requires a local stdio command.
-Python 3.12 or newer is required. Install the isolated application with
-[`pipx`](https://pipx.pypa.io/):
+Use the Python package when a client requires a local stdio command, or when
+you are self-hosting the HTTP transport. Python 3.12 or newer is required.
+Install the isolated application with [`pipx`](https://pipx.pypa.io/):
 
 ```sh
 pipx install eip-mcp
@@ -94,7 +94,7 @@ For a stdio MCP client, use `docker` as the command:
 ```
 
 Containerized Streamable HTTP operation is covered in the
-[self-hosting guide](docs/self-hosting.md#docker).
+[self-hosting guide](https://github.com/exploitintel/eip-mcp/blob/main/docs/self-hosting.md#docker).
 
 ## What assistants can do
 
@@ -111,7 +111,7 @@ Containerized Streamable HTTP operation is covered in the
   resource
 
 The complete [tool reference](https://github.com/exploitintel/eip-mcp/blob/main/docs/user-guide.md#tool-reference)
-describes every tool, filter, section, and pagination rule.
+lists every tool and documents the section and pagination rules.
 
 ## Result contract
 

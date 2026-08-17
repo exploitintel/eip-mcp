@@ -1,6 +1,6 @@
 """Every declared parameter must demonstrably take effect. Live API required.
 
-    EIP_MCP_TEST_API_BASE_URL=http://127.0.0.1:13002 pytest tests/test_live_parameter_effects.py
+    EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com pytest tests/test_live_parameter_effects.py
 
 Why this file exists, stated plainly so it is never weakened back into a smoke
 test: a call that returns a well-formed page proves nothing about the arguments

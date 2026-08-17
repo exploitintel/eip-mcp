@@ -1,7 +1,7 @@
 # Contributing to eip-mcp
 
 Contributions must preserve the read-only API boundary and the product rules in
-[AGENTS.md](AGENTS.md).
+[AGENTS.md](https://github.com/exploitintel/eip-mcp/blob/main/AGENTS.md).
 
 ## Development setup
 
@@ -17,21 +17,30 @@ python -m pip install -e .
 Run the hermetic quality suite before opening a pull request:
 
 ```sh
+! git grep -n -I -P '[\x{2013}\x{2014}]' -- .   # CI rejects en/em dashes
 ruff check src tests
 pytest -q --cov=eip_mcp_v3 --cov-fail-under=95
 python -m build
 python -m twine check dist/*
 ```
 
+CI runs `ruff` and `pytest` on Python 3.12 and 3.14, so an interpreter-specific
+failure is invisible in a single local run. The build and `twine check` steps
+run once, on 3.12.
+
 Every skip in the default test run must be a live test waiting on
-`EIP_MCP_TEST_API_BASE_URL`; no other test is allowed to skip silently.
+`EIP_MCP_TEST_API_BASE_URL`, with one exception: the `code_search` leg of
+`test_a_rendered_verdict_is_always_attributed_to_a_model` skips because that
+surface renders no verdict for the shape under test. It runs, and enforces the
+attribution rule, the moment that surface does render one. No other test is
+allowed to skip silently.
 
 ## Live verification
 
 Live tests are opt-in, sequential, and bounded:
 
 ```sh
-EIP_MCP_TEST_API_BASE_URL=http://127.0.0.1:13002 \
+EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com \
   pytest tests/test_live.py tests/test_live_parameter_effects.py -v
 ```
 
