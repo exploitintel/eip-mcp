@@ -91,9 +91,50 @@ def _n(text: str) -> float:
     return float(text.replace(",", ""))
 
 
-def _blocks(page: str, heading: str) -> list[str]:
-    """Split a rendered page into one string per result row."""
-    parts = page.split(f"## {heading} ")
+def _truncated(page: str) -> bool:
+    return "truncated at" in page
+
+
+def _expect_parsed(page: str, blocks: list, rows: list, what: str) -> None:
+    """Every block the renderer emitted must parse.
+
+    `cap()` cuts at a character offset, so a truncated page's final block is
+    routinely half a row. Tolerate that one, and only that one: dropping rows
+    quietly is what made a parser fault read as "returned nothing".
+    """
+    allowed = 1 if _truncated(page) else 0
+    missing = len(blocks) - len(rows)
+    assert missing <= allowed, (
+        f"{missing} of {len(blocks)} {what} row(s) did not parse; the renderer "
+        "and this parser disagree"
+    )
+
+
+def _blocks(page: str, *headings: str) -> list[str]:
+    """Split a rendered page into one string per result row.
+
+    Pass every heading label the surface can emit; a page may mix them, as the
+    CWE directory does with Weakness, Category and View.
+
+    A heading this parser does not know used to surface as an empty row list,
+    which callers then reported as "returned nothing" - indistinguishable from
+    the API genuinely having no data, and wrong. If the page carries result
+    headings but none is one we asked for, either the renderer changed or this
+    parser is reading the wrong page. Say so rather than returning nothing.
+    """
+    pattern = "|".join(re.escape(h) for h in headings)
+    parts = re.split(rf"(?m)^## (?:{pattern}) ", page)
+    # `cap()` cuts at a character offset, so it can slice a heading in half. A
+    # truncated page cannot testify about the renderer's headings.
+    if len(parts) == 1 and not _truncated(page):
+        present = re.findall(r"(?m)^## (.+)$", page)
+        if present:
+            shown = [h[:80] for h in present[:3]]
+            raise AssertionError(
+                f"no '## {' / '.join(headings)} ' rows, but the page renders "
+                f"{len(present)} heading(s): {shown}. Either the renderer's "
+                "heading changed, or this parser is reading the wrong page."
+            )
     return parts[1:]
 
 
@@ -167,28 +208,50 @@ def code_rows(page: str) -> list[dict]:
     return rows
 
 
+# `inline()` escalates the code-span delimiter when the value itself contains a
+# backtick, so a fixed single backtick silently fails to match those rows.
+_SPAN = r"(`+) (.+?) \1"
+
+# Anchored to the whole role line. An unanchored `source ` ...`` search crosses
+# newlines, so a display name containing " · source " bound `source_scope` to
+# text from the heading line and produced a plausible wrong value rather than
+# no value - worse than dropping the row, because the assertion then blames the
+# API for a parser fault.
+_AUTHOR_ROLE_LINE = re.compile(
+    r"(?m)^((?:Author|Repository owner)(?: / (?:Author|Repository owner))*)"
+    r" · source (`+) (.+?) \2"
+    r" · source identity (`+) (.+?) \4\s*$"
+)
+
+
 def author_rows(page: str) -> list[dict]:
     rows = []
-    for block in re.split(r"(?m)^## ", page)[1:]:
-        match = re.match(r"` ([^`]+) ` · #(\d+)", block)
-        source = re.search(r"source ` ([^`]+) `", block)
-        external_id = re.search(r"source identity ` ([^`]+) `", block)
-        role_line = re.search(r"^(.*?) · source `", block, re.M)
+    # `_blocks` strips the heading label. Splitting on a bare "## " left
+    # "Exploit contributor " in front of the name span, so the match below
+    # found nothing and every author assertion failed as "returned nothing"
+    # while the tool was returning correct rows.
+    blocks = _blocks(page, "Exploit contributor")
+    for block in blocks:
+        match = re.match(_SPAN + r" · #(\d+)", block)
+        role_line = _AUTHOR_ROLE_LINE.search(block)
+        if not match or not role_line:
+            continue
         roles = set()
-        if role_line and "Author" in role_line.group(1):
+        labels = role_line.group(1)
+        if "Author" in labels:
             roles.add("author")
-        if role_line and "Repository owner" in role_line.group(1):
+        if "Repository owner" in labels:
             roles.add("owner")
-        if match:
-            rows.append(
-                {
-                    "name": match.group(1),
-                    "public_id": int(match.group(2)),
-                    "source_scope": source.group(1) if source else None,
-                    "external_id": external_id.group(1) if external_id else None,
-                    "roles": roles,
-                }
-            )
+        rows.append(
+            {
+                "name": match.group(2),
+                "public_id": int(match.group(3)),
+                "source_scope": role_line.group(3),
+                "external_id": role_line.group(5),
+                "roles": roles,
+            }
+        )
+    _expect_parsed(page, blocks, rows, "author")
     return rows
 
 
@@ -258,32 +321,42 @@ async def test_exploit_author_id_changes_the_result_set(tools):
         assert author["public_id"] in contributor_ids, row["artifact_id"]
 
 
+def _spans(page: str, blocks: list[str], what: str) -> list[str]:
+    """Read the leading code span of each block, loudly."""
+    values = [m.group(2) for b in blocks if (m := re.match(_SPAN, b))]
+    _expect_parsed(page, blocks, values, what)
+    return values
+
+
 def vendor_rows(page: str) -> list[str]:
-    return re.findall(r"^## Vendor ` (.+?) `\s*$", page, re.M)
+    return _spans(page, _blocks(page, "Vendor"), "vendor")
 
 
 def product_rows(page: str) -> list[tuple[str, str]]:
     blocks = _blocks(page, "Product")
     rows = []
     for block in blocks:
-        product = re.match(r"` (.+?) `", block)
-        vendor = re.search(r"^Vendor: ` (.+?) `", block, re.M)
+        product = re.match(_SPAN, block)
+        vendor = re.search(r"(?m)^Vendor: (`+) (.+?) \1\s*$", block)
         if product and vendor:
-            rows.append((vendor.group(1), product.group(1)))
+            rows.append((vendor.group(2), product.group(2)))
+    _expect_parsed(page, blocks, rows, "product")
     return rows
 
 
 def ecosystem_rows(page: str) -> list[str]:
-    return re.findall(r"^## Ecosystem ` (.+?) `\s*$", page, re.M)
+    return _spans(page, _blocks(page, "Ecosystem"), "ecosystem")
 
 
 def ecosystem_entries(page: str) -> list[tuple[str, int]]:
+    blocks = _blocks(page, "Ecosystem")
     rows = []
-    for block in _blocks(page, "Ecosystem"):
-        ecosystem = re.match(r"` (.+?) `", block)
+    for block in blocks:
+        ecosystem = re.match(_SPAN, block)
         package_count = re.search(rf"({_NUM}) packages?", block)
         if ecosystem and package_count:
-            rows.append((ecosystem.group(1), int(_n(package_count.group(1)))))
+            rows.append((ecosystem.group(2), int(_n(package_count.group(1)))))
+    _expect_parsed(page, blocks, rows, "ecosystem")
     return rows
 
 
@@ -291,15 +364,19 @@ def package_rows(page: str) -> list[tuple[str, str]]:
     blocks = _blocks(page, "Package")
     rows = []
     for block in blocks:
-        package = re.match(r"` (.+?) `", block)
-        ecosystem = re.search(r"^Ecosystem: ` (.+?) `", block, re.M)
+        package = re.match(_SPAN, block)
+        ecosystem = re.search(r"(?m)^Ecosystem: (`+) (.+?) \1\s*$", block)
         if package and ecosystem:
-            rows.append((ecosystem.group(1), package.group(1)))
+            rows.append((ecosystem.group(2), package.group(2)))
+    _expect_parsed(page, blocks, rows, "package")
     return rows
 
 
 def weakness_rows(page: str) -> list[str]:
-    return re.findall(r"^## Weakness ` (CWE-[0-9]+) `\s*$", page, re.M)
+    # browse_weaknesses has no kind filter, so a page can carry any mix of
+    # Weakness, Category and View. Matching only "Weakness" returned [] for an
+    # all-category page, which made the disjoint-page assertions pass vacuously.
+    return _spans(page, _blocks(page, "Weakness", "Category", "View"), "weakness")
 
 
 def _nonincreasing(values: list[float | str]) -> bool:
