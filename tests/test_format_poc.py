@@ -56,7 +56,7 @@ def assert_inert(out: str, *, headings: int, fences: int = 0) -> None:
     Substring assertions cannot see this: ``[x](http://evil/)`` on a trusted line
     is still a live link once the client renders it. Headings and fences are
     checked by count rather than by absence, because the formatter writes its own
- - so any extra one is the corpus talking.
+    - so any extra one is the corpus talking.
     """
     live = {token.type for token in tokens(out)} & set(FORBIDDEN_TOKEN_TYPES)
     assert not live, f"corpus value produced live {live}"
@@ -182,9 +182,16 @@ def test_the_count_rule_is_stated_once_per_page_and_only_when_a_count_rendered()
 
 def test_a_count_of_one_reads_as_one_linked_poc():
     out = format_search_page(
-        {"items": [{"identifier": "CVE-0000-0301", "poc_count": 1,
+        {
+            "items": [
+                {
+                    "identifier": "CVE-0000-0301",
+                    "poc_count": 1,
                     "catalogued_exploit_count": 1,
-                    "repository_candidate_count": 1}]}
+                    "repository_candidate_count": 1,
+                }
+            ]
+        }
     )
     assert "1 linked PoC (including 1 catalogued exploit, 1 repository PoC candidate)" in out
 
@@ -196,10 +203,16 @@ def test_parts_without_a_total_render_as_the_siblings_they_then_are():
     "including" with no number to include them in would dangle.
     """
     out = format_search_page(
-        {"items": [{"identifier": "CVE-0000-0302",
+        {
+            "items": [
+                {
+                    "identifier": "CVE-0000-0302",
                     "catalogued_exploit_count": 2,
                     "repository_candidate_count": 3,
-                    "nuclei_count": 4}]}
+                    "nuclei_count": 4,
+                }
+            ]
+        }
     )
     assert "2 catalogued exploits, 3 repository PoC candidates, 4 Nuclei templates" in out
     assert fmt.POC_PART_PREFIX not in out.split(fmt.POC_COUNT_RULE, 1)[-1]
@@ -935,11 +948,24 @@ def _hostile_pages() -> dict[str, str]:
                 "next_cursor": h,
                 "items": [
                     {
-                        "public_id": h, "artifact_id": h, "source": h, "catalog_kind": h,
-                        "language": h, "path": h, "file_type": h, "size": h, "title": h,
-                        "author": h, "owner_name": h, "url": h, "vulnerability_ids": [h],
-                        "snippet": h, "snippet_start_line": h, "snippet_end_line": h,
-                        "match_line": h, "provider": h,
+                        "public_id": h,
+                        "artifact_id": h,
+                        "source": h,
+                        "catalog_kind": h,
+                        "language": h,
+                        "path": h,
+                        "file_type": h,
+                        "size": h,
+                        "title": h,
+                        "author": h,
+                        "owner_name": h,
+                        "url": h,
+                        "vulnerability_ids": [h],
+                        "snippet": h,
+                        "snippet_start_line": h,
+                        "snippet_end_line": h,
+                        "match_line": h,
+                        "provider": h,
                     }
                 ],
             }
@@ -954,10 +980,16 @@ def _hostile_pages() -> dict[str, str]:
             {
                 key: h
                 for key in (
-                    "status", "read_model_version", "api_policy_revision",
-                    "source_checkpoint_sha256", "built_at", "database_read_only",
-                    "code_search_status", "code_search_built_at",
-                    "code_search_artifact_count", "code_search_file_count",
+                    "status",
+                    "read_model_version",
+                    "api_policy_revision",
+                    "source_checkpoint_sha256",
+                    "built_at",
+                    "database_read_only",
+                    "code_search_status",
+                    "code_search_built_at",
+                    "code_search_artifact_count",
+                    "code_search_file_count",
                 )
             }
         ),
@@ -972,11 +1004,19 @@ def _hostile_pages() -> dict[str, str]:
         ),
         "poc_detail": format_poc_detail(
             {
-                "public_id": h, "artifact_id": h, "title": h, "source": h, "author": h,
-                "owner_name": h, "url": h, "file_count": h,
+                "public_id": h,
+                "artifact_id": h,
+                "title": h,
+                "source": h,
+                "author": h,
+                "owner_name": h,
+                "url": h,
+                "file_count": h,
                 "technical_analysis": {"summary": h, "classification": h},
                 "backdoor_review": {
-                    "summary": h, "verdict": h, "findings": [{"text": h, "file": h}]
+                    "summary": h,
+                    "verdict": h,
+                    "findings": [{"text": h, "file": h}],
                 },
                 "vulnerabilities": {"total": 1, "items": [{"vulnerability_id": h, "provider": h}]},
             }
@@ -992,15 +1032,23 @@ def _hostile_pages() -> dict[str, str]:
         "poc_page": format_poc_page(
             {
                 "items": [
-                    {"public_id": h, "title": h, "source": h, "file_count": h,
-                     "vulnerability_count": h, "language": h}
+                    {
+                        "public_id": h,
+                        "title": h,
+                        "source": h,
+                        "file_count": h,
+                        "vulnerability_count": h,
+                        "language": h,
+                    }
                 ],
                 "next_cursor": h,
             }
         ),
         "search_page": format_search_page(
-            {"items": [{"identifier": h, "title": h, "cvss": {"score": h}, "poc_count": h}],
-             "next_cursor": h}
+            {
+                "items": [{"identifier": h, "title": h, "cvss": {"score": h}, "poc_count": h}],
+                "next_cursor": h,
+            }
         ),
     }
 
@@ -1130,9 +1178,7 @@ def test_readiness_warns_when_the_index_is_not_ready():
 def test_coverage_rows_are_bounded_and_the_bound_is_disclosed():
     """Per-field bounding cannot hold a page down: only per-collection bounding can."""
     coverage = [{"source": f"source-{n}", "dated": 5, "total": 9} for n in range(5_000)]
-    out = format_statistics(
-        {}, {"poc_supply": [], "poc_date_coverage": coverage}, "poc_supply"
-    )
+    out = format_statistics({}, {"poc_supply": [], "poc_date_coverage": coverage}, "poc_supply")
     rows = [line for line in out.splitlines() if line.startswith("- ")]
     assert len(rows) == 20
     assert "5,000" in out, "the true total must be stated"
@@ -1193,7 +1239,7 @@ def test_a_manifest_the_response_did_not_carry_is_not_reported_as_zero_files():
 
 
 def test_absent_association_data_is_not_reported_as_an_unlinked_artifact():
-    """"Catalogued independently of any CVE" is a corpus claim, not a default."""
+    """ "Catalogued independently of any CVE" is a corpus claim, not a default."""
     out = format_poc_detail({"artifact_id": "abc"})
     assert "catalogued independently" not in out.lower()
     assert "Not returned in this response." in out
@@ -1324,18 +1370,23 @@ def test_no_corpus_value_becomes_a_live_construct_in_statistics():
 
 
 def test_no_corpus_value_becomes_a_live_construct_in_readiness():
-    out = format_readiness({key: HOSTILE for key in (
-        "status",
-        "read_model_version",
-        "api_policy_revision",
-        "source_checkpoint_sha256",
-        "built_at",
-        "database_read_only",
-        "code_search_status",
-        "code_search_built_at",
-        "code_search_artifact_count",
-        "code_search_file_count",
-    )})
+    out = format_readiness(
+        {
+            key: HOSTILE
+            for key in (
+                "status",
+                "read_model_version",
+                "api_policy_revision",
+                "source_checkpoint_sha256",
+                "built_at",
+                "database_read_only",
+                "code_search_status",
+                "code_search_built_at",
+                "code_search_artifact_count",
+                "code_search_file_count",
+            )
+        }
+    )
     assert_inert(out, headings=2)
     assert "PWNED" in out
 
@@ -1349,8 +1400,9 @@ def test_no_corpus_value_becomes_a_live_construct_in_a_file_list():
 
 
 def test_no_corpus_value_becomes_a_live_construct_in_file_content():
-    out = format_file_content({"path": HOSTILE, "artifact_id": HOSTILE, "sha256": HOSTILE,
-                               "content": HOSTILE})
+    out = format_file_content(
+        {"path": HOSTILE, "artifact_id": HOSTILE, "sha256": HOSTILE, "content": HOSTILE}
+    )
     assert_inert(out, headings=1, fences=1)
     assert "PWNED" in out
 
@@ -1388,9 +1440,7 @@ def test_detail_renders_each_association_claim_and_pointer(poc_trojan):
 def test_association_evidence_sits_under_the_link_it_belongs_to(poc_trojan):
     lines = format_poc_detail(poc_trojan).splitlines()
     head = next(
-        i
-        for i, line in enumerate(lines)
-        if line.startswith("- ") and "CVE-2026-10702" in line
+        i for i, line in enumerate(lines) if line.startswith("- ") and "CVE-2026-10702" in line
     )
     assert lines[head + 1].startswith("  - provider ")
 
@@ -1599,6 +1649,7 @@ def test_a_maximum_cursor_made_of_backticks_survives_dynamic_delimiters():
 # here, so a tenth one cannot be the page that forgot.
 # --------------------------------------------------------------------------
 
+
 # The note is scaled to what the page renders, which is why the renderers are in two
 # lists rather than one. A page carrying corpus prose, corpus source code, findings or
 # observables puts the warning next to the data, in full. A page whose corpus values
@@ -1614,9 +1665,7 @@ def _renderer_calls_from_tools() -> set[str]:
         name
         for node in ast.walk(tree)
         if isinstance(node, ast.Call)
-        and (name := getattr(node.func, "attr", getattr(node.func, "id", ""))).startswith(
-            "format_"
-        )
+        and (name := getattr(node.func, "attr", getattr(node.func, "id", ""))).startswith("format_")
     }
 
 
@@ -1811,15 +1860,11 @@ def _info_string_escape(page: str) -> str | None:
 
 
 _FENCE_BAIT_PAGES = {
-    "poc_detail/source": lambda: format_poc_detail(
-        {"public_id": "1", "source": _FENCE_BAIT}
-    ),
+    "poc_detail/source": lambda: format_poc_detail({"public_id": "1", "source": _FENCE_BAIT}),
     "poc_detail/catalog_kind": lambda: format_poc_detail(
         {"public_id": "1", "catalog_kind": _FENCE_BAIT}
     ),
-    "poc_detail/language": lambda: format_poc_detail(
-        {"public_id": "1", "language": _FENCE_BAIT}
-    ),
+    "poc_detail/language": lambda: format_poc_detail({"public_id": "1", "language": _FENCE_BAIT}),
     "poc_page/catalog_kind": lambda: format_poc_page(
         {"items": [{"public_id": "2", "catalog_kind": _FENCE_BAIT}]}
     ),
@@ -1841,9 +1886,7 @@ def test_no_cut_offset_turns_a_code_span_into_a_fence_info_string(label):
     """
     page = _FENCE_BAIT_PAGES[label]()
     escapes = [
-        limit
-        for limit in range(40, len(page) + 80)
-        if _info_string_escape(cap(page, limit=limit))
+        limit for limit in range(40, len(page) + 80) if _info_string_escape(cap(page, limit=limit))
     ]
     assert not escapes, (
         f"{label}: corpus text reached a fence info string at {len(escapes)} "
@@ -1877,10 +1920,11 @@ def test_both_passes_limitations_survive_when_both_are_present():
         {
             "public_id": "1",
             "analysis": {
-                "backdoor_review": {"verdict": "no_backdoor_observed",
-                                    "limitations": [_REVIEW_BOUND]},
-                "technical": {"classification": "exploit",
-                              "limitations": [_TECHNICAL_BOUND]},
+                "backdoor_review": {
+                    "verdict": "no_backdoor_observed",
+                    "limitations": [_REVIEW_BOUND],
+                },
+                "technical": {"classification": "exploit", "limitations": [_TECHNICAL_BOUND]},
             },
         }
     )
@@ -1893,10 +1937,11 @@ def test_each_limitation_names_the_pass_that_stated_it():
         {
             "public_id": "1",
             "analysis": {
-                "backdoor_review": {"verdict": "no_backdoor_observed",
-                                    "limitations": [_REVIEW_BOUND]},
-                "technical": {"classification": "exploit",
-                              "limitations": [_TECHNICAL_BOUND]},
+                "backdoor_review": {
+                    "verdict": "no_backdoor_observed",
+                    "limitations": [_REVIEW_BOUND],
+                },
+                "technical": {"classification": "exploit", "limitations": [_TECHNICAL_BOUND]},
             },
         }
     )
@@ -1911,8 +1956,9 @@ def test_a_technical_only_analysis_still_states_its_limitations():
     page = fmt.format_poc_detail(
         {
             "public_id": "1",
-            "analysis": {"technical": {"classification": "exploit",
-                                       "limitations": [_TECHNICAL_BOUND]}},
+            "analysis": {
+                "technical": {"classification": "exploit", "limitations": [_TECHNICAL_BOUND]}
+            },
         }
     )
     assert _TECHNICAL_BOUND in page
@@ -1923,10 +1969,14 @@ def test_the_omitted_count_covers_both_passes():
         {
             "public_id": "1",
             "analysis": {
-                "backdoor_review": {"verdict": "no_backdoor_observed",
-                                    "limitations": [f"review bound {n}" for n in range(5)]},
-                "technical": {"classification": "exploit",
-                              "limitations": [f"technical bound {n}" for n in range(5)]},
+                "backdoor_review": {
+                    "verdict": "no_backdoor_observed",
+                    "limitations": [f"review bound {n}" for n in range(5)],
+                },
+                "technical": {
+                    "classification": "exploit",
+                    "limitations": [f"technical bound {n}" for n in range(5)],
+                },
             },
         }
     )
@@ -1980,19 +2030,26 @@ _CITED = {
                 "citations": [{"path": "mod.rb", "line_start": 8, "line_end": 12}],
             },
             "prerequisites": [
-                {"text": "target must run version < 1.11.11",
-                 "citations": [{"path": "mod.rb", "line_start": 21, "line_end": 21}]},
+                {
+                    "text": "target must run version < 1.11.11",
+                    "citations": [{"path": "mod.rb", "line_start": 21, "line_end": 21}],
+                },
             ],
             "behavior": [
-                {"text": "writes a PHP payload to /tmp",
-                 "citations": [{"path": "mod.rb", "line_start": 155, "line_end": 159}]},
+                {
+                    "text": "writes a PHP payload to /tmp",
+                    "citations": [{"path": "mod.rb", "line_start": 155, "line_end": 159}],
+                },
             ],
         },
         "backdoor_review": {
             "verdict": "no_backdoor_observed",
             "observables": [
-                {"type": "exploit_mechanism", "value": "path traversal",
-                 "citations": [{"path": "mod.rb", "line_start": 99, "line_end": 101}]},
+                {
+                    "type": "exploit_mechanism",
+                    "value": "path traversal",
+                    "citations": [{"path": "mod.rb", "line_start": 99, "line_end": 101}],
+                },
             ],
         },
     },
@@ -2016,18 +2073,30 @@ def test_every_cited_model_claim_renders_its_evidence(claim, line):
 
 def test_a_claim_without_citations_still_renders():
     page = fmt.format_poc_detail(
-        {"public_id": "1", "analysis": {"technical": {
-            "classification": "exploit",
-            "classification_reason": {"text": "uncited but stated"}}}}
+        {
+            "public_id": "1",
+            "analysis": {
+                "technical": {
+                    "classification": "exploit",
+                    "classification_reason": {"text": "uncited but stated"},
+                }
+            },
+        }
     )
     assert "uncited but stated" in page
 
 
 def test_cited_claims_are_bounded_and_disclose_the_cut():
     page = fmt.format_poc_detail(
-        {"public_id": "1", "analysis": {"technical": {
-            "classification": "exploit",
-            "behavior": [{"text": f"behaviour {n}"} for n in range(10)]}}}
+        {
+            "public_id": "1",
+            "analysis": {
+                "technical": {
+                    "classification": "exploit",
+                    "behavior": [{"text": f"behaviour {n}"} for n in range(10)],
+                }
+            },
+        }
     )
     assert "more model-stated behaviour(s) omitted" in page
 
@@ -2088,9 +2157,7 @@ def test_the_cited_claim_count_counts_what_was_actually_rendered():
 
 
 def test_the_cited_claim_count_is_right_when_there_is_a_real_cut():
-    lines = fmt._cited_claims(
-        "Model-stated behaviour", [{"text": f"claim {n}"} for n in range(9)]
-    )
+    lines = fmt._cited_claims("Model-stated behaviour", [{"text": f"claim {n}"} for n in range(9)])
     bullets = [ln for ln in lines if ln.startswith("- Model-stated")]
     assert len(bullets) == fmt._CITED_CLAIM_LIMIT
     assert f"…{9 - fmt._CITED_CLAIM_LIMIT} more" in "\n".join(lines)
@@ -2115,7 +2182,6 @@ def test_an_unfiltered_page_carries_no_language_notice():
     assert fmt.LANGUAGE_FILTER_EXCLUDES_UNRECORDED not in fmt.format_poc_page(
         {"items": [{"public_id": "1"}]}
     )
-
 
 
 # `Catalog additions` was the only trend heading naming no period, so a missing

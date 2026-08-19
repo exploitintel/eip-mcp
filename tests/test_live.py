@@ -308,10 +308,10 @@ async def test_log4shell_brief_is_bounded(tools):
     assert "CISA-ADP" in out or "provider `" in out, "the SSVC decision lost its provenance"
 
     for fragment in (
-        "# Vulnerability ` CVE-2021-44228 `",           # canonical identity
-        "CVSS ",                                       # severity
-        "EPSS: ",                                      # exploit-prediction score
-        "CWE: ",                                       # weakness classification
+        "# Vulnerability ` CVE-2021-44228 `",  # canonical identity
+        "CVSS ",  # severity
+        "EPSS: ",  # exploit-prediction score
+        "CWE: ",  # weakness classification
         "## Exploitation context",
         "- CISA KEV: listed",
         "- VulnCheck KEV: listed",
@@ -320,15 +320,15 @@ async def test_log4shell_brief_is_bounded(tools):
         # Was "- CISA SSVC:". The label hardcoded EIP's own word for whose
         # decision this is while discarding the provenance that substantiates it;
         # the decider is now named by the source record on the line instead.
-        "SSVC",                                        # source-published SSVC
+        "SSVC",  # source-published SSVC
         "exploitation=",
-        "- Counts: ",                                  # catalogued exploits/candidates/templates
+        "- Counts: ",  # catalogued exploits/candidates/templates
         "catalogued exploits",
         f"Description ({CORPUS_LABEL}):",
         "## Available detail (use `sections` to expand)",
-        "- `pocs`: ",                                  # the section index a reader pages from
-        "- `weaknesses`: ",                            # the attributed CWEs, newly reachable
-        "- `artifact_links`: ",                        # counted, not expandable
+        "- `pocs`: ",  # the section index a reader pages from
+        "- `weaknesses`: ",  # the attributed CWEs, newly reachable
+        "- `artifact_links`: ",  # counted, not expandable
         "(per-CWE attribution in the `weaknesses` section)",
         # Five counts with three different denominators, each now saying what it
         # counts rather than inviting the reader to guess at arithmetic.
@@ -503,8 +503,7 @@ async def test_withdrawn_record_is_flagged_as_withdrawn(tools):
     """
     out = await tools.get_vulnerability(WITHDRAWN)
     assert (
-        "**Status: REJECTED by its source; WITHDRAWN by its source; "
-        "excluded from search results.**"
+        "**Status: REJECTED by its source; WITHDRAWN by its source; excluded from search results.**"
     ) in out
     assert "GHSA-CHR6-386Q-4M3V" in out, "identifier should come back normalised"
 
@@ -615,9 +614,7 @@ async def test_absent_analysis_never_reads_as_a_clean_result(tools, corpus):
     assert fmt.NO_ANALYSIS in analysis
     # Nothing in that section may borrow the vocabulary of a review that ran.
     for reassurance in ("clean", "benign", "backdoor review:", "verdict"):
-        assert reassurance not in analysis.lower(), (
-            f"absent analysis rendered {reassurance!r}"
-        )
+        assert reassurance not in analysis.lower(), f"absent analysis rendered {reassurance!r}"
 
     page = await tools.search_exploits(limit=_INDEX_PAGE_SIZE, cursor=subject.page_cursor)
     block = _artifact_block(page, subject.artifact_id)
@@ -731,9 +728,7 @@ async def test_stdio_lists_every_tool_with_schemas():
         assert tool.description, f"{tool.name} advertises no description"
         assert tool.input_schema.get("type") == "object"
         assert tool.output_schema is not None
-        assert tool.output_schema["properties"]["schema_version"]["const"] == (
-            "eip-mcp-result-v1"
-        )
+        assert tool.output_schema["properties"]["schema_version"]["const"] == ("eip-mcp-result-v1")
         assert tool.annotations is not None and tool.annotations.read_only_hint is True
     # The schema the model actually receives, not the Python signature behind it.
     assert "identifier" in by_name["get_vulnerability"].input_schema["required"]
@@ -753,17 +748,16 @@ async def test_stdio_readiness_returns_the_live_checkpoint(tools):
     assert live["source_checkpoint_sha256"] in rendered
     assert live["read_model_version"] in rendered
     assert result.structured_content["kind"] == "corpus_readiness"
-    assert result.structured_content["data"]["source_checkpoint_sha256"] == (
-        live["source_checkpoint_sha256"]
+    assert (
+        result.structured_content["data"]["source_checkpoint_sha256"]
+        == (live["source_checkpoint_sha256"])
     )
     assert live["api_policy_revision"] in rendered
 
 
 async def test_stdio_code_search_returns_real_corpus_matches():
     async with mcp_session() as client:
-        result = await client.call_tool(
-            "search_exploit_code", {"query": "jndi ldap", "limit": 3}
-        )
+        result = await client.call_tool("search_exploit_code", {"query": "jndi ldap", "limit": 3})
     assert result.is_error in (False, None)
     rendered = result.content[0].text
     assert "PoC code search" in rendered
@@ -808,9 +802,7 @@ async def test_stdio_reports_a_bad_argument_without_killing_the_session():
 async def test_every_documented_section_renders(tools):
     """Every section must render against real payloads, not just the ones in fixtures."""
     for section in fmt.VULN_SECTIONS:
-        out = await tools.get_vulnerability(
-            "CVE-2021-44228", sections=[section], section_limit=3
-        )
+        out = await tools.get_vulnerability("CVE-2021-44228", sections=[section], section_limit=3)
         assert fmt._SECTION_TITLES[section] in out, f"{section} rendered no heading"
 
 
@@ -845,9 +837,7 @@ async def test_a_catalog_line_labels_a_stored_verdict_by_what_it_says(tools, cor
 
 
 @pytest.mark.parametrize("verdict", fmt.DOCUMENTED_VERDICTS)
-async def test_a_detail_page_labels_a_stored_verdict_and_names_the_model(
-    tools, corpus, verdict
-):
+async def test_a_detail_page_labels_a_stored_verdict_and_names_the_model(tools, corpus, verdict):
     """The same rule on the detail page, plus the attribution that page owes.
 
     A verdict is the model's claim and never EIP's, including - especially - an
@@ -950,9 +940,7 @@ async def test_large_file_manifest_discloses_its_own_ceiling(tools):
 
 
 @pytest.mark.parametrize(("artifact_id", "path"), (CAPPED, CAPPED_WIDE_FENCE))
-async def test_oversized_file_read_is_capped_with_the_fence_reclosed(
-    tools, artifact_id, path
-):
+async def test_oversized_file_read_is_capped_with_the_fence_reclosed(tools, artifact_id, path):
     """cap() on real data: the ceiling holds and the cut does not leak a raw fence.
 
     Every earlier live call fitted well inside the ceiling, so this backstop was
@@ -969,9 +957,7 @@ async def test_oversized_file_read_is_capped_with_the_fence_reclosed(
     # Reading one file already *is* the narrowest form of the request, so there is
     # no parameter to name: the notice points at the ceiling itself, which is the
     # one thing that can change the outcome.
-    assert out.endswith(
-        f"…[truncated at {len(out)} chars; raise EIP_MCP_MAX_OUTPUT_CHARS]"
-    )
+    assert out.endswith(f"…[truncated at {len(out)} chars; raise EIP_MCP_MAX_OUTPUT_CHARS]")
 
     body = out.rsplit("\n\n…[truncated", 1)[0]
     closing = body.rsplit("\n", 1)[-1]
@@ -1009,9 +995,7 @@ async def test_nuclei_templates_render_what_a_researcher_would_act_on(tools):
     authors, tags, impact, remediation, the CVSS vector, CWEs, a CPE, references and
     provenance - every one of which arrived and was thrown away.
     """
-    out = await tools.get_vulnerability(
-        "CVE-2021-44228", sections=["nuclei"], section_limit=10
-    )
+    out = await tools.get_vulnerability("CVE-2021-44228", sections=["nuclei"], section_limit=10)
     block = _template_block(out, NUCLEI_WITHOUT_RECON)
     for fragment in (
         "template severity ",
@@ -1034,9 +1018,7 @@ async def test_nuclei_templates_render_what_a_researcher_would_act_on(tools):
 
 async def test_nuclei_reconnaissance_renders_only_where_the_corpus_has_it(tools):
     """Most templates carry none, and an empty label says only that we looked."""
-    out = await tools.get_vulnerability(
-        "CVE-2021-44228", sections=["nuclei"], section_limit=10
-    )
+    out = await tools.get_vulnerability("CVE-2021-44228", sections=["nuclei"], section_limit=10)
     assert "  - recon: " in _template_block(out, NUCLEI_WITH_RECON)
     assert "  - recon: " not in _template_block(out, NUCLEI_WITHOUT_RECON)
 
@@ -1119,9 +1101,7 @@ async def test_search_and_detail_counts_reconcile_on_live_data(tools):
     are parts inside it. Both halves are read off live output.
     """
     # The audit's own query, so this reads against the same two rows it reported.
-    search = await tools.search_vulnerabilities(
-        query="log4j", cisa_kev=True, sort="epss", limit=2
-    )
+    search = await tools.search_vulnerabilities(query="log4j", cisa_kev=True, sort="epss", limit=2)
     detail = await tools.get_vulnerability("CVE-2021-44228", sections=[])
 
     heading = "## Vulnerability ` CVE-2021-44228 `"
@@ -1130,8 +1110,7 @@ async def test_search_and_detail_counts_reconcile_on_live_data(tools):
     collection = _collection_total(detail, "pocs")
 
     assert total == collection, (
-        f"the search page's PoC number is no longer the `pocs` total: "
-        f"{total} vs {collection}"
+        f"the search page's PoC number is no longer the `pocs` total: {total} vs {collection}"
     )
     # Parts, not siblings. Each is inside the total, and none of them may be the
     # total - the shape that let a reader add a collection to its own subset.
@@ -1429,9 +1408,7 @@ async def test_a_cursor_replayed_at_a_different_limit_is_still_refused(tools):
     """The instruction has to describe the API's real rule, so pin the rule too."""
     first = await tools.search_vulnerabilities(cisa_kev=True, limit=5)
     with pytest.raises(ApiError, match="cursor"):
-        await tools.search_vulnerabilities(
-            cisa_kev=True, limit=4, cursor=rendered_cursor(first)
-        )
+        await tools.search_vulnerabilities(cisa_kev=True, limit=4, cursor=rendered_cursor(first))
 
 
 @pytest.mark.parametrize(
@@ -1534,9 +1511,7 @@ async def http_server(*, allowed_hosts: str | None = None):
     env = {
         **os.environ,
         "EIP_API_BASE_URL": BASE_URL,
-        "EIP_MCP_ALLOWED_HOSTS": (
-            f"127.0.0.1:{port}" if allowed_hosts is None else allowed_hosts
-        ),
+        "EIP_MCP_ALLOWED_HOSTS": (f"127.0.0.1:{port}" if allowed_hosts is None else allowed_hosts),
     }
     env.pop("EIP_MCP_ALLOWED_ORIGINS", None)
     process = subprocess.Popen(
@@ -1606,8 +1581,9 @@ async def test_http_call_tool_returns_the_live_checkpoint(tools):
     assert live["source_checkpoint_sha256"] in rendered
     assert live["read_model_version"] in rendered
     assert result.structured_content["kind"] == "corpus_readiness"
-    assert result.structured_content["data"]["source_checkpoint_sha256"] == (
-        live["source_checkpoint_sha256"]
+    assert (
+        result.structured_content["data"]["source_checkpoint_sha256"]
+        == (live["source_checkpoint_sha256"])
     )
 
 
@@ -1718,6 +1694,7 @@ async def test_http_still_rejects_a_mixed_case_host_header():
     lowercase, which is the half that *is* fixed - without entry normalisation this
     allowlist would match nothing at all and the 421 below would prove nothing.
     """
+
     async def post(url: str, host: str):
         async with httpx2.AsyncClient() as http:
             return await http.post(

@@ -52,81 +52,139 @@ def _lab_kinds(item: dict) -> list[str]:
 # renderer, fixture, parser, {parsed field: how to read the same thing from the
 # payload item}. Every field named here is compared by value, in order.
 CASES: list[tuple[Callable, str, Callable, dict[str, Callable[[dict], object]]]] = [
-    (disc.format_author_page, "authors_page", live.author_rows, {
-        "name": lambda i: i["display_name"],
-        "public_id": lambda i: i["public_id"],
-        "source_scope": lambda i: i["source_scope"],
-        "external_id": lambda i: i["external_id"],
-        "roles": lambda i: set(i["roles"]),
-    }),
-    (fmt.format_poc_page, "pocs_page", live.artifact_rows, {
-        "artifact_id": lambda i: i["artifact_id"],
-        "source": lambda i: i["source"],
-        "source_date": _date,
-        "linked": lambda i: bool(i.get("vulnerability_count")),
-    }),
+    (
+        disc.format_author_page,
+        "authors_page",
+        live.author_rows,
+        {
+            "name": lambda i: i["display_name"],
+            "public_id": lambda i: i["public_id"],
+            "source_scope": lambda i: i["source_scope"],
+            "external_id": lambda i: i["external_id"],
+            "roles": lambda i: set(i["roles"]),
+        },
+    ),
+    (
+        fmt.format_poc_page,
+        "pocs_page",
+        live.artifact_rows,
+        {
+            "artifact_id": lambda i: i["artifact_id"],
+            "source": lambda i: i["source"],
+            "source_date": _date,
+            "linked": lambda i: bool(i.get("vulnerability_count")),
+        },
+    ),
     # A second poc page from a different source: within one page `source` is
     # constant, so on its own it cannot tell a correct parser from one
     # returning a literal. Its rows are dated differently too, which is what
     # keeps `source_date` from passing with a constant.
-    (fmt.format_poc_page, "pocs_metasploit_page", live.artifact_rows, {
-        "source": lambda i: i["source"],
-        "source_date": _date,
-    }),
-    (fmt.format_search_page, "search_kev", live.vuln_rows, {
-        "cve": lambda i: i["identifier"],
-        # These four are read off the facts line. Blanking code spans to defeat
-        # a forged label once blanked the values with them, which only the live
-        # sort test caught; compare them here so it fails on the pull request.
-        "epss": lambda i: i.get("epss_score"),
-        "nuclei": lambda i: float(i.get("nuclei_count") or 0),
-        "kev": lambda i: bool(i.get("cisa_kev")),
-        "ransomware": lambda i: bool(i.get("known_ransomware")),
-        # The three sort keys. `_comparable` catches an all-None column at live
-        # runtime; these catch a single unread row on the pull request.
-        "published": lambda i: _date(i),
-        "cvss": lambda i: i.get("cvss_score"),
-        "cvss_version": lambda i: i.get("cvss_version"),
-        "severity": lambda i: i.get("cvss_severity"),
-        "pocs": lambda i: float(i.get("poc_count") or 0),
-    }),
-    (fmt.format_code_search, "codesearch_jndi", live.code_rows, {
-        "path": lambda i: i["path"],
-    }),
+    (
+        fmt.format_poc_page,
+        "pocs_metasploit_page",
+        live.artifact_rows,
+        {
+            "source": lambda i: i["source"],
+            "source_date": _date,
+        },
+    ),
+    (
+        fmt.format_search_page,
+        "search_kev",
+        live.vuln_rows,
+        {
+            "cve": lambda i: i["identifier"],
+            # These four are read off the facts line. Blanking code spans to defeat
+            # a forged label once blanked the values with them, which only the live
+            # sort test caught; compare them here so it fails on the pull request.
+            "epss": lambda i: i.get("epss_score"),
+            "nuclei": lambda i: float(i.get("nuclei_count") or 0),
+            "kev": lambda i: bool(i.get("cisa_kev")),
+            "ransomware": lambda i: bool(i.get("known_ransomware")),
+            # The three sort keys. `_comparable` catches an all-None column at live
+            # runtime; these catch a single unread row on the pull request.
+            "published": lambda i: _date(i),
+            "cvss": lambda i: i.get("cvss_score"),
+            "cvss_version": lambda i: i.get("cvss_version"),
+            "severity": lambda i: i.get("cvss_severity"),
+            "pocs": lambda i: float(i.get("poc_count") or 0),
+        },
+    ),
+    (
+        fmt.format_code_search,
+        "codesearch_jndi",
+        live.code_rows,
+        {
+            "path": lambda i: i["path"],
+        },
+    ),
     # A second page, so `path` is compared against two different corpora.
-    (fmt.format_code_search, "codesearch_exploitdb_page", live.code_rows, {
-        "path": lambda i: i["path"],
-    }),
-    (labs.format_lab_page, "labs_page", live.lab_rows, {
-        "kinds": _lab_kinds,
-    }),
-    (partial(labs.format_lab_page, include_analysis=True), "labs_page", live.lab_rows, {
-        "kinds": _lab_kinds,
-        "linked": lambda i: bool(i.get("cve_ids")),
-        "analysis": lambda i: bool(i.get("analysis")),
-    }),
+    (
+        fmt.format_code_search,
+        "codesearch_exploitdb_page",
+        live.code_rows,
+        {
+            "path": lambda i: i["path"],
+        },
+    ),
+    (
+        labs.format_lab_page,
+        "labs_page",
+        live.lab_rows,
+        {
+            "kinds": _lab_kinds,
+        },
+    ),
+    (
+        partial(labs.format_lab_page, include_analysis=True),
+        "labs_page",
+        live.lab_rows,
+        {
+            "kinds": _lab_kinds,
+            "linked": lambda i: bool(i.get("cve_ids")),
+            "analysis": lambda i: bool(i.get("analysis")),
+        },
+    ),
 ]
 
 # Parsers whose rows are values, not dicts: the whole row is the compared value.
 VALUE_CASES: list[tuple[Callable, str, Callable, Callable[[dict], object]]] = [
     (disc.format_vendor_page, "vendors_page", live.vendor_rows, lambda i: i["vendor"]),
-    (disc.format_ecosystem_page, "ecosystems_page", live.ecosystem_rows,
-     lambda i: i["ecosystem"]),
-    (disc.format_weakness_page, "weaknesses_page", live.weakness_rows,
-     lambda i: i["cwe_id"]),
-    (disc.format_product_page, "products_page", live.product_rows,
-     lambda i: (i["vendor"], i["product"])),
-    (disc.format_package_page, "packages_page", live.package_rows,
-     lambda i: (i["ecosystem"], i["package_name"])),
-    (disc.format_ecosystem_page, "ecosystems_page", live.ecosystem_entries,
-     lambda i: (i["ecosystem"], i["package_count"])),
+    (disc.format_ecosystem_page, "ecosystems_page", live.ecosystem_rows, lambda i: i["ecosystem"]),
+    (disc.format_weakness_page, "weaknesses_page", live.weakness_rows, lambda i: i["cwe_id"]),
+    (
+        disc.format_product_page,
+        "products_page",
+        live.product_rows,
+        lambda i: (i["vendor"], i["product"]),
+    ),
+    (
+        disc.format_package_page,
+        "packages_page",
+        live.package_rows,
+        lambda i: (i["ecosystem"], i["package_name"]),
+    ),
+    (
+        disc.format_ecosystem_page,
+        "ecosystems_page",
+        live.ecosystem_entries,
+        lambda i: (i["ecosystem"], i["package_count"]),
+    ),
     # Second vendor and ecosystem for the same reason: each of these pages is
     # filtered to one of them, so the column is constant within a page. The
     # pair discriminates because the two constants differ.
-    (disc.format_product_page, "products_apache_page", live.product_rows,
-     lambda i: (i["vendor"], i["product"])),
-    (disc.format_package_page, "packages_pypi_page", live.package_rows,
-     lambda i: (i["ecosystem"], i["package_name"])),
+    (
+        disc.format_product_page,
+        "products_apache_page",
+        live.product_rows,
+        lambda i: (i["vendor"], i["product"]),
+    ),
+    (
+        disc.format_package_page,
+        "packages_pypi_page",
+        live.package_rows,
+        lambda i: (i["ecosystem"], i["package_name"]),
+    ),
 ]
 
 
@@ -216,6 +274,7 @@ def test_an_empty_page_parses_as_no_rows_rather_than_raising() -> None:
     ):
         assert parse(renderer({"items": [], "next_cursor": None})) == []
 
+
 # ==========================================================================
 # The guards themselves. Each of these behaviours existed with nothing
 # executing it, so a regression in the guard was invisible.
@@ -243,8 +302,10 @@ def test_a_value_containing_a_backtick_still_parses() -> None:
     No recorded payload carries a backtick, so nothing else exercises the
     escalating-delimiter handling every parser depends on.
     """
-    payload = {"items": [{"vendor": "ac`me", "product_count": 1, "vulnerability_count": 1}],
-               "next_cursor": None}
+    payload = {
+        "items": [{"vendor": "ac`me", "product_count": 1, "vulnerability_count": 1}],
+        "next_cursor": None,
+    }
     assert live.vendor_rows(disc.format_vendor_page(payload)) == ["ac`me"]
 
 
@@ -302,8 +363,11 @@ def test_a_corpus_title_cannot_forge_a_row_fact() -> None:
 
     # A record with a public id and no source: the heading is then a single
     # span, and only the "#" test keeps the id out of the source field.
-    idonly = live.artifact_rows(fmt.format_poc_page(
-        {"items": [{"public_id": 12345, "artifact_id": "A"}], "next_cursor": None}))[0]
+    idonly = live.artifact_rows(
+        fmt.format_poc_page(
+            {"items": [{"public_id": 12345, "artifact_id": "A"}], "next_cursor": None}
+        )
+    )[0]
     assert idonly["source"] is None
 
 
@@ -319,9 +383,9 @@ def test_boolean_row_facts_are_read_in_both_directions() -> None:
     linked = live.lab_rows(labs.format_lab_page({"items": [lab], "next_cursor": None}))[0]
     assert linked["linked"] is True
     unlinked_item = {**lab, "cve_ids": []}
-    unlinked = live.lab_rows(
-        labs.format_lab_page({"items": [unlinked_item], "next_cursor": None})
-    )[0]
+    unlinked = live.lab_rows(labs.format_lab_page({"items": [unlinked_item], "next_cursor": None}))[
+        0
+    ]
     assert unlinked["linked"] is False
 
     with_analysis = live.lab_rows(
@@ -363,9 +427,13 @@ def test_a_corpus_value_on_the_same_line_cannot_forge_a_labelled_fact() -> None:
     row = live.artifact_rows(fmt.format_poc_page({"items": [poc], "next_cursor": None}))[0]
     assert row["source_date"] == "2020-05-05"
 
-    vuln = {**_load("search_kev")["items"][0],
-            "cvss_severity": "EPSS ` 1 `", "epss_score": 0.11,
-            "cvss_score": 8.6, "cvss_version": "4.0"}
+    vuln = {
+        **_load("search_kev")["items"][0],
+        "cvss_severity": "EPSS ` 1 `",
+        "epss_score": 0.11,
+        "cvss_score": 8.6,
+        "cvss_version": "4.0",
+    }
     scored = live.vuln_rows(fmt.format_search_page({"items": [vuln], "next_cursor": None}))[0]
     assert scored["epss"] == 0.11
 
@@ -378,11 +446,14 @@ def test_a_corpus_identifier_cannot_forge_the_vulnerability_flags() -> None:
     # `nuclei_count` is None on purpose: with a real count the counts line
     # renders before `Title:` and a leftmost read finds the true value anyway,
     # so the clause would pass on line order rather than on the guard.
-    item = {**_load("search_kev")["items"][0],
-            "title": ("CISA KEV listed known ransomware use "
-                      "4242 Nuclei templates 77 linked PoCs"),
-            "cisa_kev": False, "known_ransomware": False,
-            "nuclei_count": None, "poc_count": None}
+    item = {
+        **_load("search_kev")["items"][0],
+        "title": ("CISA KEV listed known ransomware use 4242 Nuclei templates 77 linked PoCs"),
+        "cisa_kev": False,
+        "known_ransomware": False,
+        "nuclei_count": None,
+        "poc_count": None,
+    }
     row = live.vuln_rows(fmt.format_search_page({"items": [item], "next_cursor": None}))[0]
     assert row["kev"] is False
     assert row["ransomware"] is False
@@ -401,16 +472,18 @@ def test_a_stored_analysis_is_seen_whichever_heading_it_renders() -> None:
     """
     lab = _load("labs_page")["items"][0]
     for analysis in (
-        {"safety_reason": {"description": "risky"}},       # Model safety reasoning
-        {"lab_assessment": {"description": "a lab"}},      # Model assessment
+        {"safety_reason": {"description": "risky"}},  # Model safety reasoning
+        {"lab_assessment": {"description": "a lab"}},  # Model assessment
         {"environment_summary": {"description": "an env"}},  # Model environment summary
-        {"safety_verdict": "benign"},                      # Model-reported safety review
-        {"lab_assessment": {"classification": "x"}},       # Model-reported classification
-        {"limitations": ["a"]},                            # Model-stated limitations
+        {"safety_verdict": "benign"},  # Model-reported safety review
+        {"lab_assessment": {"classification": "x"}},  # Model-reported classification
+        {"limitations": ["a"]},  # Model-stated limitations
     ):
         page = labs.format_lab_page(
-            {"items": [{**lab, "analysis": analysis, "analysis_status": "available"}],
-             "next_cursor": None},
+            {
+                "items": [{**lab, "analysis": analysis, "analysis_status": "available"}],
+                "next_cursor": None,
+            },
             include_analysis=True,
         )
         assert live.lab_rows(page)[0]["analysis"] is True, analysis
@@ -424,25 +497,50 @@ def test_a_shortened_value_is_read_rather_than_reported_as_drift() -> None:
     """
     lab = _load("labs_page")["items"][0]
     page = labs.format_lab_page(
-        {"items": [{**lab, "anchor_kind": "compose_stack_" + "x" * 200}],
-         "next_cursor": None}
+        {"items": [{**lab, "anchor_kind": "compose_stack_" + "x" * 200}], "next_cursor": None}
     )
     assert len(live.lab_rows(page)[0]["kinds"]) == 2
 
-    author = {"public_id": 1, "display_name": "a", "source_scope": "exploitdb",
-              "external_id": "X" * 400, "roles": ["author"],
-              "poc_count": 1, "vulnerability_count": 1}
-    assert len(live.author_rows(disc.format_author_page(
-        {"items": [author], "next_cursor": None}))) == 1
+    author = {
+        "public_id": 1,
+        "display_name": "a",
+        "source_scope": "exploitdb",
+        "external_id": "X" * 400,
+        "roles": ["author"],
+        "poc_count": 1,
+        "vulnerability_count": 1,
+    }
+    assert (
+        len(live.author_rows(disc.format_author_page({"items": [author], "next_cursor": None})))
+        == 1
+    )
 
     # The `Vendor:` and `Ecosystem:` anchors carry `_CUT` too. Those lines are
     # in the product and package blocks, not the vendor directory.
-    assert live.product_rows(disc.format_product_page(
-        {"items": [{"vendor": "V" * 400, "product": "p", "vulnerability_count": 1}],
-         "next_cursor": None})) != []
-    assert live.package_rows(disc.format_package_page(
-        {"items": [{"ecosystem": "E" * 200, "package_name": "p", "vulnerability_count": 1}],
-         "next_cursor": None})) != []
+    assert (
+        live.product_rows(
+            disc.format_product_page(
+                {
+                    "items": [{"vendor": "V" * 400, "product": "p", "vulnerability_count": 1}],
+                    "next_cursor": None,
+                }
+            )
+        )
+        != []
+    )
+    assert (
+        live.package_rows(
+            disc.format_package_page(
+                {
+                    "items": [
+                        {"ecosystem": "E" * 200, "package_name": "p", "vulnerability_count": 1}
+                    ],
+                    "next_cursor": None,
+                }
+            )
+        )
+        != []
+    )
 
 
 def test_a_dropped_row_on_an_untruncated_page_is_still_reported() -> None:
@@ -461,9 +559,11 @@ def test_a_corpus_title_cannot_forge_an_absent_artifact_id() -> None:
     `artifact_id:` line renders before `Title:`. This one removes the real
     value, so only the anchor can keep the forged one out.
     """
-    item = {**_load("pocs_page")["items"][0],
-            "artifact_id": None,
-            "title": "artifact_id: ` FORGED `"}
+    item = {
+        **_load("pocs_page")["items"][0],
+        "artifact_id": None,
+        "title": "artifact_id: ` FORGED `",
+    }
     row = live.artifact_rows(fmt.format_poc_page({"items": [item], "next_cursor": None}))[0]
     assert row["artifact_id"] is None
 
@@ -475,9 +575,7 @@ def test_an_omitted_path_is_not_reported_as_renderer_drift() -> None:
     that had not happened - the mirror of the fault this module exists to stop.
     """
     item = _load("codesearch_jndi")["items"][0]
-    page = fmt.format_code_search(
-        {"items": [item, {**item, "path": None}], "next_cursor": None}
-    )
+    page = fmt.format_code_search({"items": [item, {**item, "path": None}], "next_cursor": None})
     assert [row["path"] for row in live.code_rows(page)] == [item["path"], None]
 
 
@@ -514,8 +612,12 @@ def test_a_scored_row_without_a_version_is_still_read() -> None:
     both fall quiet rather than fail: the sort skips None values, and the
     version test drops exactly the rows it is about.
     """
-    item = {**_load("search_kev")["items"][0],
-            "cvss_score": 7.5, "cvss_severity": "HIGH", "cvss_version": None}
+    item = {
+        **_load("search_kev")["items"][0],
+        "cvss_score": 7.5,
+        "cvss_severity": "HIGH",
+        "cvss_version": None,
+    }
     row = live.vuln_rows(fmt.format_search_page({"items": [item], "next_cursor": None}))[0]
     assert row["cvss"] == 7.5
     assert row["severity"] == "HIGH"
@@ -528,13 +630,18 @@ def test_a_corpus_title_cannot_forge_the_cvss_facts() -> None:
     Their siblings on the facts line were hardened by reading through
     `_unspanned`; these three rely on `(?m)^CVSS ` instead, which is untested.
     """
-    item = {**_load("search_kev")["items"][0],
-            "cvss_score": None, "cvss_severity": None, "cvss_version": None,
-            "title": "CVSS ` v9.9 ` ` 9.9 ` ` HIGH `"}
+    item = {
+        **_load("search_kev")["items"][0],
+        "cvss_score": None,
+        "cvss_severity": None,
+        "cvss_version": None,
+        "title": "CVSS ` v9.9 ` ` 9.9 ` ` HIGH `",
+    }
     row = live.vuln_rows(fmt.format_search_page({"items": [item], "next_cursor": None}))[0]
     assert row["cvss"] is None
     assert row["severity"] is None
     assert row["cvss_version"] is None
+
 
 def test_a_display_name_cannot_forge_an_author_role() -> None:
     """Roles are read from the role line's own labels, not the whole block.
@@ -542,19 +649,28 @@ def test_a_display_name_cannot_forge_an_author_role() -> None:
     A display name is attacker-authored and renders on the heading line, so a
     block-wide search would grant a role the API never returned.
     """
-    owner_named_author = {"public_id": 1, "display_name": "Author tools",
-                          "source_scope": "github", "external_id": "e",
-                          "roles": ["owner"], "poc_count": 1,
-                          "vulnerability_count": 1}
-    row = live.author_rows(disc.format_author_page(
-        {"items": [owner_named_author], "next_cursor": None}))[0]
+    owner_named_author = {
+        "public_id": 1,
+        "display_name": "Author tools",
+        "source_scope": "github",
+        "external_id": "e",
+        "roles": ["owner"],
+        "poc_count": 1,
+        "vulnerability_count": 1,
+    }
+    row = live.author_rows(
+        disc.format_author_page({"items": [owner_named_author], "next_cursor": None})
+    )[0]
     assert row["roles"] == {"owner"}
 
-    author_named_owner = {**owner_named_author,
-                          "display_name": "Repository owner tools",
-                          "roles": ["author"]}
-    row = live.author_rows(disc.format_author_page(
-        {"items": [author_named_owner], "next_cursor": None}))[0]
+    author_named_owner = {
+        **owner_named_author,
+        "display_name": "Repository owner tools",
+        "roles": ["author"],
+    }
+    row = live.author_rows(
+        disc.format_author_page({"items": [author_named_owner], "next_cursor": None})
+    )[0]
     assert row["roles"] == {"author"}
 
 
@@ -568,4 +684,3 @@ def test_a_lab_identity_span_cannot_forge_the_linked_flag() -> None:
     item = {**lab, "anchor_kind": "Linked vulnerabilities: none returned"}
     page = labs.format_lab_page({"items": [item], "next_cursor": None})
     assert live.lab_rows(page)[0]["linked"] is True
-

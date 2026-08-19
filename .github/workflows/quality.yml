@@ -40,12 +40,27 @@ jobs:
       - name: Ruff
         run: ruff check src tests
 
+      - name: Ruff format
+        run: ruff format --check src tests
+
+      - name: Mypy
+        run: |
+          set -o pipefail
+          mypy 2>&1 | tee mypy.log
+          # A stale exemption means a module was renamed or deleted but kept its
+          # entry. mypy reports that as a note and still exits 0, so fail on it:
+          # the exemption list is a debt register and may only shrink.
+          if grep -q 'unused section' mypy.log; then
+            echo "::error::A mypy exemption in pyproject.toml matches nothing. Remove it."
+            exit 1
+          fi
+
       - name: Pytest
         # Live API tests remain opt-in; CI verifies the hermetic suite and its
         # calibrated coverage floor.
         run: >-
           python -m pytest -q
-          --cov=eip_mcp_v3 --cov-report=term-missing --cov-fail-under=95
+          --cov=eip_mcp_v3 --cov-report=term-missing --cov-fail-under=96
 
   package:
     runs-on: ubuntu-latest

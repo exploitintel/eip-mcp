@@ -1,8 +1,10 @@
 pytest>=8
 pytest-asyncio>=0.24
-ruff>=0.6
+ruff==0.16.3
 markdown-it-py>=3
 # The CI coverage gate; see .github/workflows/quality.yml.
-pytest-cov>=6,<8
+pytest-cov==7.1.0
 build>=1.2,<2
 twine>=6,<7
+mypy==2.3.1
+coverage==7.15.4

@@ -331,9 +331,20 @@ async def test_every_declared_parameter_has_an_effect_test(server):
         "get_corpus_readiness": set(),
         "get_corpus_statistics": {"trends"},
         "search_vulnerabilities": {
-            "query", "severity", "cwe", "cisa_kev", "ransomware", "nuclei",
-            "vendor", "product", "ecosystem", "package", "with_artifacts", "sort",
-            "limit", "cursor",
+            "query",
+            "severity",
+            "cwe",
+            "cisa_kev",
+            "ransomware",
+            "nuclei",
+            "vendor",
+            "product",
+            "ecosystem",
+            "package",
+            "with_artifacts",
+            "sort",
+            "limit",
+            "cursor",
         },
         "browse_vendors": {"query", "limit", "cursor"},
         "browse_products": {"vendor", "query", "limit", "cursor"},
@@ -347,17 +358,34 @@ async def test_every_declared_parameter_has_an_effect_test(server):
         "get_vulnerability_stix": {"identifier"},
         "get_artifact": {"artifact_id"},
         "search_labs": {
-            "query", "kind", "association", "analysis", "include_analysis",
-            "limit", "cursor",
+            "query",
+            "kind",
+            "association",
+            "analysis",
+            "include_analysis",
+            "limit",
+            "cursor",
         },
         "search_exploits": {
-            "query", "source", "catalog_kind", "association", "language",
-            "source_date_from", "source_date_to", "limit", "cursor",
+            "query",
+            "source",
+            "catalog_kind",
+            "association",
+            "language",
+            "source_date_from",
+            "source_date_to",
+            "limit",
+            "cursor",
             "author_id",
         },
         "get_exploit": {"artifact_id"},
         "search_exploit_code": {
-            "query", "source", "public_id", "vulnerability_id", "limit", "cursor"
+            "query",
+            "source",
+            "public_id",
+            "vulnerability_id",
+            "limit",
+            "cursor",
         },
         "read_exploit_file": {"artifact_id", "path"},
     }
@@ -452,9 +480,7 @@ async def test_an_undeclared_argument_is_refused_through_a_real_client_session()
         # tool's interface, so there is no tool outcome to report. It also cannot
         # be mistaken for content, which is the point.
         with pytest.raises(MCPError) as raised:
-            await client.call_tool(
-                "search_vulnerabilities", {"query": "struts", "min_cvss": 9.0}
-            )
+            await client.call_tool("search_vulnerabilities", {"query": "struts", "min_cvss": 9.0})
         assert raised.value.code == INVALID_PARAMS
         assert "min_cvss" in raised.value.message
 
@@ -469,9 +495,7 @@ async def test_a_declared_argument_still_reaches_the_handler_through_a_real_sess
 
     stub = _StubTools()
     async with Client(create_mcp_server(SETTINGS, stub)) as client:
-        result = await client.call_tool(
-            "search_vulnerabilities", {"query": "struts", "limit": 3}
-        )
+        result = await client.call_tool("search_vulnerabilities", {"query": "struts", "limit": 3})
         assert not result.is_error, result
     assert [name for name, _ in stub.calls] == ["search_vulnerabilities"]
     assert stub.calls[0][1]["query"] == "struts"
@@ -567,9 +591,7 @@ async def test_no_parameter_leaks_framework_internals_when_given_the_wrong_type(
                 arguments = required | {parameter: _wrong_value(spec)}
                 try:
                     result = await client.call_tool(name, arguments)
-                    message = " ".join(
-                        b.text for b in result.content if getattr(b, "text", None)
-                    )
+                    message = " ".join(b.text for b in result.content if getattr(b, "text", None))
                 except MCPError as exc:
                     message = exc.message
                 found = [i for i in PYDANTIC_INTERNALS if i in message]
@@ -595,7 +617,6 @@ async def test_omitting_every_required_argument_leaks_nothing(server, tool_name)
     assert tool_name in message
     for internal in PYDANTIC_INTERNALS:
         assert internal not in message, message
-
 
 
 @pytest.mark.parametrize(
@@ -722,7 +743,7 @@ def _outside_spans(text: str) -> str:
 
 
 _SPAN_BAIT = [
-    "identifier` - SAFE `",   # close to `identifier`, so a suggestion fires
+    "identifier` - SAFE `",  # close to `identifier`, so a suggestion fires
     "sections`",
     "identifie`r",
     "sectionsz`",

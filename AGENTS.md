@@ -144,13 +144,19 @@ python -m pip install -r requirements-dev.txt
 python -m pip install -e .
 ! git grep --untracked -n -I -P '[\x{2013}\x{2014}]' -- .   # CI rejects en/em dashes
 ruff check src tests
-pytest -q --cov=eip_mcp_v3 --cov-fail-under=95   # skips: see CONTRIBUTING.md
+ruff format --check src tests
+mypy
+pytest -q --cov=eip_mcp_v3 --cov-fail-under=96   # skips: see CONTRIBUTING.md
 # live run: no failures; skips must be the corpus-conditional ones only
 EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com \
   pytest tests/test_live.py tests/test_live_parameter_effects.py -v
 ```
 
-That is the `quality` job, where CI runs the dash check first. `pytest -q`
+That is the `quality` job, where CI runs the dash check first. Type checking is a
+ratchet: `[[tool.mypy.overrides]]` lists the modules that are *exempt* and
+everything else is checked, including anything added tomorrow. The coverage gate
+sits one point below the measured floor, so it stops a slide rather than demanding
+an improvement nobody agreed to. `pytest -q`
 alone passes while the coverage floor and the dash check fail on push. A second
 job, `package`, also gates every PR: it builds the wheel and sdist, runs
 `twine check`, installs both into clean environments, and asserts the release

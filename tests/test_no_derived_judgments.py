@@ -38,6 +38,7 @@ FORMAT_MODULES = (
 def _formatter_source() -> str:
     return "\n".join(inspect.getsource(module) for module in FORMAT_MODULES)
 
+
 BANNED_SOURCE_TOKENS = (
     "github_stars",
     "exploit_rank",
@@ -105,12 +106,12 @@ def test_formatter_source_has_no_ranking_inputs():
 # fresh function name, so not one of the six legacy identifiers matched, and a
 # fresh output phrase, so not one of the nine banned phrases matched either -
 # but EIPv2's score all the same, rebuilt from the same two upstream fields.
-_SCORE_REBUILT_UNDER_A_NEW_NAME = '''
+_SCORE_REBUILT_UNDER_A_NEW_NAME = """
 def _quality(item: dict[str, Any]) -> str:
     score = 500.0 if item["verified"] else 300.0
     score += item["stars"] * 1.5
     return f"[EIP quality {score:.0f}]"
-'''
+"""
 
 
 def test_the_guard_catches_a_score_rebuilt_under_a_new_name():
@@ -128,9 +129,7 @@ def test_the_guard_catches_a_score_rebuilt_under_a_new_name():
 
 def test_formatter_never_sorts_or_scores():
     source = _formatter_source()
-    assert "sorted(" not in source, (
-        "formatter must preserve API ordering and never re-sort results"
-    )
+    assert "sorted(" not in source, "formatter must preserve API ordering and never re-sort results"
 
 
 @pytest.mark.parametrize("case", ALL_RENDERERS, ids=lambda case: case.name)
@@ -435,9 +434,11 @@ def _untraceable_numbers(out: str, payload, *, limits=()) -> list[str]:
         for taken in shown | lengths | ceilings
         if total - taken > 0
     }
-    allowed = _FIXED_PROTOCOL_NUMBERS | {str(value) for value in ints} | {
-        str(value) for value in lengths | shown | remainders
-    }
+    allowed = (
+        _FIXED_PROTOCOL_NUMBERS
+        | {str(value) for value in ints}
+        | {str(value) for value in lengths | shown | remainders}
+    )
     return sorted({number for number in _numbers_eip_wrote(out) if number not in allowed})
 
 
@@ -630,8 +631,7 @@ _GROUPED_PAYLOAD = {
     "pocs": {
         "total": len(_INTERLEAVED),
         "items": [
-            {"public_id": 1, "catalog_kind": kind, "title": marker}
-            for marker, kind in _INTERLEAVED
+            {"public_id": 1, "catalog_kind": kind, "title": marker} for marker, kind in _INTERLEAVED
         ],
     },
 }
@@ -659,9 +659,7 @@ def _group_layout(out: str) -> list:
 
 
 def _render_grouped(limit: int = len(_INTERLEAVED)) -> str:
-    return fmt.format_vulnerability(
-        _GROUPED_PAYLOAD, sections=["pocs"], section_limit=limit
-    )
+    return fmt.format_vulnerability(_GROUPED_PAYLOAD, sections=["pocs"], section_limit=limit)
 
 
 def test_the_poc_section_is_grouped_in_the_documented_sequence():
@@ -785,15 +783,24 @@ def test_rendered_point_order_is_the_payload_order():
 # sat beside a bare `backdoor review` on the same line, attributing the safety
 # claim to EIP on the two surfaces a reader sees most.
 _VERDICT_SURFACES = [
-    ("poc_page", lambda v: fmt.format_poc_page(
-        {"items": [{"public_id": "1", "analysis": {"backdoor_review": {"verdict": v}}}]}
-    )),
-    ("poc_detail", lambda v: fmt.format_poc_detail(
-        {"public_id": "1", "analysis": {"backdoor_review": {"verdict": v}}}
-    )),
-    ("code_search", lambda v: fmt.format_code_search(
-        {"items": [{"path": "a.py", "analysis": {"backdoor_review": {"verdict": v}}}]}
-    )),
+    (
+        "poc_page",
+        lambda v: fmt.format_poc_page(
+            {"items": [{"public_id": "1", "analysis": {"backdoor_review": {"verdict": v}}}]}
+        ),
+    ),
+    (
+        "poc_detail",
+        lambda v: fmt.format_poc_detail(
+            {"public_id": "1", "analysis": {"backdoor_review": {"verdict": v}}}
+        ),
+    ),
+    (
+        "code_search",
+        lambda v: fmt.format_code_search(
+            {"items": [{"path": "a.py", "analysis": {"backdoor_review": {"verdict": v}}}]}
+        ),
+    ),
 ]
 
 
@@ -824,23 +831,23 @@ _ROW_STATES = {
     # on `.get("verdict")` from a gate on the RENDERED verdict: they passed the
     # first, rendered blank, and reinstated the unflagged row this flag exists to
     # prevent. `None` and `""` cannot tell the two gates apart.
-    "whitespace_verdict": {"public_id": "1",
-                           "analysis": {"backdoor_review": {"verdict": "   "}}},
-    "zero_width_verdict": {"public_id": "1",
-                           "analysis": {"backdoor_review": {"verdict": "\u200b"}}},
-    "tab_verdict": {"public_id": "1",
-                    "analysis": {"backdoor_review": {"verdict": "\t"}}},
-    "benign": {"public_id": "1",
-               "analysis": {"backdoor_review": {"verdict": "no_backdoor_observed"}}},
-    "classified_only": {"public_id": "1",
-                        "analysis": {"technical": {"classification": "exploit"}}},
+    "whitespace_verdict": {"public_id": "1", "analysis": {"backdoor_review": {"verdict": "   "}}},
+    "zero_width_verdict": {
+        "public_id": "1",
+        "analysis": {"backdoor_review": {"verdict": "\u200b"}},
+    },
+    "tab_verdict": {"public_id": "1", "analysis": {"backdoor_review": {"verdict": "\t"}}},
+    "benign": {
+        "public_id": "1",
+        "analysis": {"backdoor_review": {"verdict": "no_backdoor_observed"}},
+    },
+    "classified_only": {"public_id": "1", "analysis": {"technical": {"classification": "exploit"}}},
 }
 
 
 @pytest.mark.parametrize(
     "state",
-    ["unanalysed", "empty_analysis", "whitespace_verdict", "zero_width_verdict",
-     "tab_verdict"],
+    ["unanalysed", "empty_analysis", "whitespace_verdict", "zero_width_verdict", "tab_verdict"],
 )
 def test_an_unanalysed_row_says_so_rather_than_staying_blank(state):
     page = fmt.format_poc_page({"items": [_ROW_STATES[state]]})
@@ -870,9 +877,7 @@ def test_the_unanalysed_flag_claims_neither_clean_nor_dirty():
 
 
 def test_an_unanalysed_and_an_analysed_row_are_distinguishable_on_one_page():
-    page = fmt.format_poc_page(
-        {"items": [_ROW_STATES["unanalysed"], _ROW_STATES["benign"]]}
-    )
+    page = fmt.format_poc_page({"items": [_ROW_STATES["unanalysed"], _ROW_STATES["benign"]]})
     flagged = [ln for ln in page.splitlines() if "[" in ln and "]" in ln]
     assert len(flagged) == 2, flagged
     assert flagged[0] != flagged[1]

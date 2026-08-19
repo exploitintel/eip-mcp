@@ -71,9 +71,7 @@ class Settings:
             raise ValueError("EIP_MCP_TIMEOUT_SECONDS must be a positive, finite number")
         max_chars = _number(source, "EIP_MCP_MAX_OUTPUT_CHARS", DEFAULT_MAX_OUTPUT_CHARS, int)
         if max_chars < MIN_MAX_OUTPUT_CHARS:
-            raise ValueError(
-                f"EIP_MCP_MAX_OUTPUT_CHARS must be at least {MIN_MAX_OUTPUT_CHARS}"
-            )
+            raise ValueError(f"EIP_MCP_MAX_OUTPUT_CHARS must be at least {MIN_MAX_OUTPUT_CHARS}")
         max_concurrent = _number(
             source,
             "EIP_MCP_MAX_CONCURRENT_API_REQUESTS",
@@ -81,9 +79,7 @@ class Settings:
             int,
         )
         if not 1 <= max_concurrent <= 64:
-            raise ValueError(
-                "EIP_MCP_MAX_CONCURRENT_API_REQUESTS must be between 1 and 64"
-            )
+            raise ValueError("EIP_MCP_MAX_CONCURRENT_API_REQUESTS must be between 1 and 64")
         return cls(
             api_base_url=base_url.rstrip("/"),
             request_timeout_seconds=timeout,
@@ -255,9 +251,7 @@ def _require_http_url(base_url: str) -> None:
         raise ValueError(f"EIP_API_BASE_URL port must be 1-65535, got {base_url!r}")
 
 
-def _number[T](
-    source: Mapping[str, str], name: str, default: T, convert: Callable[[str], T]
-) -> T:
+def _number[T](source: Mapping[str, str], name: str, default: T, convert: Callable[[str], T]) -> T:
     """Read a numeric setting, naming the variable when the value will not parse.
 
     A bare ``float()``/``int()`` raises ``could not convert string to float: 'soon'``,

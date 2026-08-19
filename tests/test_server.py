@@ -218,9 +218,7 @@ class _StubTools:
 
     def _record(self, name: str, **kwargs: object) -> RenderedText:
         self.calls.append((name, kwargs))
-        return RenderedText(
-            f"rendered:{name}", StructuredResult(kind=name, data={})
-        )
+        return RenderedText(f"rendered:{name}", StructuredResult(kind=name, data={}))
 
     async def get_corpus_readiness(self) -> str:
         return self._record("get_corpus_readiness")
@@ -651,9 +649,7 @@ async def test_every_parameter_reaches_its_handler_together(tool_name):
 
     await server.call_tool(tool_name, {**spec["required"], **spec["variants"]})
 
-    assert stub.calls == [
-        (tool_name, {**spec["observed_defaults"], **spec["variants"]})
-    ]
+    assert stub.calls == [(tool_name, {**spec["observed_defaults"], **spec["variants"]})]
 
 
 # --- Schema enums are a hint; tools.py stays the gate ---------------------------
@@ -760,10 +756,16 @@ RANGE_REJECTIONS = [
     ("search_exploits", {"limit": 101}, "limit must be between 1 and 100"),
     ("search_exploit_code", {"query": "jndi", "limit": 51}, "limit must be between 1 and 50"),
     ("search_exploit_code", {"query": "jndi", "limit": 0}, "limit must be between 1 and 50"),
-    ("get_vulnerability", {"identifier": "CVE-2021-44228", "section_limit": 0},
-     "section_limit must be between 1 and 50"),
-    ("get_vulnerability", {"identifier": "CVE-2021-44228", "section_limit": 51},
-     "section_limit must be between 1 and 50"),
+    (
+        "get_vulnerability",
+        {"identifier": "CVE-2021-44228", "section_limit": 0},
+        "section_limit must be between 1 and 50",
+    ),
+    (
+        "get_vulnerability",
+        {"identifier": "CVE-2021-44228", "section_limit": 51},
+        "section_limit must be between 1 and 50",
+    ),
     # Not a whole number: a different fact, and it gets a different sentence.
     ("search_vulnerabilities", {"limit": 2.5}, "limit must be a whole number"),
     ("search_vulnerabilities", {"limit": "abc"}, "limit must be a whole number"),
@@ -812,9 +814,7 @@ async def test_a_numeric_scalar_is_still_coerced_not_refused(tool_name, argument
 
 
 @pytest.mark.parametrize("tool_name,arguments,expected", RANGE_REJECTIONS)
-async def test_a_rejected_bound_reads_like_this_servers_own_errors(
-    tool_name, arguments, expected
-):
+async def test_a_rejected_bound_reads_like_this_servers_own_errors(tool_name, arguments, expected):
     server = create_mcp_server(SETTINGS, _StubTools())
     with pytest.raises(ToolError) as raised:
         await server.call_tool(tool_name, arguments)
@@ -908,9 +908,7 @@ async def test_the_advertised_ceiling_is_the_one_actually_enforced(tool_name, pa
         tool = next(t for t in await server.list_tools() if t.name == tool_name)
         spec = tool.input_schema["properties"][parameter]
         if "anyOf" in spec:
-            spec = next(
-                branch for branch in spec["anyOf"] if branch.get("type") == "integer"
-            )
+            spec = next(branch for branch in spec["anyOf"] if branch.get("type") == "integer")
         ceiling = spec["maximum"]
 
         await server.call_tool(tool_name, extra | {parameter: ceiling})
@@ -923,9 +921,7 @@ async def test_the_advertised_ceiling_is_the_one_actually_enforced(tool_name, pa
 
 
 @pytest.mark.parametrize("tool_name,arguments,expected", ENUM_REJECTIONS)
-async def test_a_rejected_enum_reads_like_this_servers_own_errors(
-    tool_name, arguments, expected
-):
+async def test_a_rejected_enum_reads_like_this_servers_own_errors(tool_name, arguments, expected):
     server = create_mcp_server(SETTINGS, _StubTools())
     with pytest.raises(ToolError) as raised:
         await server.call_tool(tool_name, arguments)
@@ -1208,8 +1204,29 @@ def test_discarding_a_client_outside_a_loop_closes_it_without_warning():
 # a float) and it widened (" true ", because it called .strip() and pydantic does
 # not, while the published schema says "type": "boolean").
 BOOLEAN_INPUTS = [
-    "y", "n", "t", "f", "Y", "N", "T", "F", 1.0, 0.0, " true ", "  yes",
-    "true", "false", "on", "off", 1, 0, "TRUE", "maybe", 2, None, [],
+    "y",
+    "n",
+    "t",
+    "f",
+    "Y",
+    "N",
+    "T",
+    "F",
+    1.0,
+    0.0,
+    " true ",
+    "  yes",
+    "true",
+    "false",
+    "on",
+    "off",
+    1,
+    0,
+    "TRUE",
+    "maybe",
+    2,
+    None,
+    [],
 ]
 
 

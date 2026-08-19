@@ -74,9 +74,7 @@ async def test_get_vulnerability_uppercases_identifier(log4shell):
 
 async def test_vulnerability_structured_data_honors_sections_and_limit(log4shell):
     tools = tools_for({"/api/v1/vulnerabilities/CVE-2021-44228": log4shell})
-    out = await tools.get_vulnerability(
-        "CVE-2021-44228", sections=["pocs"], section_limit=1
-    )
+    out = await tools.get_vulnerability("CVE-2021-44228", sections=["pocs"], section_limit=1)
 
     assert set(out.structured.data).isdisjoint(
         {"references", "nuclei_templates", "docker_labs", "research_resources"}
@@ -156,11 +154,11 @@ async def test_artifact_rejects_malformed_identifier_without_a_request(identifie
 
 MALFORMED_CVES = [
     "CVE-20211-44228",  # five-digit year
-    "CVE-XX-YY",        # no digits at all
-    "CVE-2021",         # year only
+    "CVE-XX-YY",  # no digits at all
+    "CVE-2021",  # year only
     "CVE-2021-44228x",  # trailing character
-    "CVE-2021-123",     # three-digit sequence
-    "CVE-",             # prefix alone
+    "CVE-2021-123",  # three-digit sequence
+    "CVE-",  # prefix alone
     "cve-2021-4422!8",  # lowercase, and not an identifier either
 ]
 
@@ -182,7 +180,7 @@ async def test_a_malformed_cve_is_a_format_error_not_a_missing_record(identifier
         "CVE-2021-44228",
         "cve-2021-44228",
         "  CVE-2021-44228  ",
-        "CVE-9999-99999",   # well-formed and absent: that is the API's answer to give
+        "CVE-9999-99999",  # well-formed and absent: that is the API's answer to give
         "CVE-2013-100000",  # five-digit sequence numbers are valid
     ],
 )
@@ -318,9 +316,7 @@ async def test_search_sends_mapped_parameters(search_kev):
 
 async def test_vendor_and_product_browse_call_their_exact_api_routes():
     vendors = {
-        "items": [
-            {"vendor": "Microsoft", "vulnerability_count": 9620, "product_count": 431}
-        ],
+        "items": [{"vendor": "Microsoft", "vulnerability_count": 9620, "product_count": 431}],
         "next_cursor": "vendor-cursor",
         "limit": 5,
     }
@@ -335,14 +331,10 @@ async def test_vendor_and_product_browse_call_their_exact_api_routes():
         "next_cursor": None,
         "limit": 5,
     }
-    tools, seen = recording_tools_for(
-        {"/api/v1/vendors": vendors, "/api/v1/products": products}
-    )
+    tools, seen = recording_tools_for({"/api/v1/vendors": vendors, "/api/v1/products": products})
 
     vendor_page = await tools.browse_vendors(query="  micro  ", limit=5)
-    product_page = await tools.browse_products(
-        vendor=" Microsoft ", query=" windows ", limit=5
-    )
+    product_page = await tools.browse_products(vendor=" Microsoft ", query=" windows ", limit=5)
 
     assert [request.url.path for request in seen] == ["/api/v1/vendors", "/api/v1/products"]
     assert seen[0].url.params["q"] == "micro"
@@ -361,9 +353,7 @@ async def test_product_browse_requires_a_vendor_before_calling_the_api():
 
 async def test_ecosystem_and_package_browse_call_their_exact_api_routes():
     ecosystems = {
-        "items": [
-            {"ecosystem": "npm", "vulnerability_count": 200, "package_count": 80}
-        ],
+        "items": [{"ecosystem": "npm", "vulnerability_count": 200, "package_count": 80}],
         "next_cursor": "ecosystem-cursor",
         "limit": 5,
     }
@@ -383,9 +373,7 @@ async def test_ecosystem_and_package_browse_call_their_exact_api_routes():
     )
 
     ecosystem_page = await tools.browse_ecosystems(query=" NPM ", limit=5)
-    package_page = await tools.browse_packages(
-        ecosystem=" npm ", query=" Exact ", limit=5
-    )
+    package_page = await tools.browse_packages(ecosystem=" npm ", query=" Exact ", limit=5)
 
     assert [request.url.path for request in seen] == [
         "/api/v1/ecosystems",
@@ -612,9 +600,7 @@ def default_tools_for(routes: dict, max_output_chars: int | None = None) -> EipT
     return EipTools(EipApiClient(settings, transport=httpx2.MockTransport(handler)), settings)
 
 
-async def test_default_ceiling_renders_a_full_page_at_the_documented_limit(
-    pocs_page, search_kev
-):
+async def test_default_ceiling_renders_a_full_page_at_the_documented_limit(pocs_page, search_kev):
     """`limit=100` is accepted, so `limit=100` must render.
 
     Against the recorded fixtures both a 100-row PoC page and a 100-row
@@ -862,9 +848,7 @@ async def test_a_cut_page_names_the_sections_it_dropped_and_the_parameter_to_cha
 
 
 async def test_a_cut_search_page_names_the_parameter_that_search_actually_takes(search_kev):
-    tools = default_tools_for(
-        {"/api/v1/vulnerabilities": search_kev}, max_output_chars=4_096
-    )
+    tools = default_tools_for({"/api/v1/vulnerabilities": search_kev}, max_output_chars=4_096)
     out = await tools.search_vulnerabilities()
     assert "…[truncated at" in out
     assert out.endswith("Lower `limit`, or narrow the query.]")
@@ -1142,11 +1126,11 @@ def test_the_default_hint_is_only_used_where_nothing_narrows_the_result():
 # `GHSA-chr6-386q` and `GHSA-zzzz-zzzz-zzzz` read the same way. Grammar measured
 # against the corpus (1,500 records, always 4-4-4, nothing outside GitHub's set).
 MALFORMED_GHSA_IDS = [
-    "GHSA-chr6-386q",             # two groups
-    "GHSA-chr6-386q-4m3v-9xxx",   # four groups
-    "GHSA-chr-386q-4m3v",         # short group
-    "GHSA-zzzz-zzzz-zzzz",        # z is not in the alphabet
-    "GHSA-0000-0000-0000",        # 0 and 1 are excluded as ambiguous
+    "GHSA-chr6-386q",  # two groups
+    "GHSA-chr6-386q-4m3v-9xxx",  # four groups
+    "GHSA-chr-386q-4m3v",  # short group
+    "GHSA-zzzz-zzzz-zzzz",  # z is not in the alphabet
+    "GHSA-0000-0000-0000",  # 0 and 1 are excluded as ambiguous
     "GHSA-llll-llll-llll",
     "GHSA-",
 ]
@@ -1245,9 +1229,7 @@ async def test_stripping_the_hash_does_not_admit_anything_new(identifier):
         ({"source_date_from": "2020-01-01"}, False),
     ],
 )
-async def test_the_handler_tells_the_page_whether_a_language_filter_was_applied(
-    kwargs, expected
-):
+async def test_the_handler_tells_the_page_whether_a_language_filter_was_applied(kwargs, expected):
     from eip_mcp_v3 import format as fmt
 
     tools = _bounded_tools()

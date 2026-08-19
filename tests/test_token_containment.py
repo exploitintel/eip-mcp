@@ -85,9 +85,7 @@ class Recorder:
         return self.tokens[-1]
 
     def tools(self) -> EipTools:
-        return EipTools(
-            EipApiClient(SETTINGS, transport=httpx2.MockTransport(self)), SETTINGS
-        )
+        return EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(self)), SETTINGS)
 
 
 def reachable_text(root: object, depth: int = 4) -> str:
@@ -191,9 +189,7 @@ async def test_token_echoed_back_in_unrendered_fields_does_not_reach_the_result(
             return httpx2.Response(200, json=payload)
         return response
 
-    tools = EipTools(
-        EipApiClient(SETTINGS, transport=httpx2.MockTransport(echoing)), SETTINGS
-    )
+    tools = EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(echoing)), SETTINGS)
     listing = await tools.read_exploit_file(ARTIFACT)
     content = await tools.read_exploit_file(ARTIFACT, path="exploit.py")
     for token in api.tokens:
@@ -221,14 +217,10 @@ async def test_token_echoed_into_a_rendered_field_is_scrubbed_from_the_result():
                 },
             )
         if request.url.path == "/api/v1/poc-file":
-            return httpx2.Response(
-                200, json={**CONTENT, "content": f"key = {api.token}\n"}
-            )
+            return httpx2.Response(200, json={**CONTENT, "content": f"key = {api.token}\n"})
         return response
 
-    tools = EipTools(
-        EipApiClient(SETTINGS, transport=httpx2.MockTransport(echoing)), SETTINGS
-    )
+    tools = EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(echoing)), SETTINGS)
     listing = await tools.read_exploit_file(ARTIFACT)
     content = await tools.read_exploit_file(ARTIFACT, path="exploit.py")
     for token in api.tokens:
@@ -259,9 +251,7 @@ async def test_token_is_sent_only_to_the_two_content_endpoints():
     tools = api.tools()
     await tools.read_exploit_file(ARTIFACT)
     await tools.read_exploit_file(ARTIFACT, path="exploit.py")
-    carried = {
-        path for path, _, body in api.requests if any(t in body for t in api.tokens)
-    }
+    carried = {path for path, _, body in api.requests if any(t in body for t in api.tokens)}
     assert carried == {"/api/v1/poc-files", "/api/v1/poc-file"}
 
 
@@ -280,9 +270,7 @@ async def test_propagated_errors_carry_no_token(endpoint, status, path):
     api = Recorder({"/api/v1/poc-files": FILES}, failure=(endpoint, status))
     with pytest.raises(ApiError) as excinfo:
         await api.tools().read_exploit_file(ARTIFACT, path=path)
-    rendered = "".join(
-        traceback.format_exception(type(excinfo.value), excinfo.value, excinfo.tb)
-    )
+    rendered = "".join(traceback.format_exception(type(excinfo.value), excinfo.value, excinfo.tb))
     for token in api.tokens:
         assert token not in str(excinfo.value)
         assert token not in repr(excinfo.value)
@@ -312,9 +300,7 @@ async def test_an_api_error_that_names_the_token_is_scrubbed_before_it_escapes(e
     with pytest.raises(ApiError) as excinfo:
         await api.tools().read_exploit_file(ARTIFACT, path=path)
     assert api.tokens, "no token was minted, so nothing was proven"
-    rendered = "".join(
-        traceback.format_exception(type(excinfo.value), excinfo.value, excinfo.tb)
-    )
+    rendered = "".join(traceback.format_exception(type(excinfo.value), excinfo.value, excinfo.tb))
     for token in api.tokens:
         assert token not in str(excinfo.value)
         assert token not in repr(excinfo.value)
@@ -335,9 +321,7 @@ async def test_transport_failure_drops_the_token_bearing_request_graph():
             raise httpx2.ConnectError("connection lost", request=request)
         return api(request)
 
-    tools = EipTools(
-        EipApiClient(SETTINGS, transport=httpx2.MockTransport(transport)), SETTINGS
-    )
+    tools = EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(transport)), SETTINGS)
     with pytest.raises(ApiUnavailable) as excinfo:
         await tools.read_exploit_file(ARTIFACT)
 
@@ -492,9 +476,7 @@ async def test_a_grant_too_short_to_scrub_is_refused_before_it_is_used(short):
 
 async def test_a_grant_at_the_scrubbable_length_is_accepted():
     """The boundary holds in the other direction: 8 characters is usable."""
-    api = Recorder(
-        {"/api/v1/poc-files": FILES}, access={"token": "tok_1234", "expires_in": 300}
-    )
+    api = Recorder({"/api/v1/poc-files": FILES}, access={"token": "tok_1234", "expires_in": 300})
     out = await api.tools().read_exploit_file(ARTIFACT)
     assert "exploit.py" in out
     assert "tok_1234" not in out

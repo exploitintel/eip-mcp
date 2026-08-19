@@ -93,6 +93,7 @@ def lab_rows(page: str) -> list[dict]:
         )
     return rows
 
+
 BASE_URL = os.environ.get("EIP_MCP_TEST_API_BASE_URL")
 
 pytestmark = pytest.mark.skipif(
@@ -199,11 +200,7 @@ def vuln_rows(page: str) -> list[dict]:
         # `_unspanned` decides whether a label is one this renderer wrote; the
         # value itself lives inside the span, so read it from the original line.
         epss_value = next(
-            (
-                value
-                for line in _row_lines(block)
-                if (value := _labelled_span(line, "EPSS"))
-            ),
+            (value for line in _row_lines(block) if (value := _labelled_span(line, "EPSS"))),
             None,
         )
         counts = "\n".join(_unspanned(line) for line in _row_lines(block))
@@ -315,11 +312,7 @@ def artifact_rows(page: str) -> list[dict]:
         # were tried and all three returned wrong values. They come back when
         # `format.py` labels them the way it labels provider, counts and date.
         date = next(
-            (
-                value
-                for line in _row_lines(block)
-                if (value := _labelled_span(line, "source date"))
-            ),
+            (value for line in _row_lines(block) if (value := _labelled_span(line, "source date"))),
             None,
         )
         rows.append(
@@ -463,15 +456,11 @@ async def test_author_public_id_returns_that_identity(tools):
 
 async def test_exploit_author_id_changes_the_result_set(tools):
     author = author_rows(await tools.browse_authors(limit=1))[0]
-    filtered = artifact_rows(
-        await tools.search_exploits(author_id=author["public_id"], limit=10)
-    )
+    filtered = artifact_rows(await tools.search_exploits(author_id=author["public_id"], limit=10))
     assert filtered
     for row in filtered:
         detail = await tools.get_exploit(row["artifact_id"])
-        contributor_ids = {
-            int(value) for value in re.findall(r"author_id #(\d+)", detail)
-        }
+        contributor_ids = {int(value) for value in re.findall(r"author_id #(\d+)", detail)}
         assert author["public_id"] in contributor_ids, row["artifact_id"]
 
 
@@ -658,9 +647,7 @@ async def test_lab_analysis_filter_and_include_analysis_take_effect(tools, analy
     rows = lab_rows(plain)
     if analysis == "available":
         assert rows
-        expanded = await tools.search_labs(
-            analysis=analysis, include_analysis=True, limit=10
-        )
+        expanded = await tools.search_labs(analysis=analysis, include_analysis=True, limit=10)
         assert expanded != plain
         assert any(row["analysis"] for row in lab_rows(expanded))
     elif analysis == "pending":
@@ -755,9 +742,7 @@ async def test_cwe_is_normalised_and_validated(tools):
 async def test_vendor_filter_matches_the_public_api_result_exactly(tools):
     directory = await tools._api.get("/api/v1/vendors", {"limit": 1})
     vendor = directory["items"][0]["vendor"]
-    expected = await tools._api.get(
-        "/api/v1/vulnerabilities", {"vendor": vendor, "limit": 5}
-    )
+    expected = await tools._api.get("/api/v1/vulnerabilities", {"vendor": vendor, "limit": 5})
     rows = vuln_rows(await tools.search_vulnerabilities(vendor=vendor, limit=5))
     assert rows, f"vendor={vendor!r} returned nothing"
     assert [row["cve"] for row in rows] == [item["identifier"] for item in expected["items"]]
@@ -766,17 +751,13 @@ async def test_vendor_filter_matches_the_public_api_result_exactly(tools):
 async def test_product_filter_matches_the_public_api_result_exactly(tools):
     vendor_page = await tools._api.get("/api/v1/vendors", {"limit": 1})
     vendor = vendor_page["items"][0]["vendor"]
-    product_page = await tools._api.get(
-        "/api/v1/products", {"vendor": vendor, "limit": 1}
-    )
+    product_page = await tools._api.get("/api/v1/products", {"vendor": vendor, "limit": 1})
     product = product_page["items"][0]["product"]
     expected = await tools._api.get(
         "/api/v1/vulnerabilities",
         {"vendor": vendor, "product": product, "limit": 5},
     )
-    rows = vuln_rows(
-        await tools.search_vulnerabilities(vendor=vendor, product=product, limit=5)
-    )
+    rows = vuln_rows(await tools.search_vulnerabilities(vendor=vendor, product=product, limit=5))
     assert rows, f"vendor={vendor!r}, product={product!r} returned nothing"
     assert [row["cve"] for row in rows] == [item["identifier"] for item in expected["items"]]
 
@@ -784,9 +765,7 @@ async def test_product_filter_matches_the_public_api_result_exactly(tools):
 async def test_ecosystem_filter_matches_the_public_api_result_exactly(tools):
     directory = await tools._api.get("/api/v1/ecosystems", {"limit": 1})
     ecosystem = directory["items"][0]["ecosystem"]
-    expected = await tools._api.get(
-        "/api/v1/vulnerabilities", {"ecosystem": ecosystem, "limit": 5}
-    )
+    expected = await tools._api.get("/api/v1/vulnerabilities", {"ecosystem": ecosystem, "limit": 5})
     rows = vuln_rows(await tools.search_vulnerabilities(ecosystem=ecosystem, limit=5))
     assert rows, f"ecosystem={ecosystem!r} returned nothing"
     assert [row["cve"] for row in rows] == [item["identifier"] for item in expected["items"]]
@@ -795,9 +774,7 @@ async def test_ecosystem_filter_matches_the_public_api_result_exactly(tools):
 async def test_package_filter_matches_the_public_api_result_exactly(tools):
     ecosystem_page = await tools._api.get("/api/v1/ecosystems", {"limit": 1})
     ecosystem = ecosystem_page["items"][0]["ecosystem"]
-    package_page = await tools._api.get(
-        "/api/v1/packages", {"ecosystem": ecosystem, "limit": 1}
-    )
+    package_page = await tools._api.get("/api/v1/packages", {"ecosystem": ecosystem, "limit": 1})
     package = package_page["items"][0]["package_name"]
     expected = await tools._api.get(
         "/api/v1/vulnerabilities",
@@ -845,9 +822,7 @@ async def test_product_vendor_query_limit_and_cursor_take_effect(tools):
     assert all(returned_vendor.casefold() == vendor.casefold() for returned_vendor, _ in rows)
 
     token = rows[0][1][: min(5, len(rows[0][1]))]
-    filtered = product_rows(
-        await tools.browse_products(vendor=vendor, query=token, limit=3)
-    )
+    filtered = product_rows(await tools.browse_products(vendor=vendor, query=token, limit=3))
     assert filtered
     assert all(token.casefold() in product.casefold() for _, product in filtered)
 
@@ -885,9 +860,7 @@ async def test_ecosystem_cursor_returns_a_disjoint_page(tools):
 
 async def test_package_ecosystem_query_limit_and_cursor_take_effect(tools):
     candidates = [
-        item
-        for item in ecosystem_entries(await tools.browse_ecosystems(limit=100))
-        if item[1] > 2
+        item for item in ecosystem_entries(await tools.browse_ecosystems(limit=100)) if item[1] > 2
     ]
     assert candidates, "corpus has no ecosystem large enough to prove package pagination"
     ecosystem = max(candidates, key=lambda item: item[1])[0]
@@ -897,17 +870,13 @@ async def test_package_ecosystem_query_limit_and_cursor_take_effect(tools):
     assert all(returned.casefold() == ecosystem.casefold() for returned, _ in rows)
 
     token = rows[0][1][: min(5, len(rows[0][1]))]
-    filtered = package_rows(
-        await tools.browse_packages(ecosystem=ecosystem, query=token, limit=3)
-    )
+    filtered = package_rows(await tools.browse_packages(ecosystem=ecosystem, query=token, limit=3))
     assert filtered
     assert all(token.casefold() in package.casefold() for _, package in filtered)
 
     cursor = _cursor(first)
     assert cursor, "package directory returned no cursor"
-    second = package_rows(
-        await tools.browse_packages(ecosystem=ecosystem, limit=2, cursor=cursor)
-    )
+    second = package_rows(await tools.browse_packages(ecosystem=ecosystem, limit=2, cursor=cursor))
     assert second, "the second page returned no rows, so disjointness proves nothing"
     assert set(rows).isdisjoint(second)
 
@@ -1341,9 +1310,7 @@ async def test_code_public_id_restricts_every_returned_hit(tools):
 
 async def test_code_vulnerability_id_restricts_every_returned_hit(tools):
     vulnerability_id = "CVE-2024-7120"
-    detail = await tools.get_vulnerability(
-        vulnerability_id, sections=["pocs"], section_limit=50
-    )
+    detail = await tools.get_vulnerability(vulnerability_id, sections=["pocs"], section_limit=50)
     pocs = detail.structured.data["pocs"]
     assert pocs["truncated"] is False and pocs["total"] == len(pocs["items"])
     authoritative_ids = {item["public_id"] for item in pocs["items"]}
@@ -1370,8 +1337,7 @@ async def test_code_vulnerability_id_restricts_every_returned_hit(tools):
         query="http", vulnerability_id=vulnerability_id, limit=1, cursor=cursor
     )
     assert all(
-        row["public_id"] in authoritative_ids
-        for row in second.structured.data.get("items", [])
+        row["public_id"] in authoritative_ids for row in second.structured.data.get("items", [])
     )
     with pytest.raises(Exception, match="cursor"):
         await tools.search_exploit_code(

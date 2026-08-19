@@ -84,8 +84,9 @@ def test_code_search_snippet_carrying_a_fence_cannot_escape_it(codesearch_jndi):
     """The recorded README snippet contains its own ``` run."""
     assert any("```" in item["snippet"] for item in codesearch_jndi["items"])
     out = format_code_search(codesearch_jndi)
-    assert_inert(out, headings=1 + len(codesearch_jndi["items"]),
-                 fences=len(codesearch_jndi["items"]))
+    assert_inert(
+        out, headings=1 + len(codesearch_jndi["items"]), fences=len(codesearch_jndi["items"])
+    )
 
 
 def test_no_corpus_value_becomes_a_live_construct_in_code_search():

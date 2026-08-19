@@ -135,9 +135,9 @@ async def test_the_endpoint_named_in_an_error_is_bounded():
     long_url = "http://" + "h" * 4000 + ".test"
     client = EipApiClient(
         Settings(api_base_url=long_url),
-        transport=httpx2.MockTransport(lambda request: (_ for _ in ()).throw(
-            httpx2.ConnectError("refused")
-        )),
+        transport=httpx2.MockTransport(
+            lambda request: (_ for _ in ()).throw(httpx2.ConnectError("refused"))
+        ),
     )
     with pytest.raises(ApiUnavailable) as raised:
         await client.get("/api/v1/statistics")
@@ -156,9 +156,7 @@ async def test_403_raises_api_error_with_detail():
 
 async def test_409_raises_api_error_with_detail():
     client = client_for(
-        lambda request: httpx2.Response(
-            409, json={"detail": "PoC content integrity check failed"}
-        )
+        lambda request: httpx2.Response(409, json={"detail": "PoC content integrity check failed"})
     )
     with pytest.raises(ApiError, match="PoC content integrity check failed"):
         await client.post("/api/v1/poc-code-search", {"q": "x"})
@@ -527,9 +525,7 @@ async def test_client_bounds_parallel_api_fanout():
         active -= 1
         return httpx2.Response(200, json={"ok": True})
 
-    settings = Settings(
-        api_base_url="http://api.test", max_concurrent_api_requests=2
-    )
+    settings = Settings(api_base_url="http://api.test", max_concurrent_api_requests=2)
     client = EipApiClient(settings, transport=httpx2.MockTransport(handler))
     try:
         async with anyio.create_task_group() as tasks:
@@ -584,8 +580,7 @@ async def test_queued_request_shares_the_whole_call_deadline():
         await client.aclose()
 
     assert peak == 1, (
-        f"the queued call bypassed the one-request capacity limit: peak={peak}, "
-        f"errors={errors}"
+        f"the queued call bypassed the one-request capacity limit: peak={peak}, errors={errors}"
     )
     assert len(errors) == 2, f"expected both calls to time out, got {errors}"
     assert all("did not complete in time" in error for error in errors)
@@ -616,8 +611,14 @@ def test_a_path_carrying_a_control_character_is_refused_at_the_boundary(path):
 
 @pytest.mark.parametrize(
     "path",
-    ["/api/v1/pocs", "/api/v1/vulnerabilities/CVE-2021-44228", "/health/ready",
-     "/api/v1/poc-code-search", "/api/v1/authors", "/api/v1/authors/123"],
+    [
+        "/api/v1/pocs",
+        "/api/v1/vulnerabilities/CVE-2021-44228",
+        "/health/ready",
+        "/api/v1/poc-code-search",
+        "/api/v1/authors",
+        "/api/v1/authors/123",
+    ],
 )
 def test_an_ordinary_path_is_still_allowed(path):
     from eip_mcp_v3.api_client import _check_path

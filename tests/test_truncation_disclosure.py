@@ -24,6 +24,7 @@ from eip_mcp_v3 import format_system as system_fmt
 
 _REFERENCES = partial(fmt.format_vulnerability, sections=["references"], section_limit=3)
 
+
 # Marker text long enough that a partial render cannot accidentally match, short
 # enough that no per-field ceiling truncates it.
 def _markers(count: int) -> list[str]:
@@ -124,9 +125,7 @@ def _files(count: int) -> dict:
 
 
 def _series(count: int) -> dict:
-    return {
-        "catalog_additions": [{"label": marker, "points": []} for marker in _markers(count)]
-    }
+    return {"catalog_additions": [{"label": marker, "points": []} for marker in _markers(count)]}
 
 
 def _coverage(count: int) -> dict:
@@ -256,7 +255,7 @@ def test_the_last_item_before_the_ceiling_still_renders(
 def test_a_collection_exactly_at_its_ceiling_discloses_nothing(
     name, ceiling, build, renderer, disclosure, last
 ):
-    """"…and 1 more" on a complete list is a fabricated omission."""
+    """ "…and 1 more" on a complete list is a fabricated omission."""
     out = renderer(build(ceiling))
     assert disclosure not in out, f"{name}: claimed an omission that did not happen"
 
@@ -373,8 +372,11 @@ def test_the_omission_notice_names_no_tool_that_cannot_answer():
     CVEs linked to one artifact. Naming it was advice a reader cannot act on."""
     page = "\n".join(
         fmt._linked_vulnerability_lines(
-            {"total": 934, "truncated": True,
-             "items": [{"identifier": f"CVE-2021-{n:05d}"} for n in range(100)]}
+            {
+                "total": 934,
+                "truncated": True,
+                "items": [{"identifier": f"CVE-2021-{n:05d}"} for n in range(100)],
+            }
         )
     )
     assert "924 more omitted" in page
@@ -458,9 +460,7 @@ def test_an_omitted_manifest_tail_says_it_cannot_be_paged():
 
 
 def test_a_complete_manifest_carries_no_such_warning():
-    page = system_fmt.format_file_list(
-        {"artifact_id": "a", "items": [{"path": "f.py", "size": 1}]}
-    )
+    page = system_fmt.format_file_list({"artifact_id": "a", "items": [{"path": "f.py", "size": 1}]})
     assert "omitted" not in page
     assert system_fmt.MANIFEST_UNREACHABLE not in page
 
@@ -490,8 +490,7 @@ def test_a_routed_section_keeps_its_pointer_when_the_response_withheld_items():
     assert "30 more omitted" in page
     assert fmt._SECTION_WITHHELD_ONLY in page
     assert "search_exploits" in page, (
-        "the one actionable route was dropped exactly where the section is most "
-        "incomplete"
+        "the one actionable route was dropped exactly where the section is most incomplete"
     )
 
 
