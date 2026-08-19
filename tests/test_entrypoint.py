@@ -70,7 +70,7 @@ def test_configuration_error_writes_nothing_to_stdout_and_no_traceback(capsys, m
     captured = capsys.readouterr()
     assert captured.out == ""
     assert "Traceback" not in captured.err
-    assert "File \"" not in captured.err
+    assert 'File "' not in captured.err
 
 
 def test_main_runs_the_stdio_transport(monkeypatch):
@@ -187,12 +187,8 @@ def test_stdio_starts_without_any_http_settings(recorded_run, monkeypatch):
     assert recorded_run["transport"] == "stdio"
 
 
-def test_http_transport_is_run_stateless_on_the_requested_socket(
-    recorded_run, allowlisted
-):
-    assert (
-        main(["--transport", "streamable-http", "--host", "127.0.0.1", "--port", "13003"]) == 0
-    )
+def test_http_transport_is_run_stateless_on_the_requested_socket(recorded_run, allowlisted):
+    assert main(["--transport", "streamable-http", "--host", "127.0.0.1", "--port", "13003"]) == 0
     assert recorded_run["transport"] == "streamable-http"
     kwargs = recorded_run["kwargs"]
     assert kwargs["host"] == "127.0.0.1"
@@ -409,6 +405,7 @@ def test_http_refuses_a_bare_wildcard_allowlist(recorded_run, capsys, monkeypatc
 def test_a_port_outside_the_valid_range_is_a_configuration_error(monkeypatch, capsys, port):
     monkeypatch.setenv("EIP_API_BASE_URL", "http://api.test")
     monkeypatch.setenv("EIP_MCP_ALLOWED_HOSTS", "mcp.example.test")
+
     # If the `--port` guard regresses, `--port 0` binds an EPHEMERAL socket and
     # serves forever, so this hung instead of failing - a regression hiding behind
     # CI's own timeout rather than showing up as a red test. Serving is made
@@ -499,7 +496,6 @@ def test_the_shim_is_applied_on_the_http_path_only(monkeypatch, capsys):
     monkeypatch.setattr("mcp.server.MCPServer.run", lambda self, **kw: None)
     assert main([]) == 0
     assert calls == [], "the slash shim ran under stdio, where there is no app"
-
 
 
 def test_main_wires_the_slash_redirect_fix_on_the_http_transport(monkeypatch):

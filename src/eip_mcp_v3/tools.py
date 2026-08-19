@@ -48,7 +48,7 @@ _PAGE_LIMIT_HINT = "Lower `limit`, or narrow the query."
 # passes. Everything else - readiness, one artifact, one file, the default brief -
 # has no such parameter and falls back to `DEFAULT_CAP_HINT`, which says so rather
 # than naming a knob that does not exist.
-_TRENDS_HINT = "Ask for one `trends` series, or `trends=\"none\"`."
+_TRENDS_HINT = 'Ask for one `trends` series, or `trends="none"`.'
 _FILE_PATH_HINT = "Pass `path` to read one file instead of the whole manifest."
 
 IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:+-]{1,255}$")
@@ -164,13 +164,11 @@ def _normalize_code_search_vulnerability_scope(identifier: str | None) -> str:
         "vulnerability_id must contain between 1 and 512 characters",
     )
     _require(
-        not any(
-            unicodedata.category(character) in {"Cc", "Cf"}
-            for character in normalized
-        ),
+        not any(unicodedata.category(character) in {"Cc", "Cf"} for character in normalized),
         "vulnerability_id contains invalid control characters",
     )
     return normalized
+
 
 SEVERITIES = ("CRITICAL", "HIGH", "MEDIUM", "LOW", "NONE")
 SORTS = ("published", "cvss", "epss")
@@ -296,9 +294,7 @@ class EipTools:
 
     async def get_corpus_readiness(self) -> RenderedText:
         data = await self._api.get("/health/ready")
-        return self._cap(
-            format_readiness(data), kind="corpus_readiness", payload=data
-        )
+        return self._cap(format_readiness(data), kind="corpus_readiness", payload=data)
 
     async def get_corpus_statistics(self, trends: str = "none") -> RenderedText:
         _require(trends in TREND_SERIES, f"trends must be one of: {', '.join(TREND_SERIES)}")
@@ -328,8 +324,7 @@ class EipTools:
             shown_unknown += f", and {len(unknown) - _REJECTED_SECTION_LIMIT} more"
         _require(
             not unknown,
-            f"sections must be among: {', '.join(fmt.VULN_SECTIONS)}; "
-            f"got: {shown_unknown}",
+            f"sections must be among: {', '.join(fmt.VULN_SECTIONS)}; got: {shown_unknown}",
         )
         _require(
             1 <= section_limit <= fmt.SECTION_LIMIT_MAX,
@@ -360,9 +355,7 @@ class EipTools:
     async def get_vulnerability_stix(self, identifier: str) -> RenderedText:
         normalized = _normalize_vulnerability_identifier(identifier)
         data = await self._api.get(f"/api/v1/vulnerabilities/{normalized}/stix")
-        return self._cap(
-            format_stix_bundle(data), kind="stix_bundle", payload=data
-        )
+        return self._cap(format_stix_bundle(data), kind="stix_bundle", payload=data)
 
     async def get_artifact(self, artifact_id: str) -> RenderedText:
         identifier = _normalize_artifact_id(artifact_id)
@@ -590,9 +583,7 @@ class EipTools:
             raise ValueError("cwe_id must look like CWE-79")
         normalized = f"CWE-{matched.group(1).lstrip('0') or '0'}"
         data = await self._api.get(f"/api/v1/weaknesses/{normalized}")
-        return self._cap(
-            format_weakness(data), kind="weakness", payload=data
-        )
+        return self._cap(format_weakness(data), kind="weakness", payload=data)
 
     async def browse_authors(
         self,
@@ -724,9 +715,7 @@ class EipTools:
         if public_id is not None:
             body["public_id"] = public_id
         if vulnerability_id is not None:
-            body["vulnerability_id"] = _normalize_code_search_vulnerability_scope(
-                vulnerability_id
-            )
+            body["vulnerability_id"] = _normalize_code_search_vulnerability_scope(vulnerability_id)
         if (clean_cursor := _clean_cursor(cursor)) is not None:
             body["cursor"] = clean_cursor
         data = await self._api.post("/api/v1/poc-code-search", body)
@@ -745,9 +734,7 @@ class EipTools:
         )
         _require(_is_artifact_id(identifier), MALFORMED_ARTIFACT_ID)
         data = await self._api.get(f"/api/v1/pocs/{identifier}")
-        return self._cap(
-            fmt.format_poc_detail(data), kind="exploit", payload=data
-        )
+        return self._cap(fmt.format_poc_detail(data), kind="exploit", payload=data)
 
     async def _issue_token(self, artifact_id: str) -> str:
         """Mint a short-lived, artifact-bound access token.
@@ -838,9 +825,7 @@ class EipTools:
         # gone. Callers still receive the same ApiError subtype and scrubbed message.
         raise error_type(scrubbed) from None
 
-    async def read_exploit_file(
-        self, artifact_id: str, path: str | None = None
-    ) -> RenderedText:
+    async def read_exploit_file(self, artifact_id: str, path: str | None = None) -> RenderedText:
         identifier = _normalize_artifact_id(artifact_id)
         _require(
             bool(ARTIFACT_ID_RE.fullmatch(identifier)) and len(identifier) <= 512,
@@ -855,9 +840,7 @@ class EipTools:
             # tells a model to retry with something it already sent.
             _require(len(cleaned) <= 4096, "path must be at most 4096 characters")
             _require(
-                ".." not in cleaned
-                and not cleaned.startswith("/")
-                and "\x00" not in cleaned,
+                ".." not in cleaned and not cleaned.startswith("/") and "\x00" not in cleaned,
                 "path must be a relative artifact path with no traversal segments",
             )
             path = cleaned
@@ -870,9 +853,7 @@ class EipTools:
                 kind="exploit_file_list",
                 payload=listing,
             )
-        content = await self._post_for_artifact(
-            "/api/v1/poc-file", identifier, {"path": path}
-        )
+        content = await self._post_for_artifact("/api/v1/poc-file", identifier, {"path": path})
         return self._cap(
             format_file_content(content),
             kind="exploit_file",

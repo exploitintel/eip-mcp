@@ -56,9 +56,7 @@ def _analysis(lines: list[str], analysis: Any) -> None:
     safety_reason = analysis.get("safety_reason")
     if isinstance(safety_reason, dict) and safety_reason.get("description"):
         lines.extend(
-            untrusted_block(
-                "Model safety reasoning", safety_reason["description"], max_len=1000
-            )
+            untrusted_block("Model safety reasoning", safety_reason["description"], max_len=1000)
         )
         _evidence(lines, safety_reason)
     if isinstance(assessment, dict):
@@ -151,8 +149,7 @@ def format_lab_page(data: dict[str, Any], *, include_analysis: bool = False) -> 
         raw_status = item.get("analysis_status")
         status = inline(raw_status, max_len=32) or "`unknown`"
         analysis_available = (
-            isinstance(raw_status, str)
-            and raw_status.strip().casefold() == "available"
+            isinstance(raw_status, str) and raw_status.strip().casefold() == "available"
         )
         model = inline(item.get("analysis_model"), max_len=120)
         lines.append(f"Stored analysis: {status}" + (f" · model {model}" if model else ""))

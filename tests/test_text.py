@@ -1047,9 +1047,7 @@ def live_tokens(markdown: str) -> set[str]:
         if token.type != "heading_open":
             found.add(token.type)
             continue
-        heading = next(
-            (t.content.strip() for t in flat[index + 1 :] if t.type == "inline"), ""
-        )
+        heading = next((t.content.strip() for t in flat[index + 1 :] if t.type == "inline"), "")
         if not any(name.startswith(heading) for name in EIP_HEADINGS):
             found.add("heading_open")
     return found

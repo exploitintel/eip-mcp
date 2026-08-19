@@ -38,10 +38,7 @@ def test_generic_artifact_bounds_and_discloses_linked_vulnerabilities():
             "artifact_id": "11111111-1111-5111-8111-111111111111",
             "vulnerabilities": {
                 "total": 55,
-                "items": [
-                    {"identifier": f"CVE-2026-{10_000 + index}"}
-                    for index in range(55)
-                ],
+                "items": [{"identifier": f"CVE-2026-{10_000 + index}"} for index in range(55)],
             },
         }
     )
@@ -255,8 +252,8 @@ def test_stix_formatter_returns_the_api_bundle_without_remapping():
     rendered = format_stix_bundle(bundle)
     assert "eip-stix-v1" in rendered
     assert "untrusted third-party data" in rendered
-    assert '\"name\":\"CVE-2021-44228\"' in rendered
-    assert '\"type\":\"vulnerability\"' in rendered
+    assert '"name":"CVE-2021-44228"' in rendered
+    assert '"type":"vulnerability"' in rendered
 
 
 def test_stix_markdown_json_preserves_unicode_values_through_sanitization():

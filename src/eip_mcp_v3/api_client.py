@@ -82,9 +82,7 @@ _ALLOWED_PATHS = tuple(
 # framework exception. Unreachable today because the identifier regexes gate every
 # caller-supplied segment, but this function is documented as *the* boundary and a
 # boundary that depends on its callers being careful is not one.
-_SUSPICIOUS_PATH = re.compile(
-    r"[?#]|(^|/)\.\.?(/|$)|%2f|%2e|[\x00-\x1f\x7f]|\s", re.IGNORECASE
-)
+_SUSPICIOUS_PATH = re.compile(r"[?#]|(^|/)\.\.?(/|$)|%2f|%2e|[\x00-\x1f\x7f]|\s", re.IGNORECASE)
 
 
 def _detail(payload: Any) -> str:
@@ -112,9 +110,7 @@ def _detail(payload: Any) -> str:
         # thing the docstring above says this function exists to prevent - so it
         # is flattened to its own key/value pairs instead.
         if isinstance(detail, dict):
-            return _clip(
-                "; ".join(f"{key}: {value}" for key, value in detail.items())
-            )
+            return _clip("; ".join(f"{key}: {value}" for key, value in detail.items()))
         return _clip(str(detail))
     parts = []
     for entry in detail:
@@ -269,9 +265,7 @@ class EipApiClient:
         except httpx2.TimeoutException as exc:
             raise ApiUnavailable(f"EIP API timed out at {self._target}: {_reason(exc)}") from exc
         except httpx2.HTTPError as exc:
-            raise ApiUnavailable(
-                f"EIP API unreachable at {self._target}: {_reason(exc)}"
-            ) from exc
+            raise ApiUnavailable(f"EIP API unreachable at {self._target}: {_reason(exc)}") from exc
         return self._parse(status_code, body)
 
     async def _bounded_body(self, response: httpx2.Response) -> bytes:
@@ -309,9 +303,7 @@ class EipApiClient:
             try:
                 payload = json.loads(body)
             except ValueError as exc:
-                raise ApiUnavailable(
-                    "EIP API returned a non-JSON body on a 200 response"
-                ) from exc
+                raise ApiUnavailable("EIP API returned a non-JSON body on a 200 response") from exc
             # A JSON array or scalar would satisfy `response.json()` but not the
             # annotation, and every downstream formatter calls .get() on this. An
             # AttributeError there is outside the ApiError hierarchy handlers catch,

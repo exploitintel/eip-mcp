@@ -53,9 +53,7 @@ def test_from_env_rejects_low_max_output_chars():
 
 def test_from_env_accepts_cursor_safe_output_floor_and_rejects_one_less():
     base = {"EIP_API_BASE_URL": "http://127.0.0.1:13002"}
-    assert Settings.from_env(
-        {**base, "EIP_MCP_MAX_OUTPUT_CHARS": "4096"}
-    ).max_output_chars == 4096
+    assert Settings.from_env({**base, "EIP_MCP_MAX_OUTPUT_CHARS": "4096"}).max_output_chars == 4096
     with pytest.raises(ValueError, match="at least 4096"):
         Settings.from_env({**base, "EIP_MCP_MAX_OUTPUT_CHARS": "4095"})
 
@@ -113,9 +111,12 @@ def test_from_env_accepts_http_and_https_base_urls(value, expected):
 def test_from_env_names_the_variable_for_an_unparsable_timeout(value):
     if not value.strip():
         # Blank falls back to the default rather than erroring.
-        assert Settings.from_env(
-            {"EIP_API_BASE_URL": "http://127.0.0.1:13002", "EIP_MCP_TIMEOUT_SECONDS": value}
-        ).request_timeout_seconds == 30.0
+        assert (
+            Settings.from_env(
+                {"EIP_API_BASE_URL": "http://127.0.0.1:13002", "EIP_MCP_TIMEOUT_SECONDS": value}
+            ).request_timeout_seconds
+            == 30.0
+        )
         return
     with pytest.raises(ValueError, match="EIP_MCP_TIMEOUT_SECONDS"):
         Settings.from_env(

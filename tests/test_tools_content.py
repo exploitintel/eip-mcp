@@ -64,9 +64,7 @@ async def test_code_search_propagates_unavailable():
     def handler(request):
         return httpx2.Response(503, json={"detail": "code search unavailable"})
 
-    tools = EipTools(
-        EipApiClient(SETTINGS, transport=httpx2.MockTransport(handler)), SETTINGS
-    )
+    tools = EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(handler)), SETTINGS)
     with pytest.raises(ApiUnavailable):
         await tools.search_exploit_code("jndi")
 
@@ -78,9 +76,7 @@ async def test_code_search_forwards_one_exact_scope_and_rejects_two(codesearch_j
         seen.append(request)
         return httpx2.Response(200, json=codesearch_jndi)
 
-    tools = EipTools(
-        EipApiClient(SETTINGS, transport=httpx2.MockTransport(handler)), SETTINGS
-    )
+    tools = EipTools(EipApiClient(SETTINGS, transport=httpx2.MockTransport(handler)), SETTINGS)
     await tools.search_exploit_code("jndi ldap", public_id=3505014494080483)
     assert b'"public_id":3505014494080483' in seen[-1].content
 
@@ -88,15 +84,11 @@ async def test_code_search_forwards_one_exact_scope_and_rejects_two(codesearch_j
     assert b'"vulnerability_id":"ghsa-jfh8-c2jp-5v3q"' in seen[-1].content
 
     long_alternate = "Mixed/" + "x" * 500
-    await tools.search_exploit_code(
-        "jndi ldap", vulnerability_id=f" {long_alternate} "
-    )
+    await tools.search_exploit_code("jndi ldap", vulnerability_id=f" {long_alternate} ")
     assert f'"vulnerability_id":"{long_alternate}"'.encode() in seen[-1].content
 
     with pytest.raises(ValueError, match="control characters"):
-        await tools.search_exploit_code(
-            "jndi ldap", vulnerability_id="CVE-2026-\u202e1234"
-        )
+        await tools.search_exploit_code("jndi ldap", vulnerability_id="CVE-2026-\u202e1234")
 
     with pytest.raises(ValueError, match="cannot be used together"):
         await tools.search_exploit_code(

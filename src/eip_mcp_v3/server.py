@@ -215,9 +215,7 @@ def _bounded_int(parameter: str, low: int, high: int) -> Any:
             return handler(value)
         except ValidationError as exc:
             kinds = {error["type"] for error in exc.errors()}
-            raise ToolArgumentError(
-                out_of_range if kinds & RANGE_ERRORS else not_whole
-            ) from None
+            raise ToolArgumentError(out_of_range if kinds & RANGE_ERRORS else not_whole) from None
 
     return Annotated[int, Field(ge=low, le=high), WrapValidator(validate)]
 
@@ -520,9 +518,7 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
         limit: PageLimit = 25,
         cursor: _text("cursor") = None,
     ) -> McpResult:
-        rendered = await api.browse_products(
-            vendor=vendor, query=query, limit=limit, cursor=cursor
-        )
+        rendered = await api.browse_products(vendor=vendor, query=query, limit=limit, cursor=cursor)
         return call_tool_result("browse_products", rendered)
 
     @server.tool(

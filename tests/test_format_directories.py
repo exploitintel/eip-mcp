@@ -31,9 +31,7 @@ def test_vendor_directory_preserves_order_counts_and_cursor():
 def test_product_directory_keeps_source_text_inert():
     out = format_product_page(
         {
-            "items": [
-                {"vendor": HOSTILE, "product": HOSTILE, "vulnerability_count": 3}
-            ],
+            "items": [{"vendor": HOSTILE, "product": HOSTILE, "vulnerability_count": 3}],
             "next_cursor": None,
             "limit": 25,
         }
