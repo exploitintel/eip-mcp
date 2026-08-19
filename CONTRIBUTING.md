@@ -19,7 +19,9 @@ Run the hermetic quality suite before opening a pull request:
 ```sh
 ! git grep -n -I -P '[\x{2013}\x{2014}]' -- .   # CI rejects en/em dashes
 ruff check src tests
-pytest -q --cov=eip_mcp_v3 --cov-fail-under=95
+ruff format --check src tests
+mypy
+pytest -q --cov=eip_mcp_v3 --cov-fail-under=96
 python -m build
 python -m twine check dist/*
 ```

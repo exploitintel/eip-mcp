@@ -38,7 +38,45 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.mypy]
+python_version = "3.12"
+files = ["src"]
+ignore_missing_imports = true
+# Report an override that names a module mypy never processes, so a renamed or
+# deleted entry is surfaced. It is a note and mypy still exits 0, so the CI step
+# greps for it and fails. It does NOT catch a module whose errors were fixed but
+# whose exemption stayed, because that module still exists and is processed.
+warn_unused_configs = true
+
+# A ratchet, not an allowlist. Everything is checked by default and the
+# exemptions are listed, never the inverse, so a module added tomorrow is
+# checked without anyone deciding to check it and this list can only shrink.
+#
+# 6 of 18 modules are exempt, holding 72 errors. 59 of those are one systemic
+# cause in server.py: the tool surface builds parameter schemas by calling a
+# helper in annotation position, as in `query: _text("query") = None`. mypy
+# cannot evaluate a call there and reports Invalid type annotation for each one.
+# That is the deliberate shape of the tool definitions, not a defect, and
+# unpicking it would rewrite the public tool surface. The remaining 13 errors
+# across five modules are ordinary and are the ones worth taking first.
+[[tool.mypy.overrides]]
+module = [
+    "eip_mcp_v3.format",
+    "eip_mcp_v3.format_labs",
+    "eip_mcp_v3.format_stix",
+    "eip_mcp_v3.server",
+    "eip_mcp_v3.structured",
+    "eip_mcp_v3.tools",
+]
+ignore_errors = true
+
 [tool.ruff]
+# Pin the formatter to the version requirements-dev.txt installs. `ruff check`
+# findings are stable across releases; `ruff format` output is not, and AGENTS.md
+# tells a maintainer to run these commands directly, so whatever ruff is on PATH
+# would be used. ruff refuses to run on a mismatch instead.
+required-version = "==0.16.3"
+
 line-length = 100
 src = ["src", "tests"]
 
