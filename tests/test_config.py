@@ -197,7 +197,7 @@ def test_http_settings_preserve_a_wildcard_port_pattern():
     """`:*` is the SDK middleware's own suffix form; it must survive parsing.
 
     What it actually matches is pinned in `tests/test_host_allowlist_matching.py`
- - it is a prefix test, not a port wildcard.
+    - it is a prefix test, not a port wildcard.
     """
     settings = HttpTransportSettings.from_env({"EIP_MCP_ALLOWED_HOSTS": "127.0.0.1:*"})
     assert settings.allowed_hosts == ("127.0.0.1:*", "127.0.0.1.:*")

@@ -56,7 +56,7 @@ def assert_inert(out: str, *, headings: int, fences: int = 0) -> None:
     Substring assertions cannot see this: ``[x](http://evil/)`` on a trusted line
     is still a live link once the client renders it. Headings and fences are
     checked by count rather than by absence, because the formatter writes its own
- - so any extra one is the corpus talking.
+    - so any extra one is the corpus talking.
     """
     live = {token.type for token in tokens(out)} & set(FORBIDDEN_TOKEN_TYPES)
     assert not live, f"corpus value produced live {live}"

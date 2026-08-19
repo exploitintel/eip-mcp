@@ -426,7 +426,7 @@ def _ssvc_line(ssvc: dict[str, Any], records: _SourceRecords | None = None) -> s
 
     This was the only line under `## Exploitation context` rendered without a
     source record, under a hardcoded "CISA" that nothing on the page substantiated
- - while the usage guide promises every displayed value keeps its provider,
+    - while the usage guide promises every displayed value keeps its provider,
     source record and exact source pointer. The label is EIP asserting who decided
     this; the provenance is what makes that checkable.
 

@@ -498,7 +498,7 @@ def _repair(body: str) -> str:
     A fence first: when the cut is inside one, the trailing line is code-block
     content and no code span can be open there. Otherwise the cut may have orphaned
     a code-span delimiter, which is closed with a run of exactly the opening length
- - the length that, by construction, occurs nowhere later in the line, so the
+    - the length that, by construction, occurs nowhere later in the line, so the
     appended run is the one that pairs with it.
 
     Both branches assume the cut did not *manufacture* a fence opener, which is
