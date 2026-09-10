@@ -17,7 +17,12 @@ classifiers = [
     "Topic :: Security",
 ]
 dependencies = [
-    "mcp>=2.0.0,<3",
+    # 2.1.0 stopped propagating messages raised during argument validation:
+    # anything a Pydantic validator raises reaches the caller as the bare
+    # "Error executing tool <name>", losing every refusal this server words for
+    # itself. Bisected 2.0.1 good, 2.1.0 bad. Lifting this needs the refusals
+    # moved out of validators into the tool bodies, where messages still survive.
+    "mcp>=2.0.0,<2.1",
     "httpx2>=2.5.0,<3",
 ]
 
