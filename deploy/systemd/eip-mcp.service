@@ -1,9 +1,9 @@
 [Unit]
 Description=EIP v3 MCP research server (streamable HTTP)
-Documentation=file:///opt/eip/eip-mcp-v3/README.md
+Documentation=file:///opt/eip/eip-mcp/README.md
 Wants=network-online.target eip-server-v3.service
 After=network-online.target eip-server-v3.service
-ConditionPathExists=/etc/eip-v3/eip-mcp-v3.env
+ConditionPathExists=/etc/eip-v3/eip-mcp.env
 # These two belong in [Unit]: systemd's [Service] section accepts only the legacy
 # StartLimitInterval/StartLimitBurst aliases, so the Sec-suffixed form was logged
 # as an unknown key and ignored, leaving the default 10s window. At RestartSec=3
@@ -15,11 +15,11 @@ StartLimitBurst=5
 [Service]
 Type=simple
 DynamicUser=true
-WorkingDirectory=/opt/eip/eip-mcp-v3
-EnvironmentFile=/etc/eip-v3/eip-mcp-v3.env
+WorkingDirectory=/opt/eip/eip-mcp
+EnvironmentFile=/etc/eip-v3/eip-mcp.env
 UMask=0077
-ExecStartPre=/usr/bin/test -x /opt/eip/eip-mcp-v3/.venv/bin/eip-mcp-v3
-ExecStart=/opt/eip/eip-mcp-v3/.venv/bin/eip-mcp-v3 --transport streamable-http --host 127.0.0.1 --port 13003 --path /mcp
+ExecStartPre=/usr/bin/test -x /opt/eip/eip-mcp/.venv/bin/eip-mcp
+ExecStart=/opt/eip/eip-mcp/.venv/bin/eip-mcp --transport streamable-http --host 127.0.0.1 --port 13003 --path /mcp
 Restart=on-failure
 RestartSec=3
 # A configuration error is not a transient fault, and restarting through one hides
