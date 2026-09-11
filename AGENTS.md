@@ -1,4 +1,4 @@
-# eip-mcp-v3
+# eip-mcp
 
 The public source repository, PyPI distribution, and canonical executable are
 all `eip-mcp`. The Python import package is `eip_mcp_v3`. Version 3 begins at
@@ -74,7 +74,9 @@ Its only dependency on EIP is the public HTTP API contract.
 
 ## Protocol
 
-MCP spec `2026-07-28`, SDK `mcp>=2.0.0,<3`. Use `MCPServer`; `FastMCP` does not exist
+MCP spec `2026-07-28`, SDK `mcp>=2.0.0,<2.1`; 2.1.0 stopped propagating
+messages raised during argument validation, and lifting the pin needs the
+refusals moved out of the Pydantic validators into the tool bodies. Use `MCPServer`; `FastMCP` does not exist
 in v2. `ToolAnnotations` fields are snake_case.
 
 `--transport` accepts `stdio` (the default, and what is registered in users' MCP
@@ -115,7 +117,7 @@ Unit tests run against recorded real API payloads in `tests/fixtures/`. Live tes
 `tests/test_live.py` and `tests/test_live_parameter_effects.py` run against a real API
 and are required before claiming any behavior works. **A fixture-only pass is not
 verification.** The cursor round trip is the standing example: pagination was
-unreachable by following the output's own instruction, on all three paginated tools,
+unreachable by following the output's own instruction, on every paginated tool,
 and no fixture could have caught it because the rejection came from the API's own
 cursor decoder.
 
@@ -211,8 +213,9 @@ wraps the result.
 - `structured.py` - the `eip-mcp-result-v1` envelope, and the split of the
   configured output ceiling between the human brief and the structured channel.
   The ceiling value itself is in `config.py`.
-- `declared_arguments.py` - the ledger tying every declared parameter to an
-  observable effect, because the SDK drops unknown arguments.
+- `declared_arguments.py` - the gate that refuses arguments the server does not
+  declare, publishing `additionalProperties: false` and reading the accepted
+  names back out of each published schema so there is no second list to drift.
 - `prompts.py` - the four workflow prompts and the usage-guide resource body.
 - `config.py`, `errors.py` - runtime configuration and error types.
 

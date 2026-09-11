@@ -104,14 +104,14 @@ Python package.
 From a source checkout, as root:
 
 ```sh
-install -d -m 0755 /opt/eip/eip-mcp-v3
-python3 -m venv /opt/eip/eip-mcp-v3/.venv
-/opt/eip/eip-mcp-v3/.venv/bin/python -m pip install .
-install -D -m 0644 deploy/systemd/eip-mcp-v3.service /etc/systemd/system/eip-mcp-v3.service
-install -D -m 0600 deploy/systemd/eip-mcp-v3.env.example /etc/eip-v3/eip-mcp-v3.env
+install -d -m 0755 /opt/eip/eip-mcp
+python3 -m venv /opt/eip/eip-mcp/.venv
+/opt/eip/eip-mcp/.venv/bin/python -m pip install .
+install -D -m 0644 deploy/systemd/eip-mcp.service /etc/systemd/system/eip-mcp.service
+install -D -m 0600 deploy/systemd/eip-mcp.env.example /etc/eip-v3/eip-mcp.env
 ```
 
-Then edit `/etc/eip-v3/eip-mcp-v3.env`:
+Then edit `/etc/eip-v3/eip-mcp.env`:
 
 - Set `EIP_MCP_ALLOWED_HOSTS` to the public `Host` values the proxy forwards, as
   described above. The server refuses to start while it is unset.
@@ -122,15 +122,15 @@ Then edit `/etc/eip-v3/eip-mcp-v3.env`:
 
 Neither refusal is retried: both exit 2, and the unit treats that as terminal.
 
-The unit's `ExecStartPre` tests for `/opt/eip/eip-mcp-v3/.venv/bin/eip-mcp-v3`,
-so install to that prefix or replace every `/opt/eip/eip-mcp-v3` in the unit:
+The unit's `ExecStartPre` tests for `/opt/eip/eip-mcp/.venv/bin/eip-mcp`,
+so install to that prefix or replace every `/opt/eip/eip-mcp` in the unit:
 `Documentation`, `WorkingDirectory`, `ExecStartPre`, and `ExecStart`. The unit
 serves on `--port 13003`, so point the reverse proxy at that rather than the
 `8000` used in the example above. Then:
 
 ```sh
 systemctl daemon-reload
-systemctl enable --now eip-mcp-v3.service
+systemctl enable --now eip-mcp.service
 ```
 
 The supplied unit uses `DynamicUser=true` and has no state directory. It sets
@@ -139,7 +139,7 @@ is reachable on loopback. Reading from the public API requires allowing egress
 to it. Inspect logs with:
 
 ```sh
-journalctl -u eip-mcp-v3
+journalctl -u eip-mcp
 ```
 
 The SDK does not expose a separate health endpoint. Verify the MCP handshake

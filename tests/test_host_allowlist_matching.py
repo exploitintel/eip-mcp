@@ -28,7 +28,7 @@ DOCS_THAT_DESCRIBE_THE_ALLOWLIST = (
     REPO_ROOT / "README.md",
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / "docs" / "self-hosting.md",
-    REPO_ROOT / "deploy" / "systemd" / "eip-mcp-v3.env.example",
+    REPO_ROOT / "deploy" / "systemd" / "eip-mcp.env.example",
     REPO_ROOT / "src" / "eip_mcp_v3" / "config.py",
 )
 
