@@ -950,6 +950,15 @@ async def test_oversized_file_read_is_capped_with_the_fence_reclosed(tools, arti
     as a system message. The text and structured source payload share one complete
     serialized-result budget, so neither channel alone is required to fill it.
     """
+    if (artifact_id, path) == CAPPED_WIDE_FENCE:
+        # This Git file may disappear as its repository advances. Prove absence
+        # from the complete current API inventory before declaring this live
+        # case unavailable; a failed request or incomplete listing must fail.
+        listing = await tools._post_for_artifact("/api/v1/poc-files", artifact_id)
+        detail = await tools._api.get(f"/api/v1/pocs/{artifact_id}")
+        assert len(listing["items"]) == detail["file_count"]
+        if path not in {item["path"] for item in listing["items"]}:
+            pytest.skip("current repository snapshot no longer contains the wide-fence test file")
     out = await tools.read_exploit_file(artifact_id, path=path)
     wire = call_tool_result("read_exploit_file", out).model_dump_json()
     assert len(wire) <= 40_000

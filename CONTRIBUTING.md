@@ -49,6 +49,12 @@ EIP_MCP_TEST_API_BASE_URL=https://exploit-intel.com \
 They must verify the meaning of returned parameters and fields, not merely a
 successful HTTP status.
 
+An upstream Git revision can remove a named live test file. The wide-fence
+file-read case skips only after a successful complete API file inventory proves
+that its named file is absent; the independent oversized ExploitDB file case
+still runs. Catalog-filter checks compare returned identities with the API's
+bounded page and distinguish explicitly truncated fields from incorrect values.
+
 ## Pull requests
 
 - Preserve API ordering, identifiers, attribution, and opaque cursors.
