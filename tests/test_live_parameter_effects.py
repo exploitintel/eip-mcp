@@ -1221,7 +1221,17 @@ async def test_catalog_kind_holds_on_every_row(tools, kind):
     result = await tools.search_exploits(catalog_kind=kind, limit=10)
     rows = result.structured.data["items"]
     assert rows, f"catalog_kind={kind} returned nothing"
-    off = {r.get("catalog_kind") for r in rows if r.get("catalog_kind") != kind}
+    # The shared wire budget may stop within the final structured row. Compare
+    # the returned identities to the API's complete bounded page, and only
+    # permit absent fields when the envelope explicitly discloses truncation.
+    expected = await tools._api.get("/api/v1/pocs", {"catalog_kind": kind, "limit": 10})
+    assert all(row["catalog_kind"] == kind for row in expected["items"])
+    assert [row["artifact_id"] for row in rows] == [
+        row["artifact_id"] for row in expected["items"][: len(rows)]
+    ]
+    assert any("catalog_kind" in row for row in rows)
+    assert result.structured.truncated or all("catalog_kind" in row for row in rows)
+    off = {r["catalog_kind"] for r in rows if "catalog_kind" in r and r["catalog_kind"] != kind}
     assert not off, f"catalog_kind={kind} returned {off}"
 
 
