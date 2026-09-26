@@ -21,11 +21,9 @@ VIEWABILITY_POLICY = (
     "alone."
 )
 
-INDEX_BEHIND_CORPUS = (
-    "This checkpoint differs from the corpus source checkpoint above: the index "
-    "was built from a different snapshot, so a code-search result may omit "
-    "artifacts the rest of this server can see. EIP states the difference and "
-    "makes no claim about which is newer."
+INDEX_CATALOG_MISMATCH = (
+    "The index checkpoint differs from the API's code-search catalog checkpoint. "
+    "Code search is not aligned with the current catalog."
 )
 
 UNDATED_TOTALS = (

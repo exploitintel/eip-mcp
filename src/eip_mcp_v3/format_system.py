@@ -9,7 +9,7 @@ from .format_common import (
     _FILE_LIMIT,
     _POINT_LIMIT,
     _SERIES_LIMIT,
-    INDEX_BEHIND_CORPUS,
+    INDEX_CATALOG_MISMATCH,
     MANIFEST_UNREACHABLE,
     UNDATED_TOTALS,
     VIEWABILITY_POLICY,
@@ -195,18 +195,18 @@ def format_readiness(data: dict[str, Any]) -> str:
     built_at = inline(data.get("code_search_built_at"), max_len=40)
     if built_at:
         lines.append(f"- Index built at: {built_at}")
-    # The one field that says *what* the index was built from. `code_search_status:
-    # ready` is subsystem health - an index built from a stale checkpoint reports
-    # `ready` exactly like a current one, and this page's own tool description
-    # promises it distinguishes an empty result from a degraded index. Without the
-    # checkpoint the two build times sit side by side with nothing reconciling them,
-    # and an empty `search_exploit_code` result reads as corpus absence.
+    # Optional enrichment can advance the corpus checkpoint without changing the
+    # code catalog. Only the catalog checkpoint is comparable to the index.
     index_checkpoint = inline(data.get("code_search_checkpoint_sha256"), max_len=88)
     if index_checkpoint:
         lines.append(f"- Index checkpoint: {index_checkpoint}")
-        source_checkpoint = inline(data.get("source_checkpoint_sha256"), max_len=88)
-        if source_checkpoint and source_checkpoint != index_checkpoint:
-            lines.append(f"- {INDEX_BEHIND_CORPUS}")
+    catalog_checkpoint = inline(data.get("code_search_catalog_checkpoint_sha256"), max_len=88)
+    if catalog_checkpoint:
+        lines.append(f"- Catalog checkpoint: {catalog_checkpoint}")
+        if index_checkpoint and data["code_search_catalog_checkpoint_sha256"] != data.get(
+            "code_search_checkpoint_sha256"
+        ):
+            lines.append(f"- {INDEX_CATALOG_MISMATCH}")
     for label, key in (
         ("Artifacts indexed", "code_search_artifact_count"),
         ("Files indexed", "code_search_file_count"),
