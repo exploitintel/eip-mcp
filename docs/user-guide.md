@@ -207,6 +207,12 @@ Run `get_corpus_readiness` to distinguish a service problem from a valid empty
 result. Connection errors identify the configured API origin without
 including access tokens.
 
+Readiness compares the code index with the API's code-search catalog checkpoint.
+The broader corpus checkpoint can advance after enrichment without changing code
+content. A difference from that broader checkpoint does not establish an index
+problem. If the catalog checkpoint is absent, the brief makes no checkpoint
+comparison and preserves the API's reported subsystem status.
+
 ### A page cursor is rejected
 
 Repeat the same tool with the same query, filters, sort, and limit. Copy
