@@ -93,7 +93,7 @@ HTTP-transport settings are documented separately in the
 |---|---|
 | `get_corpus_readiness` | Corpus freshness, policy revision, checkpoint, build time, and code-search readiness |
 | `get_corpus_statistics` | Corpus totals and an optional pre-aggregated trend series |
-| `search_vulnerabilities` | Full-text vulnerability search with severity, CWE, product, package, exploitation, artifact, sort, and cursor controls |
+| `search_vulnerabilities` | Full-text vulnerability search with severity, CWE, product, package, exploitation, artifact, inclusive `published_from` (ISO 8601 with timezone), `without_pocs` (zero EIP-linked PoCs), sort, and cursor controls |
 | `get_vulnerability` | Attributed vulnerability brief returning a default set of bounded sections; `sections` narrows it |
 | `get_vulnerability_stix` | API-owned current STIX 2.1 bundle for one vulnerability |
 | `browse_vendors` | Source-native vendor directory |
@@ -110,6 +110,11 @@ HTTP-transport settings are documented separately in the
 | `search_exploit_code` | Token-term search over eligible readable PoC paths and text |
 | `read_exploit_file` | List files or read one API-verified UTF-8 text file |
 | `search_labs` | Docker/Compose lab discovery with association and analysis controls |
+
+`without_pocs=true` checks the API's linked `poc_count`. Advisory-embedded PoCs
+and writeups remain available as research material and do not exclude a CVE.
+Choose one fixed UTC `published_from` value for a crawl and pass the same value
+with each returned cursor.
 
 The server also exports four prompts - `triage-cve`, `hunt-technique`,
 `screen-exploit-safety`, and `corpus-report` - and the

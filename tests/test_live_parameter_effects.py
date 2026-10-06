@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -686,7 +687,7 @@ async def test_trends_rejects_an_undeclared_value(tools):
 
 
 # ==========================================================================
-# search_vulnerabilities - 14 parameters
+# search_vulnerabilities - 16 parameters
 # ==========================================================================
 
 
@@ -943,6 +944,69 @@ async def test_with_artifacts_holds_on_every_row(tools):
     assert rows, "with_artifacts=True returned nothing"
     bare = [r["identifier"] for r in rows if r["artifact_count"] < 1]
     assert not bare, f"with_artifacts=True returned rows with no artifact: {bare}"
+
+
+async def test_without_pocs_excludes_linked_pocs(tools):
+    identifier = "CVE-2021-44228"
+    baseline = await tools.search_vulnerabilities(query=identifier, limit=5)
+    linked = next(
+        (row for row in baseline.structured.data["items"] if row["identifier"] == identifier),
+        None,
+    )
+    assert linked is not None and linked["poc_count"] > 0
+    exact = await tools.search_vulnerabilities(query=identifier, without_pocs=True, limit=5)
+    assert all(row["identifier"] != identifier for row in exact.structured.data["items"])
+    assert all(row["poc_count"] == 0 for row in exact.structured.data["items"])
+
+    page = await tools.search_vulnerabilities(without_pocs=True, limit=5)
+    assert page.structured.data["items"]
+    assert all(row["poc_count"] == 0 for row in page.structured.data["items"])
+
+
+async def test_published_from_bounds_rows_and_cursor_scope(tools):
+    baseline = await tools.search_vulnerabilities(limit=20)
+    dates = [
+        datetime.fromisoformat(row["published_at"])
+        for row in baseline.structured.data["items"]
+        if row["published_at"]
+    ]
+    assert dates
+    first = baseline.structured.data["items"][0]
+    inclusive = await tools.search_vulnerabilities(
+        query=first["identifier"], published_from=first["published_at"], limit=5
+    )
+    assert any(
+        row["identifier"] == first["identifier"] for row in inclusive.structured.data["items"]
+    )
+    future_cutoff = max(dates) + timedelta(days=1)
+    future = await tools.search_vulnerabilities(published_from=future_cutoff.isoformat(), limit=5)
+    assert not future.structured.data["items"]
+
+    cutoff = min(dates) - timedelta(days=7)
+    page = await tools.search_vulnerabilities(
+        published_from=cutoff.isoformat(), without_pocs=True, limit=5
+    )
+    assert page.structured.data["items"]
+    assert all(
+        datetime.fromisoformat(row["published_at"]) >= cutoff and row["poc_count"] == 0
+        for row in page.structured.data["items"]
+    )
+    cursor = page.structured.data["next_cursor"]
+    assert cursor
+    second = await tools.search_vulnerabilities(
+        published_from=cutoff.isoformat(), without_pocs=True, limit=5, cursor=cursor
+    )
+    first_ids = {row["identifier"] for row in page.structured.data["items"]}
+    assert second.structured.data["items"]
+    assert not first_ids.intersection(row["identifier"] for row in second.structured.data["items"])
+    assert all(
+        datetime.fromisoformat(row["published_at"]) >= cutoff and row["poc_count"] == 0
+        for row in second.structured.data["items"]
+    )
+    with pytest.raises(Exception, match="cursor does not match this query"):
+        await tools.search_vulnerabilities(
+            published_from=cutoff.isoformat(), without_pocs=False, limit=5, cursor=cursor
+        )
 
 
 async def test_a_false_flag_does_not_filter(tools):

@@ -439,7 +439,10 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
         description=(
             "Search vulnerabilities by full-text query and filters: severity "
             "(CRITICAL, HIGH, MEDIUM, LOW, NONE; case-insensitive), cwe, "
-            "exact vendor, exact product, cisa_kev, ransomware, nuclei, with_artifacts. "
+            "exact vendor, exact product, cisa_kev, ransomware, nuclei, with_artifacts, "
+            "without_pocs (zero EIP-linked PoCs), and published_from (inclusive ISO "
+            "8601 timestamp with timezone). Advisory-embedded PoCs and writeups do "
+            "not count as linked PoCs. "
             "Use browse_vendors and browse_products to obtain source-native vendor "
             "and product names. ecosystem and package are a separate exact "
             "source-native package identity; package requires ecosystem. Use "
@@ -464,6 +467,8 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
         ransomware: _flag("ransomware") = False,
         nuclei: _flag("nuclei") = False,
         with_artifacts: _flag("with_artifacts") = False,
+        without_pocs: _flag("without_pocs") = False,
+        published_from: _text("published_from") = None,
         sort: Sort = "published",
         limit: PageLimit = 25,
         cursor: _text("cursor") = None,
@@ -480,6 +485,8 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
             ransomware=ransomware,
             nuclei=nuclei,
             with_artifacts=with_artifacts,
+            without_pocs=without_pocs,
+            published_from=published_from,
             sort=sort,
             limit=limit,
             cursor=cursor,
