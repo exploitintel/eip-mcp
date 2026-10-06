@@ -342,6 +342,8 @@ async def test_every_declared_parameter_has_an_effect_test(server):
             "ecosystem",
             "package",
             "with_artifacts",
+            "without_pocs",
+            "published_from",
             "sort",
             "limit",
             "cursor",
@@ -394,7 +396,7 @@ async def test_every_declared_parameter_has_an_effect_test(server):
             f"{tool}: declared {sorted(params)} but the effect suite claims "
             f"{sorted(exercised[tool])}"
         )
-    assert sum(len(p) for p in declared.values()) == 70
+    assert sum(len(p) for p in declared.values()) == 72
 
 
 def _keywords_passed_to_tools(path: Path) -> set[str]:

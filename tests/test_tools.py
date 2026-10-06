@@ -295,6 +295,8 @@ async def test_search_sends_mapped_parameters(search_kev):
         package=" @scope/Exact-Package ",
         cisa_kev=True,
         with_artifacts=True,
+        without_pocs=True,
+        published_from=" 2026-10-01T00:00:00Z ",
         sort="epss",
         limit=5,
         cursor=cursor,
@@ -309,6 +311,8 @@ async def test_search_sends_mapped_parameters(search_kev):
     assert params["package"] == "@scope/Exact-Package"
     assert params["cisa_kev"] == "true"
     assert params["with_artifacts"] == "true"
+    assert params["without_pocs"] == "true"
+    assert params["published_from"] == "2026-10-01T00:00:00Z"
     assert params["sort"] == "epss"
     assert params["limit"] == "5"
     assert params["cursor"] == cursor
