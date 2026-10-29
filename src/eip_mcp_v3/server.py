@@ -575,7 +575,7 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
             "current vulnerability count, including records whose count is zero. "
             "query matches a CWE "
             "identifier or source-native name case-insensitively. Preserves whether "
-            "the official record is a Weakness, Category, or View and returns status "
+            "the official record is a Weakness, Category, Grouping, or View and returns status "
             "and abstraction where the CWE source supplies them, plus a "
             "next_cursor for unchanged-call pagination."
         ),
@@ -591,7 +591,7 @@ def _build_server(api: EipTools, owned_client: EipApiClient | None) -> MCPServer
 
     @server.tool(
         description=(
-            "Return one official source-backed CWE Weakness, Category, or View with "
+            "Return one official source-backed CWE Weakness, Category, Grouping, or View with "
             "its family-specific description, status, abstraction, vulnerability "
             "count and provenance. The identifier must look like "
             "CWE-79. Use search_vulnerabilities with its cwe filter to browse the "

@@ -238,7 +238,7 @@ def test_the_value_parser_reads_back_what_the_renderer_was_given(
 
 
 def test_the_weakness_fixture_still_mixes_record_types() -> None:
-    """The parser splits on Weakness, Category and View; keep two of them here.
+    """The parser splits on Weakness, Category, Grouping and View; keep two of them here.
 
     Matching only "Weakness" returned nothing for an all-category page, which
     made the disjoint-page assertions pass vacuously. This fixture carries
@@ -247,6 +247,14 @@ def test_the_weakness_fixture_still_mixes_record_types() -> None:
     """
     kinds = {item["record_type"] for item in _load("weaknesses_page")["items"]}
     assert {"weakness", "category"} <= kinds, kinds
+
+
+@pytest.mark.parametrize("kind", ["weakness", "category", "grouping", "view"])
+def test_weakness_parser_reads_every_official_family(kind: str) -> None:
+    payload = _load("weaknesses_page")
+    payload["items"] = payload["items"][:1]
+    payload["items"][0]["record_type"] = kind
+    assert live.weakness_rows(disc.format_weakness_page(payload)) == [payload["items"][0]["cwe_id"]]
 
 
 def test_every_recorded_cursor_survives_the_round_trip() -> None:
@@ -320,7 +328,7 @@ def test_a_truncated_page_is_not_reported_as_drift() -> None:
     # parse cleanly and prove nothing.
     cut = cap(page, limit=4104)
     assert cut != page, "the fixture is too small to exercise truncation"
-    blocks = live._blocks(cut, "Weakness", "Category", "View")
+    blocks = live._blocks(cut, "Weakness", "Category", "Grouping", "View")
     parsed = [b for b in blocks if re.match(live._SPAN, b)]
     assert len(parsed) == len(blocks) - 1, "this cut no longer severs a row"
     assert len(live.weakness_rows(cut)) == len(parsed)

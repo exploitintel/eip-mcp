@@ -100,7 +100,7 @@ HTTP-transport settings are documented separately in the
 | `browse_products` | Source-native products for one exact vendor |
 | `browse_ecosystems` | Source-native package ecosystem directory |
 | `browse_packages` | Exact package names for one ecosystem |
-| `browse_weaknesses` | Complete official CWE catalog with type, status, abstraction, and counts |
+| `browse_weaknesses` | Complete official CWE Weakness/Category/Grouping/View catalog with type, status, abstraction, and counts |
 | `get_weakness` | One source-backed official CWE record |
 | `browse_authors` | Source-scoped exploit contributor directory |
 | `get_author` | One source-scoped contributor and contribution counts |
