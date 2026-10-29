@@ -159,7 +159,7 @@ def _blocks(page: str, *headings: str) -> list[str]:
     """Split a rendered page into one string per result row.
 
     Pass every heading label the surface can emit; a page may mix them, as the
-    CWE directory does with Weakness, Category and View.
+    CWE directory does with Weakness, Category, Grouping and View.
 
     A heading this parser does not know used to surface as an empty row list,
     which callers then reported as "returned nothing" - indistinguishable from
@@ -518,9 +518,9 @@ def package_rows(page: str) -> list[tuple[str, str]]:
 
 def weakness_rows(page: str) -> list[str]:
     # browse_weaknesses has no kind filter, so a page can carry any mix of
-    # Weakness, Category and View. Matching only "Weakness" returned [] for an
+    # Weakness, Category, Grouping and View. Matching only "Weakness" returned [] for an
     # all-category page, which made the disjoint-page assertions pass vacuously.
-    return _spans(page, _blocks(page, "Weakness", "Category", "View"), "weakness")
+    return _spans(page, _blocks(page, "Weakness", "Category", "Grouping", "View"), "weakness")
 
 
 def _nonincreasing(values: list[float | str]) -> bool:
@@ -907,7 +907,9 @@ async def test_weakness_query_limit_and_cursor_take_effect(tools):
 async def test_get_weakness_normalises_and_resolves_the_selected_id(tools):
     selected = weakness_rows(await tools.browse_weaknesses(limit=1))[0]
     rendered = await tools.get_weakness(selected.lower())
-    assert re.search(rf"# CWE (?:Weakness|Category|View) ` {re.escape(selected)} `", rendered)
+    assert re.search(
+        rf"# CWE (?:Weakness|Category|Grouping|View) ` {re.escape(selected)} `", rendered
+    )
     assert re.search(r"associated vulnerabilit(?:y|ies)", rendered)
     with pytest.raises(Exception, match="cwe_id must look like"):
         await tools.get_weakness("79")

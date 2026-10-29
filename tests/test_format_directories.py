@@ -170,22 +170,23 @@ def test_partial_non_official_cwe_record_fails_closed():
         )
 
 
-def test_category_summary_is_not_mislabeled_as_a_weakness_definition():
+@pytest.mark.parametrize("kind", ["category", "grouping"])
+def test_category_and_grouping_summaries_keep_their_source_type(kind):
     out = format_weakness(
         {
             "cwe_id": "CWE-264",
-            "record_type": "category",
+            "record_type": kind,
             "name": "Permissions, Privileges, and Access Controls",
             "description": "Official category summary.",
             "status": "Obsolete",
             "abstraction": None,
             "vulnerability_count": 5519,
-            "provenance": {"source": "cwe", "native_id": "category:264"},
+            "provenance": {"source": "cwe", "native_id": f"{kind}:264"},
         }
     )
 
-    assert "# CWE Category ` CWE-264 `" in out
-    assert "Source category summary" in out
+    assert f"# CWE {kind.title()} ` CWE-264 `" in out
+    assert f"Source {kind} summary" in out
     assert "Source weakness definition" not in out
 
 

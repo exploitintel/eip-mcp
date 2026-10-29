@@ -161,11 +161,13 @@ def format_package_page(data: dict[str, Any]) -> str:
 _CWE_RECORD_LABELS = {
     "weakness": "Weakness",
     "category": "Category",
+    "grouping": "Grouping",
     "view": "View",
 }
 _CWE_DESCRIPTION_LABELS = {
     "weakness": "Source weakness definition",
     "category": "Source category summary",
+    "grouping": "Source grouping summary",
     "view": "Source view objective",
 }
 
